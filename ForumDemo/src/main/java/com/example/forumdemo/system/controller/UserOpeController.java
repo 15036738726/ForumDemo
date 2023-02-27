@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-@ResponseBody
+
 @RestController
 @RequestMapping("userOpe")
 public class UserOpeController {
@@ -18,6 +18,7 @@ public class UserOpeController {
      * @return
      */
     @RequestMapping("userRegister")
+    @ResponseBody
     public Result<String> userRegister(@RequestBody ForumUser forumUser){
         System.out.println(forumUser);
         return Result.success("注册成功");
@@ -27,6 +28,7 @@ public class UserOpeController {
     public ModelAndView test(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("USER_REGISTER.html");
+        System.out.println(this.getClass().getResource("/"));
         return mv;
     }
 }

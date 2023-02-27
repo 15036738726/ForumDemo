@@ -1,0 +1,101 @@
+ callback使用:
+     function request(uri, callback) {
+        $.ajax({
+          url: uri,
+          method: 'get',
+          success: function (data) {
+            callback(null, data)
+          },
+          error: function (xhr, textStatus, errorThrown) {
+            callback(errorThrown)
+          }
+        })
+      }
+
+      // callback函数，参数列表规定，第一个参数为错误抛出，第二个参数为响应值
+      request('http://baidu.com', function (err, data) {
+        if (err) {
+          // handle error
+          return
+        }
+        // handle after request logic
+        console.log(data)
+      })
+--------------------------------------------------------
+$.ajax({
+    url: '/userOpe/userRegister',   // 请求地址,
+    type: 'POST',   // 请求方式
+    contentType: 'application/json', //发送的数据类型
+    data: JSON.stringify(sendData),
+    //dataType: 'json',// 接受的数据类型,可不写
+    success: function (result) {
+
+    },
+    error: function (result) {
+        console.log('Send Request Fail..'); // 请求失败时的回调函数
+    }
+});
+
+-------------------------------------------------------
+第一版请求版本  方法挂在对象上
+
+var obj = {};
+var myutils = new MyUtils();
+
+obj.register = function(callback){
+    let username = $("#user_name").val();
+    let password = $("#password").val();
+    let sex = $("#sex").val();
+    let address = $("#address").val();
+    let email = $("#email").val();
+    var sendData = {
+        "userName":username,
+        "password":password,
+        "sex":sex,
+        "address":address,
+        "email":email
+    };
+    myutils.send(callback,'/userOpe/userRegister',sendData);
+}
+
+
+/**
+ * 触发注册
+ */
+$(".register").unbind("click").bind("click",function(){
+    obj.register(function(result){
+        debugger;
+        console.log(result)
+    });
+})
+
+--------------------------------------------------------------
+第2版请求版本  方法定义在对象内部,使用时需要把对象创建出来
+
+var myutils = new MyUtils();
+var obj = function(option){
+    this.register = function (callback) {
+        let username = $("#user_name").val();
+        let password = $("#password").val();
+        let sex = $("#sex").val();
+        let address = $("#address").val();
+        let email = $("#email").val();
+        var sendData = {
+            "userName":username,
+            "password":password,
+            "sex":sex,
+            "address":address,
+            "email":email
+        };
+        myutils.send(callback,'/userOpe/userRegister',sendData);
+    };
+};
+
+/**
+ * 触发注册
+ */
+$(".register").unbind("click").bind("click",function(){
+    new obj().register(function(result){
+        console.log(result)
+    });
+})
