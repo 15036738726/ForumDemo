@@ -48,32 +48,6 @@
         <!--<button class="btn btn-lg btn-primary btn-block register" type="submit">注 册</button>-->
         <input type="button" class="register" value="注 册"/>
     </form>
-
-
-    <div class="alert alert-success" role="alert">
-        A simple success alert—check it out!
-    </div>
-    <div class="alert alert-danger fade" role="alert">
-        A simple danger alert—check it out!
-    </div>
-    <div class="alert alert-warning" role="alert">
-        A simple warning alert—check it out!
-    </div>
-
-    <div class="alert alert-success alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong>成功!</strong> 指定操作成功提示信息。
-    </div>
-
-
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
-
 </div>
 
 </body>
@@ -100,7 +74,7 @@
     $(".register").unbind("click").bind("click",function(){
         new obj().register(function(result){
             console.log(result)
-            utils.show3sMsg("注册成功",3);
+            utils.msgDialog("注册成功",1);
         });
     })
 </script>

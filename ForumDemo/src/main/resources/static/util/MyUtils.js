@@ -44,7 +44,7 @@ var MyUtils = function(option){
         if(!arr) return undefined;
         let pageData = {};
         for(var temp of arr){
-            console.log(temp);
+            // console.log(temp);
             pageData[temp] = $("."+ele).find("#"+temp).val().trim();
         }
         return pageData;
@@ -72,8 +72,13 @@ var MyUtils = function(option){
         return false;
     };
 
-    __THIS__.show3sMsg = function(msg,time){
-        var subhtml='<div id="alert_dialog_show_3s_box" style=" overflow:hidden;"><div id="alert_show_3" class="time1" style="height:100px; width:200px; background-color:#000; color:#fff; opacity:0.8;  border-radius:8px;font-size:24px; text-align:center;z-index: 2000; position:fixed;top:20%;left:45%;"><p style="padding-top:30px;">'+msg+'</p></div></div>';
+    /**
+     * 消息提示
+     * @param msg
+     * @param time
+     */
+    __THIS__.msgDialog = function(msg,time){
+        var subhtml='<div id="msgDialog" style=" overflow:hidden;"><div id="alert_show_3" class="time1" style="height:100px; width:200px; background-color:#000; color:#fff; opacity:0.8;  border-radius:8px;font-size:24px; text-align:center;z-index: 2000; position:fixed;top:20%;left:45%;"><p style="padding-top:30px;">'+msg+'</p></div></div>';
         $("body").append(subhtml);
         // 给全局对象赋值
         __THIS__.alertTime = time;
@@ -85,7 +90,7 @@ var MyUtils = function(option){
     __THIS__.autoCloseAlert = function(time){
         __THIS__.time = __THIS__.time-1;
         if(__THIS__.time==0){
-            $('#alert_dialog_show_3s_box').remove();
+            $('#msgDialog').remove();
             clearInterval(__THIS__.alertStop);
         }
     }
