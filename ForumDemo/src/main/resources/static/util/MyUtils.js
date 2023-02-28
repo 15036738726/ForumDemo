@@ -4,12 +4,22 @@
  * @constructor
  */
 var MyUtils = function(option){
-    //this.ID = option.ID;
+    __THIS__ = this;
+    // 警告属性
+    __THIS__.myRequiredWaring  = "myRequiredWaringClass";
+    // 必填属性
+    __THIS__.myRequired = "myRequired"
+    /**
+     * 弹框相关
+     * @type {null}
+     */
+    __THIS__.alertStop = null;
+    __THIS__.alertTime = 1;// 默认1  可不给
 
     /**
      * 通用请求方法
      */
-    this.send = function(callback,url,sendData,type,async){
+    __THIS__.send = function(callback,url,sendData,type,async){
         $.ajax({
             url: url,   // 请求地址,
             data: JSON.stringify(sendData),
@@ -26,6 +36,59 @@ var MyUtils = function(option){
             }
         });
     };
+    /**
+     * 封装参数
+     */
+    __THIS__.getFormData = function(ele,arr){
+        console.log($("."+ele));
+        if(!arr) return undefined;
+        let pageData = {};
+        for(var temp of arr){
+            console.log(temp);
+            pageData[temp] = $("."+ele).find("#"+temp).val().trim();
+        }
+        return pageData;
+    };
+
+    /**
+     * 页面参数必填校验  按照元素顺序进行校验
+     * @param ele
+     * @param arr
+     */
+    __THIS__.pageRequire = function(ele,arr){
+        if(!arr) return true;
+        for(var temp of arr){
+            let currentEle = $("."+ele).find("#"+temp);
+            // 当前元素设置的必填属性
+            if(currentEle.attr(__THIS__.myRequired)!=undefined&&currentEle.attr(__THIS__.myRequired)==''){
+                // 并且没有填入值
+                if(currentEle.val().trim()==''){
+                    // 则校验不通过 这里拦截  并提供样式
+                    currentEle.addClass(__THIS__.myRequiredWaring);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    __THIS__.show3sMsg = function(msg,time){
+        var subhtml='<div id="alert_dialog_show_3s_box" style=" overflow:hidden;"><div id="alert_show_3" class="time1" style="height:100px; width:200px; background-color:#000; color:#fff; opacity:0.8;  border-radius:8px;font-size:24px; text-align:center;z-index: 2000; position:fixed;top:20%;left:45%;"><p style="padding-top:30px;">'+msg+'</p></div></div>';
+        $("body").append(subhtml);
+        // 给全局对象赋值
+        __THIS__.alertTime = time;
+        // setInterval每间隔1000毫秒 执行一次 __THIS__.autoCloseAlert(time)函数
+        __THIS__.alertStop = setInterval(__THIS__.autoCloseAlert(),1000)
+    };
+
+    //3s关闭弹出框
+    __THIS__.autoCloseAlert = function(time){
+        __THIS__.time = __THIS__.time-1;
+        if(__THIS__.time==0){
+            $('#alert_dialog_show_3s_box').remove();
+            clearInterval(__THIS__.alertStop);
+        }
+    }
 };
 
 var utils = new MyUtils();

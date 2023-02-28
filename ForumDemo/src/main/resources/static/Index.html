@@ -16,55 +16,80 @@
     <link href="bootstrap-3.4.1/docs/examples/signin/signin.css" rel="stylesheet">
     <script src="bootstrap-3.4.1/docs/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="bootstrap-3.4.1/docs/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="bootstrap-3.4.1/docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="jquery/jquery.min.js"></script>
+    <!--alert弹框-->
+    <script src="bootstrap-3.4.1/js/alert.js"></script>
 <!--    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
 </head>
 <body>
 <div class="container">
-    <form class="form-signin">
-        <h2 class="form-signin-heading">Please sign in</h2>
+    <form class="form-signin myForm">
+        <h2 class="form-signin-heading">Please Register</h2>
 
-        <label for="user_name" class="sr-only">昵 称</label>
-        <input type="input" id="user_name" class="form-control" placeholder="昵 称" required>
+        <label for="userName" class="sr-only">昵 称</label>
+        <input type="input" id="userName" class="form-control" placeholder="昵 称" myRequired>
 
         <label for="password" class="sr-only">登录密码</label>
-        <input type="password" id="password" class="form-control" placeholder="登录密码" required>
+        <input type="password" id="password" class="form-control" placeholder="登录密码" myRequired>
 
         <label for="address" class="sr-only">地 址</label>
-        <input type="input" id="address" class="form-control" placeholder="地 址" required>
+        <input type="input" id="address" class="form-control" placeholder="地 址" myRequired>
 
         <label for="email" class="sr-only">邮 箱</label>
-        <input type="email" id="email" class="form-control" placeholder="邮 箱" required autofocus>
+        <input type="email" id="email" class="form-control" placeholder="邮 箱" myRequired>
 
         <div class="checkbox">
             <label>
                 <input type="checkbox" value="remember-me"> Remember me
             </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block register" type="submit">注 册</button>
-
+        <!--<button class="btn btn-lg btn-primary btn-block register" type="submit">注 册</button>-->
+        <input type="button" class="register" value="注 册"/>
     </form>
+
+
+    <div class="alert alert-success" role="alert">
+        A simple success alert—check it out!
+    </div>
+    <div class="alert alert-danger fade" role="alert">
+        A simple danger alert—check it out!
+    </div>
+    <div class="alert alert-warning" role="alert">
+        A simple warning alert—check it out!
+    </div>
+
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>成功!</strong> 指定操作成功提示信息。
+    </div>
+
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+
 </div>
-<script src="bootstrap-3.4.1/docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+
 </body>
-<script src="jquery/jquery.min.js"></script>
+
 <script src="util/MyUtils.js"></script>
 <script type="text/javascript">
-    var myutils = new MyUtils();
     var obj = function(option){
         this.register = function (callback) {
-            let username = $("#user_name").val();
-            let password = $("#password").val();
-            let sex = $("#sex").val();
-            let address = $("#address").val();
-            let email = $("#email").val();
-            var sendData = {
-                "userName":username,
-                "password":password,
-                "sex":sex,
-                "address":address,
-                "email":email
-            };
+            let eleArr = new Array();
+            eleArr.push("userName");
+            eleArr.push("password");
+            eleArr.push("address");
+            eleArr.push("email");
+            let checkRequire = utils.pageRequire("myForm",eleArr);
+            if(checkRequire)return;
+            let sendData = utils.getFormData("myForm",eleArr);
             utils.send(callback,'/userOpe/userRegister',sendData);
         };
     };
@@ -75,6 +100,7 @@
     $(".register").unbind("click").bind("click",function(){
         new obj().register(function(result){
             console.log(result)
+            utils.show3sMsg("注册成功",3);
         });
     })
 </script>

@@ -33,6 +33,9 @@ body {
 
 .form-signin input[type="password"],input[type="input"],input[type="email"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  /*border-top-left-radius: 0;*/
+  /*border-top-right-radius: 0;*/
+}
+.myRequiredWaringClass{
+  border: 1px solid red;
 }
