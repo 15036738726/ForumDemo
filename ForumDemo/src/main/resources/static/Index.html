@@ -40,18 +40,13 @@
         <label for="email" class="sr-only">邮 箱</label>
         <input type="email" id="email" class="form-control" placeholder="邮 箱" myRequired>
 
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" value="remember-me"> Remember me
-            </label>
-        </div>
         <!--<button class="btn btn-lg btn-primary btn-block register" type="submit">注 册</button>-->
-        <input type="button" class="register" value="注 册"/>
+        <input type="button" class="register defalutButton" value="注 册"/>
     </form>
 </div>
 
 </body>
-
+<link href="util/MyUtils.css" rel="stylesheet">
 <script src="util/MyUtils.js"></script>
 <script type="text/javascript">
     var obj = function(option){
@@ -74,7 +69,7 @@
     $(".register").unbind("click").bind("click",function(){
         new obj().register(function(result){
             console.log(result)
-            utils.msgDialog("注册成功",1);
+            utils.msgDialog("注册成功",utils.DIALOG_SUCCESS);
         });
     })
 </script>

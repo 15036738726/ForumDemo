@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Jquery Fade demo</title>
+    <style>
+        div{background-color:#eaeaea;border:solid 1px #999999;width:100px;height:100px;text-align:center;
+            line-height:100px;font-size:16px;display:none;margin:10px;}
+    </style>
+    <script src="../../jquery/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#one").click(function(){
+                $("#con_a").fadeIn(100);
+                $("#con_b").fadeIn(500);
+                $("#con_c").fadeIn(1000);
+            });
+            $("#two").click(function(){
+                $("#con_a").fadeOut(100);
+                $("#con_b").fadeOut(500);
+                $("#con_c").fadeOut(1000);
+            });
+            $("#three").click(function(){
+                $("#con_a").fadeToggle(100);
+                $("#con_b").fadeToggle(500);
+                $("#con_c").fadeToggle(1000);
+            });
+            $("#four").click(function(){
+                $("#con_a").fadeTo("slow",0.5);
+                $("#con_b").fadeTo("slow",0.7);
+                $("#con_c").fadeTo("slow",0.9);
+            });
+        });
+        //http://localhost:9090/consult/其他/fade.html
+    </script>
+</head>
+<body>
+<h1>Jquery淡入淡出演示</h1>
+<button id="one">点击我淡入</button>
+<button id="two">点击我淡出</button>
+<button id="three">点击我切换淡入淡出</button>
+<button id="four">透明度</button>
+<div id="con_a">1</div>
+<div id="con_b">2</div>
+<div id="con_c">3</div>
+</body>
+</html>

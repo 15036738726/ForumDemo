@@ -9,12 +9,14 @@ var MyUtils = function(option){
     __THIS__.myRequiredWaring  = "myRequiredWaringClass";
     // 必填属性
     __THIS__.myRequired = "myRequired"
-    /**
-     * 弹框相关
-     * @type {null}
-     */
-    __THIS__.alertStop = null;
-    __THIS__.alertTime = 1;// 默认1  可不给
+    // 系统默认弹框关闭时间,毫秒值
+    __THIS__.closeMilliSecond = 500;// 默认500
+    // 弹框颜色
+    __THIS__.dialogColorMap = {"SUCCESS":"#5cb85c","WARNING":"#f0ad4e","DEFAULT":"#000"};
+    // 对外提供颜色枚举
+    __THIS__.DIALOG_SUCCESS = "SUCCESS";
+    __THIS__.DIALOG_WARNING = "WARNING";
+    __THIS__.DIALOG_DEFAULT = "DEFAULT";
 
     /**
      * 通用请求方法
@@ -36,15 +38,14 @@ var MyUtils = function(option){
             }
         });
     };
+
     /**
      * 封装参数
      */
     __THIS__.getFormData = function(ele,arr){
-        console.log($("."+ele));
         if(!arr) return undefined;
         let pageData = {};
         for(var temp of arr){
-            // console.log(temp);
             pageData[temp] = $("."+ele).find("#"+temp).val().trim();
         }
         return pageData;
@@ -66,6 +67,9 @@ var MyUtils = function(option){
                     // 则校验不通过 这里拦截  并提供样式
                     currentEle.addClass(__THIS__.myRequiredWaring);
                     return true;
+                }else{
+                    // 移除样式
+                    currentEle.removeClass(__THIS__.myRequiredWaring);
                 }
             }
         }
@@ -73,27 +77,43 @@ var MyUtils = function(option){
     };
 
     /**
-     * 消息提示
      * @param msg
-     * @param time
+     * @param type 弹框类型
+     * @param millisecond 毫秒值
      */
-    __THIS__.msgDialog = function(msg,time){
-        var subhtml='<div id="msgDialog" style=" overflow:hidden;"><div id="alert_show_3" class="time1" style="height:100px; width:200px; background-color:#000; color:#fff; opacity:0.8;  border-radius:8px;font-size:24px; text-align:center;z-index: 2000; position:fixed;top:20%;left:45%;"><p style="padding-top:30px;">'+msg+'</p></div></div>';
+    __THIS__.msgDialog = function(msg,type,millisecond){
+        let dialogColor = __THIS__.dialogColorMap[type?type:__THIS__.DIALOG_DEFAULT];
+        let style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML='.dialogStyleClassDiv{' +
+            'opacity:0.8;z-index: 2000;' +
+            'height:60px; width:120px;' +
+            'background-color:'+dialogColor+';border-radius:8px;' +
+            'text-align:center;font-size:24px;color:#fff;' +
+            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +
+            '}' +
+            '.dialogStyleClassP{' +
+            'line-height: 60px;' +
+            '}';
+        // 把当前样式添加到 当前引用页面的head标签中
+        $('head').append(style);
+        var subhtml='<div id="msgDialog" style="overflow:hidden;"><div class="dialogStyleClassDiv"><p class="dialogStyleClassP">'+msg+'</p></div></div>';
         $("body").append(subhtml);
-        // 给全局对象赋值
-        __THIS__.alertTime = time;
-        // setInterval每间隔1000毫秒 执行一次 __THIS__.autoCloseAlert(time)函数
-        __THIS__.alertStop = setInterval(__THIS__.autoCloseAlert(),1000)
+        // setInterval每间隔1000毫秒 执行一次__THIS__.autoCloseAlert函数
+        // setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
+        var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.closeMilliSecond);
+        //关闭弹框
+        function autoCloseAlert(){
+            // 加上淡出效果
+            $('#msgDialog').fadeOut(700,'linear',function(){
+                debugger
+                $('#msgDialog').remove();
+                clearInterval(msgDialogStop);
+            });
+        }
     };
 
-    //3s关闭弹出框
-    __THIS__.autoCloseAlert = function(time){
-        __THIS__.time = __THIS__.time-1;
-        if(__THIS__.time==0){
-            $('#msgDialog').remove();
-            clearInterval(__THIS__.alertStop);
-        }
-    }
 };
 
 var utils = new MyUtils();
+
