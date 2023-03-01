@@ -7,8 +7,13 @@ spring:
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
     #driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/forum?characterEncoding=utf8&serverTimezone=UTC
 
 
-mybatis:
+mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: assign_id #全局设置雪花算法
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
