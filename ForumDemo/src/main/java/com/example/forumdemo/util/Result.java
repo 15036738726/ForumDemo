@@ -87,5 +87,19 @@ public class Result<T> implements Serializable {
         return r;
     }
 
+    /**
+     * 系统级错误 统一返回信息
+     * @param data
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> systemFial(T data) {
+        Result<T> r = new Result<T>();
+        r.setCode(CommonConstant.SYSTEM_ERR_CODE);
+        r.setMessage(CommonConstant.SYSTEM_ERR_MESSAGE);
+        r.setData(data);
+        return r;
+    }
+
 
 }

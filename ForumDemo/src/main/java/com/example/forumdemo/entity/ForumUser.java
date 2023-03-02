@@ -1,5 +1,7 @@
 package com.example.forumdemo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,7 +11,9 @@ import java.io.Serializable;
  */
 @Data
 public class ForumUser implements Serializable {
-    private String userId;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long userId;
+
     private String userName;
     private String password;
     private Integer sex;

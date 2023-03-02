@@ -1,5 +1,7 @@
 package com.example.forumdemo.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.system.mapper.UserOpeMapper;
@@ -19,11 +21,15 @@ public class UserOpeServiceImpl extends ServiceImpl<UserOpeMapper,ForumUser> imp
      * @return
      */
     @Override
-    public boolean userRegister(ForumUser forumUser) {
-        // 判断是否重复
-        //ForumUser forumUser1 = userOpeMapper.selectOne();
-
-        //int count = userOpeMapper.insert(forumUser);
+    public boolean userRegister(ForumUser forumUser){
+        QueryWrapper<ForumUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_name",forumUser.getUserName());
+        // 判断是否重复 根据用户名
+        ForumUser user = userOpeMapper.selectOne(queryWrapper);
+        if(user!=null){
+            return true;
+        }
+        int count = userOpeMapper.insert(forumUser);
         return false;
     }
 }

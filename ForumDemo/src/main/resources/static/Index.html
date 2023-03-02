@@ -68,8 +68,9 @@
      */
     $(".register").unbind("click").bind("click",function(){
         new obj().register(function(result){
-            console.log(result)
-            utils.msgDialog("注册成功",utils.DIALOG_SUCCESS);
+            console.log(result);
+            // 执行结果反馈给用户
+            utils.feedback(result);
         });
     })
 </script>

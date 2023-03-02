@@ -99,3 +99,42 @@ $(".register").unbind("click").bind("click",function(){
         console.log(result)
     });
 })
+
+--------------------------------
+原始弹框代码备份:
+    /**
+     * 弹框
+     * @param msg  消息
+     * @param type 弹框类型
+     * @param millisecond 毫秒值
+     */
+    __THIS__.msgDialog = function(msg,type,millisecond){
+        let dialogColor = __THIS__.dialogColorMap[type?type:__THIS__.DIALOG_DEFAULT];
+        let style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML='.dialogStyleClassDiv{' +
+            'opacity:0.8;z-index: 2000;' +
+            'height:60px; width:120px;' +
+            'background-color:'+dialogColor+';border-radius:8px;' +
+            'text-align:center;font-size:24px;color:#fff;' +
+            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +
+            '}' +
+            '.dialogStyleClassP{' +
+            'line-height: 60px;' +
+            '}';
+        // 把当前样式添加到 当前引用页面的head标签中
+        $('head').append(style);
+        var subhtml='<div id="msgDialog" style="overflow:hidden;"><div class="dialogStyleClassDiv"><p class="dialogStyleClassP">'+msg+'</p></div></div>';
+        $("body").append(subhtml);
+        // setInterval每间隔1000毫秒 执行一次__THIS__.autoCloseAlert函数
+        // setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
+        var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.closeMilliSecond);
+        //关闭弹框
+        function autoCloseAlert(){
+            // 加上淡出效果
+            $('#msgDialog').fadeOut(700,'linear',function(){
+                $('#msgDialog').remove();
+                clearInterval(msgDialogStop);
+            });
+        }
+    };

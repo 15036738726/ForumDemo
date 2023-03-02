@@ -25,12 +25,11 @@ public class UserOpeController {
     @RequestMapping("userRegister")
     @ResponseBody
     public Result<String> userRegister(@RequestBody ForumUser forumUser){
-        //System.out.println(forumUser);
         boolean result = userOpeService.userRegister(forumUser);
         if(result){
-            return Result.fail("已存在");
+            return Result.fail("用户["+forumUser.getUserName()+"]已存在");
         }
-        return Result.success("注册成功");
+        return Result.success("用户["+forumUser.getUserName()+"]注册成功");
     }
 
     @RequestMapping("test")

@@ -47,11 +47,11 @@ DROP TABLE IF EXISTS `forum_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `forum_user` (
-  `user_id` varchar(40) NOT NULL COMMENT '主键,用户id',
+  `user_id` bigint NOT NULL COMMENT '主键,用户id',
   `user_name` varchar(40) NOT NULL COMMENT '用户昵称,不可重复',
   `password` varchar(40) NOT NULL COMMENT '账号登录密码',
   `sex` int NOT NULL DEFAULT '1' COMMENT '0:女  1:男',
-  `addres` varchar(40) NOT NULL COMMENT '地址',
+  `address` varchar(40) NOT NULL COMMENT '地址',
   `email` varchar(40) NOT NULL COMMENT '邮箱',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='论坛demo,用户表';
@@ -63,6 +63,7 @@ CREATE TABLE `forum_user` (
 
 LOCK TABLES `forum_user` WRITE;
 /*!40000 ALTER TABLE `forum_user` DISABLE KEYS */;
+INSERT INTO `forum_user` VALUES (1631102796239331330,'1','1',1,'1','1111111@qq.com'),(1631190730158206978,'11','1',1,'1','1'),(1631190765381971970,'111','1',1,'1','1'),(1631194168585711617,'111111','1',1,'1','1'),(1631205137974128641,'123232','1',1,'1','1'),(1631205415918071809,'12323223232','1',1,'1','1'),(1631205464630718466,'123232232321','1',1,'1','1');
 /*!40000 ALTER TABLE `forum_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,4 +80,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-01  9:20:42
+-- Dump completed on 2023-03-02 16:13:03

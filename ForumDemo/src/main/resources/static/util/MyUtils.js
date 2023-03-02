@@ -12,11 +12,12 @@ var MyUtils = function(option){
     // 系统默认弹框关闭时间,毫秒值
     __THIS__.closeMilliSecond = 500;// 默认500
     // 弹框颜色
-    __THIS__.dialogColorMap = {"SUCCESS":"#5cb85c","WARNING":"#f0ad4e","DEFAULT":"#000"};
+    __THIS__.dialogColorMap = {"DEFAULT":"#000","WARNING":"#f0ad4e","ERR":"#d9534f"};
     // 对外提供颜色枚举
-    __THIS__.DIALOG_SUCCESS = "SUCCESS";
-    __THIS__.DIALOG_WARNING = "WARNING";
-    __THIS__.DIALOG_DEFAULT = "DEFAULT";
+    __THIS__.DIALOG_WARNING = "WARNING";// 黄色警告
+    __THIS__.DIALOG_DEFAULT = "DEFAULT";// 黑色弹框
+    __THIS__.DIALOG_ERR = "ERR"; // 红色,系统级错误
+    __THIS__.dialogFontSize = "14"; // 弹框字体大小
 
     /**
      * 通用请求方法
@@ -77,27 +78,41 @@ var MyUtils = function(option){
     };
 
     /**
-     * @param msg
+     * 弹框反馈 请求之后的反馈消息弹框提醒
+     * @param data
+     */
+    __THIS__.feedback = function(data,millisecond,fontSize){
+        let map = {200:__THIS__.DIALOG_DEFAULT,400:__THIS__.DIALOG_WARNING,500:__THIS__.DIALOG_ERR};
+        __THIS__.msgDialog(data.message,map[data.code],millisecond,fontSize);
+    };
+
+    /**
+     * 弹框
+     * @param msg  消息
      * @param type 弹框类型
      * @param millisecond 毫秒值
+     * @param fontSize 文字大小
      */
-    __THIS__.msgDialog = function(msg,type,millisecond){
+    __THIS__.msgDialog = function(msg,type,millisecond,fontSize){
         let dialogColor = __THIS__.dialogColorMap[type?type:__THIS__.DIALOG_DEFAULT];
+        fontSize = fontSize?fontSize:__THIS__.dialogFontSize;
         let style = document.createElement('style');
         style.type = 'text/css';
-        style.innerHTML='.dialogStyleClassDiv{' +
+        style.innerHTML='.myTip{' +
+            'margin-top: 5px;margin-bottom: 5px;' +
+            'color: #fff;background-color: '+dialogColor+';' +
+            'display: inline-block;font-weight: 400;' +
+            'text-align: center;white-space: nowrap;' +
+            'vertical-align: middle;touch-action: manipulation;' +
+            'cursor: auto;background-image: none;' +
+            'border: 1px solid transparent;padding: 6px 12px;font-size: '+fontSize+'px;line-height: 1.42857143;' +
+            'border-radius: 4px;user-select: none;' +
             'opacity:0.8;z-index: 2000;' +
-            'height:60px; width:120px;' +
-            'background-color:'+dialogColor+';border-radius:8px;' +
-            'text-align:center;font-size:24px;color:#fff;' +
-            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +
-            '}' +
-            '.dialogStyleClassP{' +
-            'line-height: 60px;' +
+            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +//屏幕水平垂直居中
             '}';
         // 把当前样式添加到 当前引用页面的head标签中
         $('head').append(style);
-        var subhtml='<div id="msgDialog" style="overflow:hidden;"><div class="dialogStyleClassDiv"><p class="dialogStyleClassP">'+msg+'</p></div></div>';
+        var subhtml='<button type="button" class="myTip">'+msg+'</button>';
         $("body").append(subhtml);
         // setInterval每间隔1000毫秒 执行一次__THIS__.autoCloseAlert函数
         // setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
@@ -105,9 +120,8 @@ var MyUtils = function(option){
         //关闭弹框
         function autoCloseAlert(){
             // 加上淡出效果
-            $('#msgDialog').fadeOut(700,'linear',function(){
-                debugger
-                $('#msgDialog').remove();
+            $('.myTip').fadeOut(700,'linear',function(){
+                $('.myTip').remove();
                 clearInterval(msgDialogStop);
             });
         }

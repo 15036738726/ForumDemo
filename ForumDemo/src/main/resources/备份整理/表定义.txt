@@ -1,11 +1,11 @@
 
 ##注册表FORUM_USER:
 CREATE TABLE `forum_user` (
-  `user_id` varchar(40) NOT NULL COMMENT '主键,用户id',
+  `user_id` bigint NOT NULL COMMENT '主键,用户id',
   `user_name` varchar(40) NOT NULL COMMENT '用户昵称,不可重复',
   `password` varchar(40) NOT NULL COMMENT '账号登录密码',
   `sex` int NOT NULL DEFAULT '1' COMMENT '0:女  1:男',
-  `addres` varchar(40) NOT NULL COMMENT '地址',
+  `address` varchar(40) NOT NULL COMMENT '地址',
   `email` varchar(40) NOT NULL COMMENT '邮箱',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='论坛demo,用户表';
