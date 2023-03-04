@@ -19,6 +19,12 @@ var MyUtils = function(option){
     __THIS__.DIALOG_ERR = "ERR"; // 红色,系统级错误
     __THIS__.dialogFontSize = "14"; // 弹框字体大小
 
+    // 初始化方法,组价的所有前置控制,可定义在这个方法中
+    __THIS__.init = function () {
+        // dialog弹框所依赖的样式表 初始化
+        __THIS__.insertPageStyleSheet();
+    };
+
     /**
      * 通用请求方法
      */
@@ -96,26 +102,10 @@ var MyUtils = function(option){
     __THIS__.msgDialog = function(msg,type,millisecond,fontSize){
         let dialogColor = __THIS__.dialogColorMap[type?type:__THIS__.DIALOG_DEFAULT];
         fontSize = fontSize?fontSize:__THIS__.dialogFontSize;
-        let style = document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML='.myTip{' +
-            'margin-top: 5px;margin-bottom: 5px;' +
-            'color: #fff;background-color: '+dialogColor+';' +
-            'display: inline-block;font-weight: 400;' +
-            'text-align: center;white-space: nowrap;' +
-            'vertical-align: middle;touch-action: manipulation;' +
-            'cursor: auto;background-image: none;' +
-            'border: 1px solid transparent;padding: 6px 12px;font-size: '+fontSize+'px;line-height: 1.42857143;' +
-            'border-radius: 4px;user-select: none;' +
-            'opacity:0.8;z-index: 2000;' +
-            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +//屏幕水平垂直居中
-            '}';
-        // 把当前样式添加到 当前引用页面的head标签中
-        $('head').append(style);
         var subhtml='<button type="button" class="myTip">'+msg+'</button>';
         $("body").append(subhtml);
-        // setInterval每间隔1000毫秒 执行一次__THIS__.autoCloseAlert函数
-        // setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
+        // 对默认的样式进行覆盖,设置颜色和字体大小
+        $(".myTip").css("background-color",dialogColor).css("font-size",fontSize);
         var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.closeMilliSecond);
         //关闭弹框
         function autoCloseAlert(){
@@ -127,7 +117,31 @@ var MyUtils = function(option){
         }
     };
 
-};
+    /**
+     * 往页面中增加组件所需要的样式表
+     */
+    __THIS__.insertPageStyleSheet = function(){
+        let style = document.createElement('style');
+        style.type = 'text/css';
+        style.id = 'my_utils_style_sheet';
+        style.innerHTML='.myTip{' +
+            'margin-top: 5px;margin-bottom: 5px;' +
+            'color: #fff;background-color: '+__THIS__.dialogColorMap["DEFAULT"]+';' +
+            'display: inline-block;font-weight: 400;' +
+            'text-align: center;white-space: nowrap;' +
+            'vertical-align: middle;touch-action: manipulation;' +
+            'cursor: auto;background-image: none;' +
+            'border: 1px solid transparent;padding: 6px 12px;font-size: '+__THIS__.dialogFontSize+'px;line-height: 1.42857143;' +
+            'border-radius: 4px;user-select: none;' +
+            'opacity:0.8;z-index: 2000;' +
+            'position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);' +//屏幕水平垂直居中
+            '}';
+        // 把当前样式添加到 当前引用页面的head标签中
+        $('head').append(style);
+    };
 
+};
 var utils = new MyUtils();
+// 执行组价初始化
+utils.init();
 

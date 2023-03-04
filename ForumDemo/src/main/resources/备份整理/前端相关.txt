@@ -138,3 +138,25 @@ $(".register").unbind("click").bind("click",function(){
             });
         }
     };
+------------------------------------------
+js动态往head中添加或删除style节点
+https://blog.csdn.net/chijiangwo8270/article/details/100930831
+
+<script>
+//添加
+var style = document.createElement('style');
+style.type = 'text/css';
+style.id = 'add-style-id';
+style.innerHTML='body{ background-color:#ddd; }';
+document.getElementsByTagName('head').item(0).appendChild(style);
+//删除
+setTimeout(function(){
+document.getElementsByTagName('head').item(0).removeChild(document.getElementById('add-style-id'))
+},5000)
+//不支持低版本IE
+</script>
+------------------------------
+setInterval定时方法:
+// setInterval每间隔closeMilliSecond毫秒 执行一次__THIS__.autoCloseAlert函数
+// setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
+var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.closeMilliSecond);

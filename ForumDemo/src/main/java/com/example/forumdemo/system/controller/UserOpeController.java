@@ -35,7 +35,7 @@ public class UserOpeController {
     @RequestMapping("test")
     public ModelAndView test(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("USER_REGISTER.html");
+        mv.setViewName("test.html");
         System.out.println(this.getClass().getResource("/"));
         return mv;
     }
