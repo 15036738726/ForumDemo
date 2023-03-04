@@ -4,15 +4,12 @@ import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.system.service.UserOpeService;
 import com.example.forumdemo.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 
 @RestController
-@RequestMapping("userOpe")
+@RequestMapping("/userOpe")
 public class UserOpeController {
 
     @Autowired
@@ -22,8 +19,7 @@ public class UserOpeController {
      * 用户注册
      * @return
      */
-    @RequestMapping("userRegister")
-    @ResponseBody
+    @PutMapping("/userRegister")
     public Result<String> userRegister(@RequestBody ForumUser forumUser){
         boolean result = userOpeService.userRegister(forumUser);
         if(result){

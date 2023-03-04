@@ -59,7 +59,7 @@
             let checkRequire = utils.pageRequire("myForm",eleArr);
             if(checkRequire)return;
             let sendData = utils.getFormData("myForm",eleArr);
-            utils.send(callback,'/userOpe/userRegister',sendData);
+            utils.send(callback,'/userOpe/userRegister',sendData,utils.PUT__REQUEST);
         };
     };
 

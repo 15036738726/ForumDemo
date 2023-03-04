@@ -5,10 +5,33 @@
  */
 var MyUtils = function(option){
     __THIS__ = this;
-    // 警告属性
+
+    /**
+     * restful请求风格 请求方式枚举
+     * @type {string}
+     */
+    //获取资源
+    __THIS__.GET_REQUEST = "GET";
+    //更新资源
+    __THIS__.POST_REQUEST = "POST";
+    //创建资源
+    __THIS__.PUT__REQUEST = "PUT";
+    // 删除资源
+    __THIS__.DELETE_REQUEST = "DELETE";
+
+    /**
+     * 必填相关
+     * @type {string}
+     */
+    // 必填警告属性
     __THIS__.myRequiredWaring  = "myRequiredWaringClass";
     // 必填属性
     __THIS__.myRequired = "myRequired"
+
+    /**
+     * 弹框相关
+     * @type {number}
+     */
     // 系统默认弹框关闭时间,毫秒值
     __THIS__.closeMilliSecond = 500;// 默认500
     // 弹框颜色
@@ -19,7 +42,9 @@ var MyUtils = function(option){
     __THIS__.DIALOG_ERR = "ERR"; // 红色,系统级错误
     __THIS__.dialogFontSize = "14"; // 弹框字体大小
 
-    // 初始化方法,组价的所有前置控制,可定义在这个方法中
+    /**
+     * 初始化方法,组价的所有前置控制,可定义在这个方法中
+     */
     __THIS__.init = function () {
         // dialog弹框所依赖的样式表 初始化
         __THIS__.insertPageStyleSheet();
