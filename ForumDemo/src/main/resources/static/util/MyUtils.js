@@ -10,12 +10,12 @@ var MyUtils = function(option){
      * restful请求风格 请求方式枚举
      * @type {string}
      */
-    //获取资源
+    //获取资源 xxx/xxx/{},URL传参 使用此方式,sendData=null 参数挂在url后
     __THIS__.GET_REQUEST = "GET";
     //更新资源
     __THIS__.POST_REQUEST = "POST";
     //创建资源
-    __THIS__.PUT__REQUEST = "PUT";
+    __THIS__.PUT_REQUEST = "PUT";
     // 删除资源
     __THIS__.DELETE_REQUEST = "DELETE";
 

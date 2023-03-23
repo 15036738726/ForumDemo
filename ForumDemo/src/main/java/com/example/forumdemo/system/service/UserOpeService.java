@@ -10,4 +10,18 @@ public interface UserOpeService extends IService<ForumUser>{
      * @return
      */
     boolean userRegister(ForumUser forumUser);
+
+    /**
+     * 用户登录
+     * @param forumUser
+     * @return
+     */
+    boolean userLogin(ForumUser forumUser);
+
+    /**
+     * 根据用户名,查询用户信息
+     * @param forumUser
+     * @return
+     */
+    ForumUser getUserByUserName(ForumUser forumUser);
 }

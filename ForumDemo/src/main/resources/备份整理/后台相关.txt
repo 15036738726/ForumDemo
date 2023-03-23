@@ -1,2 +1,20 @@
 常见的HTTP状态码(HTTP Status Code)说明
 https://blog.csdn.net/qq_41378597/article/details/90348764
+
+session控制登录问题:
+https://blog.csdn.net/shwjakak/article/details/124533029?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124533029-blog-128118279.pc_relevant_recovery_v2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124533029-blog-128118279.pc_relevant_recovery_v2&utm_relevant_index=2
+
+大厂架构演进实战之手写 CAS 单点登录
+https://blog.csdn.net/weijia521/article/details/109194758
+
+SpringBoot集成JWT实现Token登录验证
+https://blog.csdn.net/qq_42263280/article/details/128009297
+
+好用到爆！IDEA版Postman面世了，功能真心强大
+https://blog.csdn.net/BASK2311/article/details/128465792
+
+Hutool 常用工具类介绍-DateUtil
+https://blog.csdn.net/liuerchong/article/details/124606563
+
+
+
