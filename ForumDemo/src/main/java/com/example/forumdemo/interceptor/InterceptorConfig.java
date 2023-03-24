@@ -25,12 +25,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
         List<String> patterns = new ArrayList<String>();
         patterns.add("/error");
         // 登录验证拦截器类,拦截所有
-        registry.addInterceptor(myJwtInterceptor).addPathPatterns("/**").excludePathPatterns(patterns);
+        //registry.addInterceptor(myJwtInterceptor).addPathPatterns("/**").excludePathPatterns(patterns);
     }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //发送/main.html请求来到bmodule/B01
-        registry.addViewController("/main.html").setViewName("B01");
+        // registry.addViewController("/main.html").setViewName("B01");
     }
 }
