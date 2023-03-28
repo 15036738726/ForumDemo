@@ -96,18 +96,32 @@
             </plugin>
         </plugins>
 
+        <!--编译文件处理-->
         <resources>
-            <!--指定resource中的xml和properties以及html文件编译到类路径中,
-               供运行的时候使用-->
+            <resource>
+                <directory>src/main/java</directory>
+                <!--配置文件也打包编译-->
+                <includes>
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <!--配置文件中的预编译是否处理,默认false不处理-->
+                <filtering>false</filtering>
+            </resource>
             <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.html</include>
-                </includes>
+                <!--除了文本和脚本,其他都编译打包-->
+                <excludes>
+                    <!--排除文本-->
+                    <exclude>**/*.txt</exclude>
+                    <!--排除sql脚本-->
+                    <exclude>**/*.sql</exclude>
+                </excludes>
+                <filtering>false</filtering>
             </resource>
         </resources>
+
     </build>
 
 </project>

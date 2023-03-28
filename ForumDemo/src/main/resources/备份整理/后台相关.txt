@@ -17,4 +17,10 @@ Hutool 常用工具类介绍-DateUtil
 https://blog.csdn.net/liuerchong/article/details/124606563
 
 
+启动报错问题 Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+解决方案3:
+https://blog.csdn.net/wangzhongshun/article/details/123069833
+
+Maven的pom.xml中resources标签的用法
+https://blog.csdn.net/wenonepiece/article/details/112721380
 
