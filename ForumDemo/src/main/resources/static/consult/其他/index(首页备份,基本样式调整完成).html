@@ -75,9 +75,169 @@
           content="西瓜视频,西瓜视频电脑版,短视频,综艺视频,原创视频,西瓜直播,今日头条视频,西瓜视频官网,电影,电视剧,游戏,农人,VLOG,音乐,少儿,搞笑,美食,体育,NBA,宠物,汽车,综艺,动漫,军事,财经,旅游">
     <meta data-react-helmet="true" name="Baiduspider" content="noarchive">
     <style type="text/css">
+        /**视频主体大盒子,一行放入4个item**/
+        .content_main{
+            width: 100%;
+            display: contents;
+        }
 
+        /**每个内容(视频主体)div**/
+        .content_main .content_item{
+            margin-bottom: 40px;
+            display: inline-block;
+            width: 240px;
+            height: 226px;
+            margin-right: 9px;
+            border: 1px solid #9fb5a3;
+            /*background: radial-gradient(black, transparent);*/
+        }
+
+        /**每个item封面div 顶部部分**/
+        .content_item .item_body_top{
+            width: 100%;
+            height: 64%;
+        }
+        /**封面图片img标签**/
+        .item_body_top .top_img{
+            width: 100%;
+            height: 100%;
+        }
+
+        /**每个item,人物头像以及内容描述, 中间部分**/
+        .content_item .item_body_person{
+            width: 100%;
+            height: 16%;
+            margin: 5px 0px 5px 0px;
+            position: relative;
+        }
+        .item_body_person .item_head{
+            width: 16%;
+            height: 100%;
+            display: inline-block;
+            position: relative;
+            top: -8px;
+        }
+        .item_body_person .item_head .item_head_img{
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+        }
+        .item_body_person .item_desp{
+            width: 82%;
+            height: 100%;
+            display: inline-block;
+        }
+        .item_body_person .item_desp .item_desp_span{
+            white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /**底部内容浏览量和发布信息  底部部分**/
+        .content_item .item_body_down{
+            width: 100%;
+            height: 15%;
+            padding-left: 18%;
+        }
+        .item_body_down .person_name{
+            width: 100%;
+            height: 50%;
+        }
+        .item_body_down .person_name .person_name_span{
+            font-size: 12px;
+            color: #606266;
+        }
+        .item_body_down .broadcast_publish{
+            width: 100%;
+            height: 50%;
+        }
+        .item_body_down .broadcast_publish .broadcast_count{
+
+        }
+        .item_body_down .broadcast_publish .publish_time{
+
+        }
+        .item_body_down .broadcast_publish span{
+            font-size: 12px;
+            color: #606266;
+        }
+
+        xg-text-track.xg-text-track {
+            font-family: "PingFang SC", "SF Pro SC", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            position: absolute;
+            bottom: 0;
+            color: #fff;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        xg-text-track.xg-text-track.text-track-no-fitvideo {
+            margin-bottom: 2%;
+        }
+
+        xg-text-track.xg-text-track.text-track-hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        xg-text-track.xg-text-track.text-track-show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-inner {
+            display: block;
+            max-width: 92%;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-span {
+            display: -webkit-box;
+            text-align: center;
+            text-overflow: ellipsis;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            padding: 1px 4px;
+            -webkit-line-clamp: 1;
+            line-height: 120%;
+            word-break: break-word;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-span.text-track-deputy {
+            font-size: 75%;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-span.text-track-single {
+            -webkit-line-clamp: 1;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-span.text-track-double {
+            -webkit-line-clamp: 2;
+        }
+
+        xg-text-track.xg-text-track xg-text-track-span.text-track-three {
+            -webkit-line-clamp: 3;
+        }
+
+        xg-text-track.xg-text-track.text-track-bg xg-text-track-inner {
+            background-color: rgba(0, 0, 0, .54);
+            border-radius: 2px;
+        }
+
+        xg-text-track.xg-text-track.text-track-stroke xg-text-track-inner {
+            background-color: none;
+            border-radius: 0;
+            text-shadow: -1px 1px 0 rgba(0, 0, 0, .7), 1px 1px 0 rgba(0, 0, 0, .7), 1px -1px 0 rgba(0, 0, 0, .7), -1px -1px 0 rgba(0, 0, 0, .7);
+        }
     </style>
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+<!--    <link rel="stylesheet" type="text/css" href="css/index.css">-->
     <link rel="stylesheet" type="text/css"
           href="off_line_file/main_index/Components-BU-FixedButtonGroup.3c40bd6f09.chunk.css">
     <script src="off_line_file/main_index/aria.js?appid=69f863421101c759071ee42d499b4e6f"
@@ -110,15 +270,15 @@
                                 </div>
                                 <div class="input-container">
                                     <input type="search" class="input"
-                                    placeholder="年轻人不讲武德" value="">
+                                           placeholder="年轻人不讲武德" value="">
                                     <span
-                                        class="search-btn" role="button" tabindex="0">
+                                            class="search-btn" role="button" tabindex="0">
                                         <svg width="20" height="20"
-                                        viewBox="0 0 24 24"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+                                             viewBox="0 0 24 24"
+                                             fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
                                          <path
-                                        fill-rule="evenodd" clip-rule="evenodd"
-                                        fill="#0C0D0F"></path></svg> <span>搜索</span></span></div>
+                                                 fill-rule="evenodd" clip-rule="evenodd"
+                                                 fill="#0C0D0F"></path></svg> <span>搜索</span></span></div>
                             </div>
                             <div class="btn-wrap">
                                 <ul class="nav-list">
@@ -135,11 +295,11 @@
                                     <li class="siteHeader__message siteHeader__textBtn withIcon">
                                         <div tabindex="0"><span class="message-icon-wrapper">
                                             <svg width="18" height="18" viewBox="0 0 24 24"
-                                               fill="none"
-                                               xmlns="http://www.w3.org/2000/svg"
-                                               role="img">
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 role="img">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
-                                                fill="#0C0D0F"></path></svg></span>消息
+                                                      fill="#0C0D0F"></path></svg></span>消息
                                         </div>
                                     </li>
                                     <li class="siteHeader__textBtn withIcon">
@@ -292,7 +452,7 @@
                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
                              role="img" class="side-icon">
                             <path
-                                  fill="#0C0D0F"></path>
+                                    fill="#0C0D0F"></path>
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                   fill="#0C0D0F"></path>
                         </svg>
@@ -675,7 +835,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                      role="img">
                     <path
-                          fill="#0C0D0F"></path>
+                            fill="#0C0D0F"></path>
                     <path fill-rule="evenodd" clip-rule="evenodd"
                           fill="#0C0D0F"></path>
                 </svg>
