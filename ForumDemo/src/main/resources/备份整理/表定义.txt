@@ -7,9 +7,9 @@ CREATE TABLE `forum_user` (
   `sex` int NOT NULL DEFAULT '1' COMMENT '0:女  1:男',
   `address` varchar(40) NOT NULL COMMENT '地址',
   `email` varchar(40) NOT NULL COMMENT '邮箱',
+  `user_head` varchar(100) DEFAULT NULL COMMENT '用户头像,图片地址',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='论坛demo,用户表';
-
 
 ##系统参数表
 CREATE TABLE forum.forum_param (
@@ -41,3 +41,25 @@ VALUES('cfg_hot_count', '5', '热评值,点赞数超过多少就算热评');
 INSERT INTO forum.forum_param
 (forum_cfg_key, forum_cfg_vlaue, desp)
 VALUES('cfg_guanzhu_formwork', '关注*已关注', '关注/已关注模板,切割使用');
+
+
+#作品表
+CREATE TABLE forum.forum_zuo_pin (
+	zuopin_id BIGINT NOT NULL COMMENT '主键',
+	category INT NOT NULL COMMENT '分类 视频1/图片2/论题3',
+	content_type INT NOT NULL COMMENT '内容归类 科技,文学等...',
+	title varchar(40) NOT NULL COMMENT '内容标题',
+	img_path varchar(100) NULL COMMENT '封面图片地址',
+	video_path varchar(100) NULL COMMENT '视频地址',
+	yuanchuang TINYINT DEFAULT 0 NOT NULL COMMENT '原创 boolean值  true(1)和false(0)',
+	look_count INT DEFAULT 0 NOT NULL COMMENT '观看次数,6万次观看',
+	dan_mu INT DEFAULT 0 NOT NULL COMMENT '弹幕条数,82条弹幕',
+	work_time varchar(40) NOT NULL COMMENT '发布时间',
+	biao_qian varchar(40) NULL COMMENT '标签:#猫咪的迷惑行为  #猫咪  #动物',
+	del INT DEFAULT 1 NOT NULL COMMENT '删除标志 0:已删除 1:未删除',
+	zan INT DEFAULT 0 NOT NULL COMMENT '视频点赞数',
+	user_id BIGINT NOT NULL COMMENT '外键,标识该内容是由那个用户发布的'
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;

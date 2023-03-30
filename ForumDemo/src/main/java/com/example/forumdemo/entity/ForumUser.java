@@ -20,7 +20,8 @@ public class ForumUser implements Serializable {
     private String address;
     private String email;
 
-
+    // 用户头像 图片地址
+    private String userHead;
 
     //    注册表FORUM_USER:
 //    user_id  主键user_32位uuid

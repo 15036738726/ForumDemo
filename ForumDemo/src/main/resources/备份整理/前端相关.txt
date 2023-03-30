@@ -240,3 +240,81 @@ var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.
 <!--内容END-->
 <div class="content_item">
 </div>
+
+------------------------------
+外部函数获取ajax返回的数据
+https://blog.csdn.net/sofeware333/article/details/99583076?utm_source=app&app_version=4.5.0
+
+
+#####################js遍历的几种方式#########################################
+        // 用七种方式遍历下列数组
+        let arr = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+
+        //1、for循环
+        console.log("for循环")
+        for (let i = 0; i < arr.length; i++) {
+            console.log(arr[i]);
+        }
+        console.log("----------------")
+
+        // 2、for in 和for of
+        // for in 只能打印index
+        console.log("for in")
+        for (const key in arr) {
+            console.log(arr[key]);
+        }
+        console.log("----------------")
+        // for of 打印值
+        console.log("for of")
+        for (const key of arr) {
+            console.log(key);
+        }
+        console.log("----------------")
+
+        //3、foreach
+        console.log("foreach");
+        arr.forEach((item, index) => {
+            console.log(index + "=>" + item);
+        })
+        console.log("----------------")
+
+        // 4、Symbol
+        console.log("Symbol")
+        let item = arr[Symbol.iterator]();
+        for (const key in arr) {
+            console.log(item.next().value)
+
+        }
+        console.log("----------------")
+
+        //5、map
+        // 数组.map()会返回一个新数组，数组的大小跟原始数组一样
+        // 数组元素是函数返回的结果
+        console.log("map")
+        let newArr_map = arr.map((item, key) =>{
+            console.log(item)
+            return item*2;
+        })
+        console.log("----------------")
+
+        // 6、filter
+        // filtet是一个过滤器，也是返回一个新数组，原数组中满足返回要求的元素就复制到新数组中，不满足就不复制
+        // 不会改变原数组的内容
+        console.log("filter")
+        let newArr_filter = arr.filter((item, key) =>{
+            console.log(item);
+            return item == 'a';
+        })
+        console.log("----------------")
+
+        //7、Object.entries()
+        // 简单说就是 Object.entries() 可以把一个对象的键值以数组的形式遍历出来
+        console.log("Object.entries() ")
+        let newArr_entries = Object.entries(arr);
+        newArr_entries.forEach((item, index)=>{
+            // item是个数组：['0','a']
+            console.log( item[1]);
+
+        })
+#####################js遍历的几种方式#########################################

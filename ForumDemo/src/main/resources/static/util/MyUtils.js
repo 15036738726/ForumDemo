@@ -51,24 +51,35 @@ var MyUtils = function(option){
     };
 
     /**
-     * 通用请求方法
+     * 通用请求方法 如果需要返回值,则需要指定调用方式为 同步async = false
      */
     __THIS__.send = function(callback,url,sendData,type,async){
+        let resultData;
         $.ajax({
             url: url,   // 请求地址,
             data: JSON.stringify(sendData),
             type: type?type:'POST',   // 请求方式
-            async: async?async:true,// 默认就是异步可以不设置
+            async: async==undefined?true:async,// 默认就是异步可以不设置
             contentType: 'application/json', //发送的数据类型
             //dataType: 'json',// 接受的数据类型,可不写
             success: function (result) {
-                callback(result);
+                if(callback){
+                    callback(result);
+                }else{
+                    resultData = result;
+                }
             },
             error: function (result) {
                 console.log('Send Request Fail..'); // 请求失败时的回调函数
-                callback(result);
+                if(callback){
+                    callback(result);
+                }else{
+                    resultData = result;
+                }
             }
         });
+        // 使用同步方式时,才能正确返回,这种为了解决调用处获取返回值问题
+        return resultData;
     };
 
     /**
