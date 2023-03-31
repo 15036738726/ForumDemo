@@ -11,6 +11,7 @@ import java.io.Serializable;
  * 首页实体
  */
 @Data
+//@TableName("ForumZuoPin")
 public class ForumZuoPin implements Serializable {
     @TableId(type = IdType.ASSIGN_ID)
     private Long zuopinId;
@@ -28,20 +29,31 @@ public class ForumZuoPin implements Serializable {
     // 联查其他信息
     // user_id://内容是由那个用户发布的
     private Long userId;
+    /*
     // user_name://用户名称   冗余字段 实体考虑 建表不需要
     @TableField(exist = false)
     private String userName;
     // user_head:// 用户头像  冗余字段 实体考虑 建表不需要
     @TableField(exist = false)
     private String userHead;
+    */
+    @TableField(exist = false)
+    private ForumUser userInfo;
+
     // yuanchuang:原创 boolean值
     private boolean yuanchuang;
-    // look_count:6万次观看
+    // look_count  int值
     private Integer lookCount;
+    // look_count:6万次观看
+    @TableField(exist = false)
+    private String lookCountText;
     // dan_mu:82条弹幕
     private Integer danMu;
     // work_time://发布时间
     private String workTime;
+    // work_time: 3个月前
+    @TableField(exist = false)
+    private String workTimeText;
     // biao_qian:标签:#猫咪的迷惑行为  #猫咪  #动物
     private String biaoQian;
 

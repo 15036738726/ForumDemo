@@ -1,4 +1,4 @@
-package com.example.forumdemo.system.service;
+package com.example.forumdemo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forumdemo.entity.ForumUser;

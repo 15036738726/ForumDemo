@@ -14,7 +14,7 @@ CREATE TABLE `forum_user` (
 ##系统参数表
 CREATE TABLE forum.forum_param (
 	forum_cfg_key varchar(40) NOT NULL COMMENT '参数名称',
-	forum_cfg_vlaue varchar(40) NOT NULL COMMENT '参数值',
+	forum_cfg_value varchar(40) NOT NULL COMMENT '参数值',
 	desp varchar(40) NULL COMMENT '参数描述'
 )
 ENGINE=InnoDB
@@ -24,22 +24,22 @@ COMMENT='论坛demo,参数表';
 
 #系统参数表数据
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_text_fold_limit', '50', '文字过长折叠限制');
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_count_fold_limit', '5', '评论条数几条折叠');
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_text_formwork', '展开', '展开 [某个评论内容过长提示模板]');
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_count_formwork', '展开*回复', '展开[更多/5条]回复 [子评论过长模板],使用时替换');
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_hot_count', '5', '热评值,点赞数超过多少就算热评');
 INSERT INTO forum.forum_param
-(forum_cfg_key, forum_cfg_vlaue, desp)
+(forum_cfg_key, forum_cfg_value, desp)
 VALUES('cfg_guanzhu_formwork', '关注*已关注', '关注/已关注模板,切割使用');
 
 

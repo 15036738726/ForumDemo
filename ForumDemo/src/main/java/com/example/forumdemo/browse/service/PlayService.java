@@ -1,18 +1,18 @@
 package com.example.forumdemo.browse.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forumdemo.entity.ForumZuoPin;
-import com.example.forumdemo.entity.ItemQuery;
+import com.github.yulichang.base.MPJBaseService;
 
-import java.util.HashMap;
 import java.util.List;
 
-public interface PlayService extends IService<ForumZuoPin> {
+public interface PlayService extends MPJBaseService<ForumZuoPin> {
 
     /**
      * 根据条件查询产品表
-     * @param itemQuery
+     * @param queryParam
      * @return
      */
     List<ForumZuoPin> queryList(ForumZuoPin queryParam);
+
+    List<ForumZuoPin> queryList2(ForumZuoPin queryParam);
 }

@@ -1,11 +1,10 @@
-package com.example.forumdemo.system.service.impl;
+package com.example.forumdemo.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forumdemo.entity.ForumUser;
-import com.example.forumdemo.system.mapper.UserOpeMapper;
-import com.example.forumdemo.system.service.UserOpeService;
+import com.example.forumdemo.user.mapper.UserOpeMapper;
+import com.example.forumdemo.user.service.UserOpeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

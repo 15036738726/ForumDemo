@@ -1,9 +1,9 @@
-package com.example.forumdemo.system.controller;
+package com.example.forumdemo.user.controller;
 
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.jwt.JwtTokenUtils;
 import com.example.forumdemo.jwt.PassToken;
-import com.example.forumdemo.system.service.UserOpeService;
+import com.example.forumdemo.user.service.UserOpeService;
 import com.example.forumdemo.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

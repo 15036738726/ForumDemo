@@ -24,3 +24,32 @@ https://blog.csdn.net/wangzhongshun/article/details/123069833
 Maven的pom.xml中resources标签的用法
 https://blog.csdn.net/wenonepiece/article/details/112721380
 
+
+MybatisPlus多表连接查询
+https://blog.csdn.net/m0_63836794/article/details/122593962
+
+mybatis-plus-join mybatis-plus多表联查必备神器(icu.mhb  JoinBaseMapper)
+https://blog.csdn.net/mahuibo123/article/details/
+
+mybatis-plus-join用法(com.github.yulichang MPJBaseMapper)
+https://blog.csdn.net/qq_24298751/article/details/125621162
+
+MPJ API
+https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectAs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
