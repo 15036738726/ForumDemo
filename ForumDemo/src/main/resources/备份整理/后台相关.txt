@@ -29,13 +29,89 @@ MybatisPlus多表连接查询
 https://blog.csdn.net/m0_63836794/article/details/122593962
 
 mybatis-plus-join mybatis-plus多表联查必备神器(icu.mhb  JoinBaseMapper)
-https://blog.csdn.net/mahuibo123/article/details/
+https://blog.csdn.net/mahuibo123/article/details/125886063
 
 mybatis-plus-join用法(com.github.yulichang MPJBaseMapper)
 https://blog.csdn.net/qq_24298751/article/details/125621162
+https://blog.csdn.net/qq_31116181/article/details/113741489
 
 MPJ API
 https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectAs
+
+MPJ坐标:
+<dependency>
+    <groupId>com.github.yulichang</groupId>
+    <artifactId>mybatis-plus-join-boot-starter</artifactId>
+    <version>1.4.4</version>
+</dependency>
+
+##############################表链接查询 一对一################################
+    /**
+     * 根据条件查询产品表
+     * @param queryParam
+     * @return
+     */
+    public List<ForumZuoPin> queryList(ForumZuoPin queryParam) {
+        /**
+         * https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectCollection
+         * leftJoin
+         * 第一个参数: 参与连表的实体类class
+         * 第二个参数: 连表的ON字段,这个属性必须是第一个参数实体类的属性  即链接表属性
+         * 第三个参数: 参与连表的ON的另一个实体类属性 主表属性
+         */
+        MPJLambdaWrapper<ForumZuoPin> lambdaWrapper = new MPJLambdaWrapper<ForumZuoPin>();
+        // 主表的全字段
+        lambdaWrapper.selectAll(ForumZuoPin.class)
+                /**
+                 *                附表的部分字段 这种写法适用于 userName userHead 在forumZuoPin表中已定义的情况,目前是UserInfo实体 所以只能用selectAssociation
+                 *                .select(ForumUser::getUserName,ForumUser::getUserHead)
+                 */
+                // 一对一查询并映射Association,把forumUser实体类中的所有字段,映射到ForumZuoPin实体类中的getUserInfo中,
+                .selectAssociation(ForumUser.class,ForumZuoPin::getUserInfo)
+                /**
+                 *                 只映射部分字段 类比写法
+                 *                 .selectAssociation(ForumUser.class,ForumZuoPin::getUserInfo,
+                 *                         map -> map.id(ForumUser::getUserId)
+                 *                                 .result(ForumUser::getUserName)
+                 *                                 .result(ForumUser::getUserHead)
+                 *                 )
+                 *
+                 * <resultMap id="xxxxxxxx" type="com.github.yulichang.join.dto.UserDTO">
+                 *     <result property="id" column="id"/>
+                 *     <result property="name" column="name"/>
+                 *     <collection property="addressList" javaType="java.util.List"
+                 *         ofType="com.github.yulichang.join.entity.UserAddressDO">
+                 *         <id property="id" column="mpj_id"/>
+                 *         <result property="address" column="address"/>
+                 *         <result property="userId" column="user_id"/>
+                 *     </collection>
+                 * </resultMap>
+                 *
+                 */
+                // 链接表  连接条件
+                .leftJoin(ForumUser.class,ForumUser::getUserId,ForumZuoPin::getUserId);
+        // 设置查询参数
+        // 查询归类设置 如果如果是0,就查询观看人数高的
+        if(queryParam.getContentType()==0){
+            // queryWrapper.orderByDesc("look_count");
+            lambdaWrapper.orderByDesc(ForumZuoPin::getLookCount);
+        }else{
+            // queryWrapper.eq("contentType",queryParam.getContentType());
+            lambdaWrapper.eq(ForumZuoPin::getContentType,queryParam.getContentType());
+        }
+        // 删除状态
+        // queryWrapper.eq("del",queryParam.getDel());
+        lambdaWrapper.eq(ForumZuoPin::getDel,queryParam.getDel());
+        // 执行查询
+        List<ForumZuoPin> list = playMapper.selectJoinList(ForumZuoPin.class, lambdaWrapper);
+        // 数据太少,这里暂时先增加点数据 追加5个
+        Optional<ForumZuoPin> any = list.stream().findAny();
+        for(int i = 0;i<5;i++){
+            list.add(any.get());
+        }
+        return list;
+    }
+##############################表链接查询 一对一################################
 
 
 

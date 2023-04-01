@@ -14,5 +14,4 @@ public interface PlayService extends MPJBaseService<ForumZuoPin> {
      */
     List<ForumZuoPin> queryList(ForumZuoPin queryParam);
 
-    List<ForumZuoPin> queryList2(ForumZuoPin queryParam);
 }

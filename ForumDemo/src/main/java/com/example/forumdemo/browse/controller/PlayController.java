@@ -41,7 +41,6 @@ public class PlayController {
     @ResponseBody
     public Result<List<ForumZuoPin>> loadItemData(@RequestBody ForumZuoPin queryParam){
         List<ForumZuoPin> data = playService.queryList(queryParam);
-        playService.queryList2(queryParam);
         return Result.success("加载成功",data);
     }
 }
