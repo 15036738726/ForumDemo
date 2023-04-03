@@ -2746,12 +2746,12 @@
                 let main_dom = $(".content_main");
                 for(let temp of data.data){
                     let content_item_temp =
-                        '<div class="content_item">\n' +
+                        '<div class="content_item zuopininfo_event" zuo_pin_id="'+temp.zuopinId+'" user_id="'+temp.userId+'">\n' +
                         '    <div class="item_body_top">\n' +
                         '        <img class="top_img" src="'+temp.imgPath+'">\n' +
                         '    </div>\n' +
                         '    <div class="item_body_person">\n' +
-                        '        <div class="item_head">\n' +
+                        '        <div class="item_head userinfo_event"">\n' +
                         '            <img class="item_head_img" src="'+temp.userInfo.userHead+'">\n' +
                         '        </div>\n' +
                         '        <div class="item_desp">\n' +
@@ -2759,7 +2759,7 @@
                         '        </div>\n' +
                         '    </div>\n' +
                         '    <div class="item_body_down">\n' +
-                        '        <div class="person_name">\n' +
+                        '        <div class="person_name userinfo_event">\n' +
                         '            <span class="person_name_span">'+temp.userInfo.userName+'</span>\n' +
                         '        </div>\n' +
                         '        <div class="broadcast_publish">\n' +
@@ -2771,11 +2771,34 @@
                         '</div>';
                     main_dom.append(content_item_temp);
                 }
+                // 绑定事件
+                __THIS__.clickEvent();
             }else{
                 // 异常,则执行结果反馈
                 utils.feedback(data);
             }
         };
+
+        // 事件绑定
+        __THIS__.clickEvent = function(){
+            // 用户信息事件
+            $(".userinfo_event").unbind("click").bind("click",function(e){
+                // 阻止事件冒泡 事件存在嵌套,如果触发了userinfo_event,则阻止触发zuopininfo_event事件
+                e.stopPropagation();
+                //console.log(e.target);
+                //console.log($(e.target));
+                console.log("用户ID:"+$(e.target).parents("div .content_item").attr("user_id"));
+                window.open("/user_info.html","_blank");
+            });
+
+            // 视频点击事件
+            $(".zuopininfo_event").unbind("click").bind("click",function(e){
+                console.log("作品ID:"+$(e.target).parents("div .content_item").attr("zuo_pin_id"));
+                window.open("/zuopin_detail.html","_blank");
+            });
+
+        };
+
     };
     new indexObj().init();
 </script>
