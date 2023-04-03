@@ -4,6 +4,7 @@ import com.example.forumdemo.browse.mapper.PlayMapper;
 import com.example.forumdemo.browse.service.PlayService;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.entity.ForumZuoPin;
+import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,18 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         lambdaWrapper.eq(ForumZuoPin::getDel,queryParam.getDel());
         // 执行查询
         List<ForumZuoPin> list = playMapper.selectJoinList(ForumZuoPin.class, lambdaWrapper);
+
+        /**
+         * 处理界面显示文本
+         * 1.观看次数
+         * 2.发布时间
+         * 3.
+         *
+         */
+        Optional.ofNullable(list).ifPresent(e -> e.stream().forEach(e1 -> {
+            e1.setLookCountText(Utils.lookCountText(e1.getLookCount()));
+            e1.setWorkTimeText(Utils.workTimeText(e1.getWorkTime()));
+        }));
 
         // 数据太少,这里暂时先增加点数据 追加5个
         Optional<ForumZuoPin> any = list.stream().findAny();

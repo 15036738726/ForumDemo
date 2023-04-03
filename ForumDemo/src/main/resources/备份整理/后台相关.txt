@@ -68,6 +68,8 @@ MPJ坐标:
                  */
                 // 一对一查询并映射Association,把forumUser实体类中的所有字段,映射到ForumZuoPin实体类中的getUserInfo中,
                 .selectAssociation(ForumUser.class,ForumZuoPin::getUserInfo)
+                // selectAs用法,ForumUser中的sex字段  映射为 testSex 与ForumZuoPin中的字段对应 查到值就设置到testSex中
+                .selectAs(ForumUser::getSex,ForumZuoPin::getTestSex)
                 /**
                  *                 只映射部分字段 类比写法
                  *                 .selectAssociation(ForumUser.class,ForumZuoPin::getUserInfo,
