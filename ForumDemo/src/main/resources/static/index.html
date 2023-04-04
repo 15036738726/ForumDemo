@@ -2706,7 +2706,8 @@
          * 页面功能初始化
          */
         __THIS__.init = function () {
-            console.log("index.html页面初始化!");
+            // 应用页面主题
+            utils.applyPageTheme();
             // 其他初始化数据加载
             __THIS__.otherLoad();
             // 加载主要数据(视频)
@@ -2717,14 +2718,13 @@
          * 其他初始化数据加载
          */
         __THIS__.otherLoad = function(){
-            console.log("其他初始化数据加载otherLoad");
+
         };
 
         /**
          * 加载视频数据,
          */
         __THIS__.loadItemData = function(temp){
-            console.log("加载视频数据loadItemData")
             // 获取数据
             let sendData = {};
             // 实体类中设置的有默认值,如果是常规推荐查询(查询观看数高的,并且未删除的视频数据),则可以不用设置
@@ -2755,8 +2755,6 @@
          * @param data
          */
         __THIS__.renderItemData = function(data){
-            console.log("渲染页面renderItemData");
-            console.log(data);
             // 请求成功
             if(data.code==200){
                 let main_dom = $(".content_main");

@@ -318,3 +318,6 @@ https://blog.csdn.net/sofeware333/article/details/99583076?utm_source=app&app_ve
 
         })
 #####################js遍历的几种方式#########################################
+
+本地存储的sessionStoreage和localStorag的区别和使用
+https://blog.csdn.net/h18377528386/article/details/122692687

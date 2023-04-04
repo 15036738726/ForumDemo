@@ -19,25 +19,9 @@ var MyUtils = function(option){
     // 删除资源
     __ROOT__.DELETE_REQUEST = "DELETE";
 
-    /**
-     * 往window中设置值时的公共Key
-      * @type {string}
-     */
+    // 往localStore中设置值时的公共Key
     __ROOT__.PUBLIC_PARAM_KEY = "PUBLIC_PARAM_KEY";
-    /**
-     *     所有当前对象的公共参数  需要保留的,都设置到window上,并且在这个地方设置,设置参数时,调用处直接调用该方法,
-     *     与initPublicParam配合使用,两个地方是对应的,设置了什么就取什么
-     * @param value
-     */
-    __ROOT__.autoSetPublicParam = function(value){
-        let param = {};
-        // 设置主题参数
-        param.PAGE_THEME = __ROOT__.pageTheme;
-        window[__ROOT__.PUBLIC_PARAM_KEY] = param;
-    };
-    __ROOT__.getPublicParam = function(){
-         return window.opener[__ROOT__.PUBLIC_PARAM_KEY];
-    }
+
 
     /**
      * 必填相关
@@ -47,7 +31,6 @@ var MyUtils = function(option){
     __ROOT__.myRequiredWaring  = "myRequiredWaringClass";
     // 必填属性
     __ROOT__.myRequired = "myRequired";
-
 
 
     /**
@@ -67,7 +50,7 @@ var MyUtils = function(option){
     /**
      * 页面主题
      */
-    __ROOT__.pageTheme = true;// true 即为默认 false 则为暗黑模式
+    __ROOT__.PAGE_THEME = true;// true 即为默认 false 则为暗黑模式
 
     /**
      * 初始化方法,组价的所有前置控制,可定义在这个方法中
@@ -85,12 +68,26 @@ var MyUtils = function(option){
      * 参数接收初始化 初始化公共参数
      */
     __ROOT__.initPublicParam = function(){
-        let param = __ROOT__.getPublicParam();
-        if(param){
-            // 有值,则初始化
-            __ROOT__.pageTheme
+        let paramJsonStr = localStorage.getItem(__ROOT__.PUBLIC_PARAM_KEY);
+        // 有值,则初始化
+        if(paramJsonStr){
+            // 1.初始化主题参数
+            let paramJsonObj = JSON.parse(paramJsonStr);
+            __ROOT__.PAGE_THEME = paramJsonObj.PAGE_THEME;
         }
-    }
+    };
+
+    /**
+     * 所有当前对象的公共参数  在这个地方设置,需要调整参数或者设置参数时,调用处直接调用该方法,
+     * 与initPublicParam配合使用,两个地方是对应的,设置了什么就取什么
+     */
+    __ROOT__.autoSetPublicParam = function(){
+        let param = {};
+        // 设置主题参数
+        param.PAGE_THEME = __ROOT__.PAGE_THEME;
+        // 设置其他参数
+        localStorage.setItem(__ROOT__.PUBLIC_PARAM_KEY,JSON.stringify(param));
+    };
 
     /**
      * 通用请求方法 如果需要返回值,则需要指定调用方式为 同步async = false
@@ -105,6 +102,7 @@ var MyUtils = function(option){
             contentType: 'application/json', //发送的数据类型
             //dataType: 'json',// 接受的数据类型,可不写
             success: function (result) {
+                console.log(result);
                 if(callback){
                     callback(result);
                 }else{
@@ -113,6 +111,7 @@ var MyUtils = function(option){
             },
             error: function (result) {
                 console.log('Send Request Fail..'); // 请求失败时的回调函数
+                console.log(result);
                 if(callback){
                     callback(result);
                 }else{
@@ -228,7 +227,7 @@ var MyUtils = function(option){
          */
         $(".themeChange").unbind("click").bind("click",function(e){
             // 调用主题切换
-            __ROOT__.pageTheme = !__ROOT__.pageTheme;
+            __ROOT__.PAGE_THEME = !__ROOT__.PAGE_THEME;
             // 设置公共参数,方便下个tab获取
             __ROOT__.autoSetPublicParam();
             // 应用主题
@@ -241,8 +240,7 @@ var MyUtils = function(option){
      * @param val true:则默认为白色   false:则默认为暗黑模式
      */
      __ROOT__.applyPageTheme = function(){
-         console.log(__ROOT__.pageTheme+"zhizhihzihzihzihzihizhi");
-        if(__ROOT__.pageTheme){
+        if(__ROOT__.PAGE_THEME){
             // 浅色外观
             $("html").removeAttr("dark");
             $(".themeChangeText").text('切换深色外观');
@@ -254,9 +252,7 @@ var MyUtils = function(option){
                 '                          d="M10.314 2.546a.75.75 0 0 1 .11.789 7.75 7.75 0 0 0 10.241 10.242.75.75 0 0 1 1.034.867C20.609 18.785 16.681 22 12 22 6.477 22 2 17.523 2 12c0-4.68 3.215-8.608 7.556-9.7a.75.75 0 0 1 .758.246ZM8.529 4.24A8.502 8.502 0 0 0 12 20.5a8.502 8.502 0 0 0 7.761-5.028A9.25 9.25 0 0 1 8.528 4.239Z"\n' +
                 '                          fill="#0C0D0F"></path>\n' +
                 '                </svg>');
-            console.log("触发了浅色外观..........")
         }else{
-            console.log("触发了深色外观..........")
             // 深色外观
             $("html").attr("dark",true);
             $(".themeChangeText").text('切换浅色外观');
@@ -278,7 +274,7 @@ var MyUtils = function(option){
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部
-// 不过对于新的tab页面,还是会进行初始化,即每个tab都会产生一个utils,所以想通过utils带参,是不可行的,还是用window对象吧
+// 不过对于新的tab页面,还是会进行初始化,即每个tab都会产生一个utils
 if(!utils){
     var utils = new MyUtils();
     // 执行组价初始化
