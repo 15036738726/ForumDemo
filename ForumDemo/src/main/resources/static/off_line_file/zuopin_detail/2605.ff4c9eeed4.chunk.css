@@ -5933,7 +5933,7 @@
 
 .Page_Projection__layout .Page_Projection__secondary_des_and_action {
     position: relative;
-    min-height: calc(100% + 12px + 1px)
+    /*min-height: calc(100% + 12px + 1px)*/
 }
 
 .Page_Projection__layout .Page_Projection__title_and_action {

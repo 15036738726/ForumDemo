@@ -71,7 +71,8 @@
 }
 .item_body_down .person_name .person_name_span{
     font-size: 12px;
-    color: #606266;
+    color: #909399;
+    color: var(--content-secondary);
 }
 .item_body_down .broadcast_publish{
     width: 100%;
@@ -85,7 +86,8 @@
 }
 .item_body_down .broadcast_publish span{
     font-size: 12px;
-    color: #606266;
+    color: #909399;
+    color: var(--content-secondary);
 }
 
 xg-text-track.xg-text-track {

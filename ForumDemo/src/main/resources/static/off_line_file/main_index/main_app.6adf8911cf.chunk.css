@@ -5023,6 +5023,7 @@ body {
     font-weight: 500
 }
 
+/**主题切换样式控制 黑色**/
 :root[dark=true] {
     --brand: #FF3D5E;
     --brand-2: #E1E3E5;
@@ -5051,6 +5052,7 @@ body {
     --accent-content-inverse: 255, 255, 255
 }
 
+/**主题切换样式控制  默认白色**/
 :root {
     --brand: #fe3355;
     --brand-2: #0C0D0F;
