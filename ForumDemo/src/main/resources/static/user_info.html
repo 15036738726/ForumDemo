@@ -1,4 +1,4 @@
-<html lang="zh" class="js-focus-visible" data-js-focus-visible="" dark="true" data-react-helmet="dark"
+<html lang="zh" class="js-focus-visible" data-js-focus-visible="" dark="false" data-react-helmet="dark"
       style="--vw:8.14px;">
 <head>
     <meta charset="utf-8">
@@ -571,6 +571,7 @@
             -->
 
             <div class="userDetailV3">
+                <!--视频  合集 小视频-->
                 <div class="userDetailV3__header-wrap">
                     <div class="userDetailV3__header">
                         <div class="userDetailV3__header__bg"><img
@@ -647,8 +648,10 @@
                     </div>
                     <div class="sticky__wrapper" style="display: none; height: 46px;"></div>
                 </div>
+                <!--播放全部,下方视频内容-->
                 <div class="userDetailV3__content">
                     <div>
+                        <!--播放全部 最新发布  搜索-->
                         <div class="userDetailV3__filters">
                             <div class="userDetailV3__filters_playlist color-content-primary"
                                  data-disable_default="true" style="cursor:pointer">
@@ -676,6 +679,7 @@
                                 </svg>
                                 <input type="text" style="width:28px" placeholder="搜索TA的视频" value=""></div>
                         </div>
+                        <!--视频列表-->
                         <div>
                             <div class="userDetailV3__main__list">
                                 <div class="HorizontalFeedCard">
@@ -1944,11 +1948,13 @@
                                 <div class="empty_placeholder video"></div>
                                 <div class="empty_placeholder video"></div>
                             </div>
+                            <!--...加载样式-->
                             <div class="Feed-footer">
                                 <div class="Loading-2 light"><i></i><i></i><i></i></div>
                             </div>
                         </div>
                     </div>
+                    <!--底部热门标签-->
                     <div class="userDetailV3__footer">
                         <div class="seo-links"><span>热门：</span><a class="seo-links__link-item"
                                                                   href="https://www.ixigua.com/search/%E6%B1%AA%E5%B0%8F%E8%8F%B2%E5%A4%A7S"
@@ -1982,20 +1988,12 @@
             </div>
         </main>
         <div class="BU-FixedGroup">
-            <div class="BU-FixedGroup__block">
+            <div class="BU-FixedGroup__block themeChange">
                 <div class="BU-FixedGroup__cell"><span class="BU-FixedGroup__triangle"></span>
-                    <div>切换浅色外观</div>
+                    <div class="themeChangeText">切换浅色外观</div>
                 </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                     role="img">
-                    <path d="M12 .75a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2A.75.75 0 0 1 12 .75Z"
-                          fill="#000"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M6.25 12a5.75 5.75 0 1 1 11.5 0 5.75 5.75 0 0 1-11.5 0ZM12 7.75a4.25 4.25 0 1 0 0 8.5 4.25 4.25 0 0 0 0-8.5Z"
-                          fill="#000"></path>
-                    <path d="M12.75 20.5a.75.75 0 0 0-1.5 0v2a.75.75 0 0 0 1.5 0v-2ZM23.25 12a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75ZM3.5 12.75a.75.75 0 0 0 0-1.5h-2a.75.75 0 0 0 0 1.5h2ZM19.955 19.955a.75.75 0 0 1-1.06 0l-1.415-1.414a.75.75 0 1 1 1.06-1.06l1.415 1.413a.75.75 0 0 1 0 1.061ZM5.46 6.52a.75.75 0 0 0 1.06-1.06L5.106 4.044a.75.75 0 0 0-1.06 1.06L5.458 6.52ZM4.045 19.955a.75.75 0 0 1 0-1.06L5.46 17.48a.75.75 0 0 1 1.06 1.06l-1.414 1.415a.75.75 0 0 1-1.06 0ZM17.48 5.46a.75.75 0 1 0 1.061 1.06l1.414-1.414a.75.75 0 1 0-1.06-1.06L17.48 5.458Z"
-                          fill="#000"></path>
-                </svg>
+                <!--图标由页面加载时,动态拼接,这里删除svg标签-->
+
             </div>
             <div class="BU-FixedGroup__block BU-FixedGroup__desktop">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -15172,4 +15170,33 @@
 }</script>
 <script nonce="">window._SSR_PID = "v2-userdetailv3"</script>
 </body>
+
+<link href="util/MyUtils.css" rel="stylesheet">
+<script src="jquery/jquery.min.js"></script>
+<script src="util/MyUtils.js"></script>
+<script type="text/javascript">
+    var currentPageObj = function (option){
+        __THIS__ = this;
+
+        /**
+         * 页面功能初始化
+         */
+        __THIS__.init = function () {
+            // 应用页面主题
+            utils.applyPageTheme();
+            // 其他初始化数据加载
+            __THIS__.otherLoad();
+
+        };
+
+        /**
+         * 其他初始化数据加载
+         */
+        __THIS__.otherLoad = function(){
+
+        };
+    };
+    new currentPageObj().init();
+</script>
+
 </html>
