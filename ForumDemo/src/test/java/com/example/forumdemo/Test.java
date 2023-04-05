@@ -39,10 +39,7 @@ public class Test {
         //System.out.println(between.getUnits());
         System.out.println(between.getYears());*/
 
-        // v2 提交测试,以后都在这个分支上开发 推送,开发完成之后 在合并到main上
-
-        // 测试main推送保护
-
+        // 测试推送
     }
 
     private static int getRandomNumberInRange(int min, int max) {
