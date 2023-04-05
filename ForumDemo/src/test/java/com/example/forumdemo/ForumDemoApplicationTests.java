@@ -18,6 +18,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 //测试类启动时就只会初始化 Spring 上下文，不再启动 Tomcat 容器了 加载某个类时,classes={}中增加class
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes={})
 class ForumDemoApplicationTests {
+    /**
+     * @Test
+     *org.junit.jupiter.api.Test和org.junit.Test区别
+     * 如果引入后面的包，必须用public来修饰方法(类名和方法名)，  如果引入前面的包，就不能public来修饰方法。
+     */
 
     @Autowired
     private UserOpeMapper userOpeMapper;

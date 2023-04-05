@@ -55,10 +55,10 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         }));
 
         // 数据太少,这里暂时先增加点数据 追加5个
-        Optional<ForumZuoPin> any = list.stream().findAny();
-        for(int i = 0;i<5;i++){
-            list.add(any.get());
-        }
+//        Optional<ForumZuoPin> any = list.stream().findAny();
+//        for(int i = 0;i<5;i++){
+//            list.add(any.get());
+//        }
         return list;
     }
 

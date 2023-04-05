@@ -38,22 +38,27 @@ public class Utils {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime start  = LocalDateTime.parse(workTime,dateTimeFormatter);
         LocalDateTime end = LocalDateTime.now();
+        Duration duration = Duration.between(start, end);
         // 相差的分钟数
-        long temp = Duration.between(start, end).toMinutes();
+        long temp = duration.toMinutes();
+        if(temp==0){
+            return "刚刚";
+        }
         if(temp<60){
             return temp+"分钟前";
         }
         // 计算相差的小时数
-        temp = Duration.between(start, end).toHours();
+        temp = duration.toHours();
         if(temp<24){
             return temp+"小时前";
         }
         // 计算相差的天数
-        temp = Duration.between(start, end).toDays();
+        temp = duration.toDays();
         if(temp<30){
             return temp+"天前";
         }
-        // 对temp进行处理
+
+        // 处理月份和年份数据
         long month = temp/30;
         if(month<12){
             return month+"个月前";
