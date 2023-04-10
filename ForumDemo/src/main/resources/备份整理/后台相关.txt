@@ -119,6 +119,12 @@ Java8 时间处理
 https://www.mianshigee.com/note/detail/21201dgt/
 
 
+更新所有远程分支信息: 如果你的remote branch不是在origin下，按你得把命令中的 origin 换成你的名字
+git remote update origin --prune
+但我很好奇是否可以仅使用 IDEA UI 来做到这一点
+VCS -> Git -> Fetch
+
+
 
 
 
