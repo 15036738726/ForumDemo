@@ -132,6 +132,14 @@ VCS -> Git -> Fetch
 #处理Long类型过长,前端js损失精度注解
 https://blog.csdn.net/weixin_65549694/article/details/125055243
 
+重装 IDEA 再也不愁了，一招搞定同步个人配置
+https://blog.51cto.com/zhongmayisheng/5223333?b=totalstatistic
+
+重装IDEA时，如何备份IDEA之前的配置
+https://blog.csdn.net/qq_43783527/article/details/122947765
+
+JetBrains全家桶激活  Idea所有版本激活
+https://r86oxhhvu2.feishu.cn/docx/doxcnsqHeJ7dbM6hF4LEmU0jaxe
 
 
 
