@@ -63,3 +63,19 @@ CREATE TABLE forum.forum_zuo_pin (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_0900_ai_ci;
+
+#评论表
+CREATE TABLE `forum_comment` (
+  `comment_id` bigint NOT NULL COMMENT '主键',
+  `zuopin_id` bigint NOT NULL COMMENT '作品外键',
+  `user_id` bigint NOT NULL COMMENT '用户外键',
+  `comment` varchar(200) NOT NULL COMMENT '评论内容主体',
+  `parent_comment_id` bigint NOT NULL COMMENT '评论的根  默认:0 为1级top  如果是第二级:值为某个1级评论的id',
+  `reply_id` bigint NOT NULL COMMENT '回复是那条评论,评论id',
+  `reply_user_id` bigint NOT NULL COMMENT '回复的是那个用户Id',
+  `work_time` varchar(40) NOT NULL COMMENT '入库时间',
+  `del` int NOT NULL DEFAULT '1' COMMENT '删除状态,0:已删除 1:未删除',
+  `zan_count` int NOT NULL DEFAULT '0' COMMENT '点赞数',
+  PRIMARY KEY (`comment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
