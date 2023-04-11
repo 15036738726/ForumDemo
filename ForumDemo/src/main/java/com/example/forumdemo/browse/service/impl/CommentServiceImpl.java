@@ -24,13 +24,10 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
     public List<ForumComment> queryCommentData(ForumComment queryComment) {
         MPJLambdaWrapper<ForumComment> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(ForumComment.class)
-                .selectAssociation(ForumUser.class,ForumComment::getUserInfo)
-/*                .selectAs(ForumUser::getUserName,ForumComment::getUserName)
-                // 特殊情况,只能手写了,版本要求1.4.0以上
-                .select("t2.user_name as replyUserName")*/
-                .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getUserId);
-                //.selectAssociation(ForumUser.class,ForumComment::getReplyUserInfo)
-                //.leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getReplyUserId);
+                .selectAssociation("t1",ForumUser.class,ForumComment::getUserInfo)
+                .selectAssociation("t2",ForumUser.class,ForumComment::getReplyUserInfo)
+                .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getUserId)
+                .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getReplyUserId);
         // 设置作品id参数
         wrapper.eq(ForumComment::getZuopinId,queryComment.getZuopinId());
         // 查询正常数据
@@ -49,7 +46,6 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         List<ForumComment> rtn = new ArrayList<>();
         Optional.ofNullable(list).ifPresent(e -> {
             // e ->list
-            e.stream().forEach(e2 -> {System.out.println(e2.getParentCommentId()+"-------------");});
             // 收集所有顶级
             Long val = Long.valueOf("0");
             List<ForumComment> top = e.stream().filter(temp -> temp.getParentCommentId().equals(val)).collect(Collectors.toList());

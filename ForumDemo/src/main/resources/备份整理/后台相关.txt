@@ -38,6 +38,10 @@ https://blog.csdn.net/qq_31116181/article/details/113741489
 MPJ API
 https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectAs
 
+解决查询评论关联同一个表两次问题 Mybatis Plus Join
+https://ylctmh.com/pages/core/qt/many.html
+
+
 MPJ坐标:
 <dependency>
     <groupId>com.github.yulichang</groupId>
@@ -123,6 +127,11 @@ https://www.mianshigee.com/note/detail/21201dgt/
 git remote update origin --prune
 但我很好奇是否可以仅使用 IDEA UI 来做到这一点
 VCS -> Git -> Fetch
+
+
+#处理Long类型过长,前端js损失精度注解
+https://blog.csdn.net/weixin_65549694/article/details/125055243
+
 
 
 

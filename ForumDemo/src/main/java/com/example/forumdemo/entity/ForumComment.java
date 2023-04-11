@@ -22,7 +22,7 @@ public class ForumComment implements Serializable {
     private Long userId;
     // 回复者用户信息 张三回复李四 张三对象
     @TableField(exist = false)
-    private String userInfo;
+    private ForumUser userInfo;
     // 评论主体
     private String comment;
     // 1级 0  2级 父评论Id
