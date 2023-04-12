@@ -3032,8 +3032,12 @@
 
                 // 视频点击事件
                 $(".zuopininfo_event").unbind("click").bind("click",function(e){
-                    // console.log("作品ID:"+$(e.target).parents("div .FeedContainer__itemWrapper").attr("zuo_pin_id"));
-                    window.open("/zuopin_detail.html","_blank");
+                    // alert("作品ID:"+$(e.target).parents("div .FeedContainer__itemWrapper").attr("zuo_pin_id"));
+                    let paramDom = $(e.target).parents("div .FeedContainer__itemWrapper");
+                    let zuopinId = paramDom.attr("zuo_pin_id");
+                    let userId = paramDom.attr("user_id");
+                    window.open("/zuopin_detail.html?zuopinId="+zuopinId+"&userId="+userId,"_blank");
+
                 });
             }else{
                 // 异常,则执行结果反馈

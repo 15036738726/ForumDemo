@@ -271,6 +271,24 @@ var MyUtils = function(option){
         }
     };
 
+    /**
+     * 获取url上的参数
+     */
+    __ROOT__.getUrlParam = function(){
+        var query = location.search.substring(1);
+        var values= query.split("&");
+        let paramMap = {};
+        for(var i = 0; i < values.length; i++) {
+            var pos = values[i].indexOf('=');
+            if (pos == -1) continue;
+            var paramname = values[i].substring(0,pos);
+            var value = values[i].substring(pos+1);
+            paramMap[paramname] = value;
+            //alert(paramname +","+value );
+        }
+        return paramMap;
+    };
+
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部

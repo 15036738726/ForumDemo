@@ -1342,6 +1342,7 @@
                             </div>
                             <div class="hr before-comment-list"></div>
                             <div class="commentList">
+                                <!--完全展开START-->
                                 <div class="commentItem" data-id="7216340102652511016">
                                     <div class="commentItem__info">
                                         <div class="component-avatar commentItem__headImg clickable" style="width: 40px; height: 40px;"><a
@@ -1635,7 +1636,9 @@
                                         <div class="hr"></div>
                                     </div>
                                 </div>
+                                <!--完全展开END-->
 
+                                <!--未展开START-->
                                 <div class="commentItem" data-id="7200606397195830050">
                                     <div class="commentItem__info">
                                         <div class="component-avatar commentItem__headImg clickable"
@@ -1687,6 +1690,8 @@
                                         <div class="hr"></div>
                                     </div>
                                 </div>
+                                <!--未展开END-->
+
                                 <div class="commentItem" data-id="7200598724756898575">
                                     <div class="commentItem__info">
                                         <div class="component-avatar commentItem__headImg clickable"
@@ -5795,6 +5800,10 @@
     var currentPageObj = function (option){
         // 这个地方最好不要用__THIS__,防止工具类中绑定的click事件 里边使用的__THIS__被这个地方所覆盖 (处理解决:把utils中的THIS换个名字)
         __THIS__ = this;
+        // 作品信息
+        __THIS__.zuoPinInfo = {};
+        // 当前作品对应的用户信息
+        __THIS__.userInfo = {};
 
         /**
          * 页面功能初始化
@@ -5804,6 +5813,8 @@
             utils.applyPageTheme();
             // 其他初始化数据加载
             __THIS__.otherLoad();
+            // 根据作品id,查询当前作品下的所有评论
+            __THIS__.loadCommentData({"zuopinId":__THIS__.zuoPinInfo.zuopinId});
 
         };
 
@@ -5811,6 +5822,36 @@
          * 其他初始化数据加载
          */
         __THIS__.otherLoad = function(){
+            // 初始化 userinfo zuopinInfo
+            let param = utils.getUrlParam();
+            // 这里暂时不发送请求获取数据,只记录zuopinId 还有userId
+            __THIS__.userInfo.userId = param.userId;
+            __THIS__.zuoPinInfo.zuopinId = param.zuopinId;
+            console.log("当前页面作品Id:"+__THIS__.zuoPinInfo.zuopinId+",用户ID:"+__THIS__.userInfo.userId)
+        };
+
+        /**
+         * 加载评论信息
+         */
+        __THIS__.loadCommentData = function(temp){
+            let sendData = {};
+            sendData.zuopinId = temp.zuopinId;
+            utils.send(
+                function(temp){
+                    __THIS__.renderCommentData(temp);
+                }
+                ,"/commentController/queryCommentData"
+                ,sendData
+                ,utils.PUT_REQUEST
+            );
+
+        };
+
+        /**
+         * 拿到数据,进行页面渲染
+         * @param data
+         */
+        __THIS__.renderCommentData = function(data){
 
         };
     };
