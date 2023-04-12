@@ -5804,6 +5804,8 @@
         __THIS__.zuoPinInfo = {};
         // 当前作品对应的用户信息
         __THIS__.userInfo = {};
+        // 当前作品页的所有评论数据
+        __THIS__.commentList = [];
 
         /**
          * 页面功能初始化
@@ -5852,8 +5854,303 @@
          * @param data
          */
         __THIS__.renderCommentData = function(data){
+            /**
+             * 1.第一种,[只要有child,就显示展开x条回复,如果没有就单条处理]
+             * 2.只要点击了展开,就一定存在收起回复  和第一种是互斥的,有2没1,有1没2
+             * 3.展开的情况下,child过多,显示更多回复 按钮
+             */
+            if(data.code == 200&&data.data.length>0){
+                // alert("加载吧...")
+                // 把所有评论数据存入到当前页面对象中,因为展开更多评论会用到
+                __THIS__.commentList = data.data;
 
+                // 初始化拼接的位置
+                let dom = $(".commentList");
+                dom.empty();
+                // 初始化页面时,所有评论初次加载时的dom,都是折叠状态 一次性拼接到位,另外一种方式就是构建一个top,拼接一次
+                let initDom = '';
+                for (let temp of __THIS__.commentList) {
+                    // console.log(temp);
+                    // 这层遍历,只考虑第一种情况
+                    if(temp.child.length==0){
+                        initDom += __THIS__.firstCommentTemplate_notHaveChild(temp);
+                        // dom.append(__THIS__.firstCommentTemplate_notHaveChild(temp));
+                    }else{
+                        initDom += __THIS__.firstCommentTemplate_haveChild(temp);
+                        // dom.append(__THIS__.firstCommentTemplate_haveChild(temp));
+                    }
+                }
+                dom.append(initDom);
+                // 加载评论区域事件
+                __THIS__.commentItemEvent();
+            }
         };
+
+        /**
+         * 评论区域事件绑定
+         */
+        __THIS__.commentItemEvent = function(){
+
+            /**
+             * [展开x条回复] / [收起回复] 事件控制
+             */
+            $(".commentItem__interaction__moreReply").unbind("click").bind("click",function(e){
+                let rootDom = $(e.target).parents(".commentItem");
+                // 获取点击的top的评论ID
+                let topId = rootDom.attr("data-id");
+
+                /**
+                 * 因为牵涉递归调用,所以需要动态的判断是展开还是收起,即这个方法需要同时处理2事件情况,
+                 * 他们的类名是一模一样的都是commentItem__interaction__moreReply,每次触发dom变更,方法最后都重新执行一下commentItemEvent,重新绑定事件
+                 */
+
+                // true,表示此刻点击的是收起标签  false,表示点击的是展开元素
+                let toogleState = rootDom.find(".commentItem__interaction__moreReply i").hasClass("actived");
+
+                if(toogleState){
+                    // 收起
+                    // 移除top下的所有子dom
+                    rootDom.find(".commentList").remove();
+                }else{
+                    // 展开
+                    // 根据topId,找到对应的childArray
+                    let childArray = __THIS__.getChildArray(topId,__THIS__.commentList);
+                    // 获取拼接的dom
+                    let childDom = __THIS__.openMoreCommentEventTemplate(childArray);
+                    // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间 拼接到在commentItem__details__main之后
+                    rootDom.find(".commentItem__details__main").after(childDom);
+                }
+
+                // 调用评论折叠转换  把展开回复 替换为收起回复  后续需要处理每次展开多少条问题
+                __THIS__.commentFoldToogle(toogleState,rootDom);
+
+                // 因为存在元素的拼接,所以刚拼接的元素是没有事件的,重新加载事件绑定
+                __THIS__.commentItemEvent();
+            });
+        };
+
+        /**
+         * 展开/收起 转换
+         * @param flag false 移除展开,添加收起   true则相反
+         * @rootDom
+         */
+        __THIS__.commentFoldToogle = function(flag,rootDom){
+            rootDom.find(".commentItem__interaction__moreReply").remove();
+            // 拼接到hr之前
+            if(flag){
+                let topId = rootDom.attr("data-id");
+                // 计算 评论条数
+                let childArray = __THIS__.getChildArray(topId,__THIS__.commentList);
+                let openDom = '<button class="commentItem__interaction__moreReply"><span>展开 '+childArray.length+' 条回复</span><i class="newFoldIcon">\n' +
+                    '    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+                    '        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                    '              d="M2.854 5.868a.5.5 0 01.353-.853h5.586a.5.5 0 01.353.853L6.354 8.661a.5.5 0 01-.708 0L2.854 5.868z"\n' +
+                    '              fill="#A3A7AD"></path>\n' +
+                    '    </svg>\n' +
+                    '</i></button>';
+                rootDom.find(".hr").before(openDom);
+            }else{
+                let shrinkDom = '<button class="commentItem__interaction__moreReply"><span>收起回复</span><i class="newFoldIcon actived">\n' +
+                    '    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+                    '        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                    '              d="M9.146 6.674a.5.5 0 01-.353.853H3.207a.5.5 0 01-.353-.853L5.646 3.88a.5.5 0 01.708 0l2.792 2.793z"\n' +
+                    '              fill="#A3A7AD"></path>\n' +
+                    '    </svg>\n' +
+                    '</i></button>';
+                rootDom.find(".hr").before(shrinkDom);
+            }
+        };
+
+        /**
+         * 根据topId,获取对应的child
+         * @param topId
+         * @param data
+         */
+        __THIS__.getChildArray = function(topId,data){
+            for(let tempObj of data){
+                if(tempObj.commentId == topId){
+                    return tempObj.child;
+                }
+            }
+        };
+
+        /**
+         * 第一种情况模板  有child
+         * @param temp
+         */
+        __THIS__.firstCommentTemplate_haveChild = function(temp){
+            let str = '<div class="commentItem" data-id="'+temp.commentId+'">\n' +
+                '    <div class="commentItem__info">\n' +
+                '        <div class="component-avatar commentItem__headImg clickable" style="width: 40px; height: 40px;"><a\n' +
+                '                class="component-avatar__inner" title="'+temp.userInfo.userName+'" aria-label="'+temp.userInfo.userName+'"\n' +
+                '                target="user_'+temp.userInfo.userId+'" data-disable_default="true">\n' +
+                '            <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
+                '                                             src="'+temp.userInfo.userHead+'"\n' +
+                '                                             data-src=""\n' +
+                '                                             backup-src=""\n' +
+                '                                             alt="'+temp.userInfo.userName+'头像"\n' +
+                '                                             style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
+                '            </div>\n' +
+                '            <div class="BU-MagicImage__shadow"></div>\n' +
+                '        </a></div>\n' +
+                '        <div class="commentItem__userName"><span class="user__name">'+temp.userInfo.userName+'</span></div>\n' +
+                '        <div class="commentItem__publishTime">1个月前</div>\n' +
+                '        <div class="commentItem__ipAddress">冥王星</div>\n' +
+                '    </div>\n' +
+                '    <div class="commentItem__details">\n' +
+                '        <div class="commentItem__details__main">\n' +
+                '            <div class="commentItem__text">\n' +
+                '                <pre>'+temp.comment+'</pre>\n' +
+                '            </div>\n' +
+                '            <div class="commentItem__interaction_contaniner">\n' +
+                '                <div class="commentItem__interaction">\n' +
+                '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
+                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                             role="img">\n' +
+                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
+                '                                  fill="#0C0D0F"></path>\n' +
+                '                        </svg>\n' +
+                '                        <span>2</span></button>\n' +
+                '                    <button class="commentItem__interaction__reply">回复</button>\n' +
+                '                </div>\n' +
+                '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
+                '                    <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                          d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
+                '                          fill="#0C0D0F"></path>\n' +
+                '                </svg>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '        <button class="commentItem__interaction__moreReply"><span>展开 '+temp.child.length+' 条回复</span><i class="newFoldIcon">\n' +
+                '            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+                '                <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                      d="M2.854 5.868a.5.5 0 01.353-.853h5.586a.5.5 0 01.353.853L6.354 8.661a.5.5 0 01-.708 0L2.854 5.868z"\n' +
+                '                      fill="#A3A7AD"></path>\n' +
+                '            </svg>\n' +
+                '        </i></button>\n' +
+                '        <div class="hr"></div>\n' +
+                '    </div>\n' +
+                '</div>';
+            return str;
+        };
+
+        /**
+         * 第一种情况模板  没有有child
+         * @param temp
+         */
+        __THIS__.firstCommentTemplate_notHaveChild = function(temp){
+            let str = '<div class="commentItem" data-id="'+temp.commentId+'">\n' +
+                '    <div class="commentItem__info">\n' +
+                '        <div class="component-avatar commentItem__headImg clickable" style="width: 40px; height: 40px;"><a\n' +
+                '                class="component-avatar__inner" title="'+temp.userInfo.userName+'" aria-label="'+temp.userInfo.userName+'" target="user_'+temp.userInfo.userId+'"\n' +
+                '                data-disable_default="true">\n' +
+                '            <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
+                '                                             src="'+temp.userInfo.userHead+'"\n' +
+                '                                             data-src=""\n' +
+                '                                             backup-src=""\n' +
+                '                                             alt="'+temp.userInfo.userName+'头像"\n' +
+                '                                             style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
+                '            </div>\n' +
+                '            <div class="BU-MagicImage__shadow"></div>\n' +
+                '        </a></div>\n' +
+                '        <div class="commentItem__userName"><span class="user__name">'+temp.userInfo.userName+'</span></div>\n' +
+                '        <div class="commentItem__publishTime">1个月前</div>\n' +
+                '        <div class="commentItem__ipAddress">冥王星</div>\n' +
+                '    </div>\n' +
+                '    <div class="commentItem__details">\n' +
+                '        <div class="commentItem__details__main">\n' +
+                '            <div class="commentItem__text">\n' +
+                '                <pre>'+temp.comment+'</pre>\n' +
+                '            </div>\n' +
+                '            <div class="commentItem__interaction_contaniner">\n' +
+                '                <div class="commentItem__interaction">\n' +
+                '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
+                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                             role="img">\n' +
+                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
+                '                                  fill="#0C0D0F"></path>\n' +
+                '                        </svg>\n' +
+                '                        <span>40</span></button>\n' +
+                '                    <button class="commentItem__interaction__reply">回复</button>\n' +
+                '                </div>\n' +
+                '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
+                '                    <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                          d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
+                '                          fill="#0C0D0F"></path>\n' +
+                '                </svg>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '        <div class="hr"></div>\n' +
+                '    </div>\n' +
+                '</div>';
+            return str;
+        };
+
+        /**
+         * [展开x条回复] 单击事件 对应的  元素模板
+         * @param childArr 所有child数组
+         */
+        __THIS__.openMoreCommentEventTemplate = function(childArr){
+            let str = '<div class="commentList">';
+            for(let childTemp of childArr){
+                str += '    <div class="commentItem sub-comment-item" data-id="'+childTemp.commentId+'">\n' +
+                    '        <div class="commentItem__info">\n' +
+                    '            <div class="component-avatar commentItem__headImg clickable" style="width: 24px; height: 24px;"><a\n' +
+                    '                    class="component-avatar__inner" title="'+childTemp.userInfo.userName+'" aria-label="'+childTemp.userInfo.userName+'"\n' +
+                    '                    target="user_'+childTemp.userInfo.userId+'" data-disable_default="true">\n' +
+                    '                <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
+                    '                                                 src="'+childTemp.userInfo.userHead+'"\n' +
+                    '                                                 data-src=""\n' +
+                    '                                                 backup-src=""\n' +
+                    '                                                 alt="'+childTemp.userInfo.userName+'头像"\n' +
+                    '                                                 style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
+                    '                </div>\n' +
+                    '                <div class="BU-MagicImage__shadow"></div>\n' +
+                    '            </a></div>\n' +
+                    '            <div class="commentItem__userName"><span class="user__name">'+childTemp.userInfo.userName+'</span></div>\n' +
+                    '            <div class="commentItem__publishTime">1个月前</div>\n' +
+                    '            <div class="commentItem__ipAddress">海王星</div>\n' +
+                    '        </div>\n' +
+                    '        <div class="commentItem__details">\n' +
+                    '            <div class="commentItem__details__main">\n' +
+                    '                <div class="commentItem__text">\n';
+                    // 为true 则说明是@模式,需要增加下面标签
+                    if(childTemp.aiteState){
+                        str += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
+                    }
+                    str +='              <pre>'+childTemp.comment+'</pre>\n' +
+                    '                </div>\n' +
+                    '                <div class="commentItem__interaction_contaniner">\n' +
+                    '                    <div class="commentItem__interaction">\n' +
+                    '                        <button aria-label="'+childTemp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
+                    '                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
+                    '                                 xmlns="http://www.w3.org/2000/svg" role="img">\n' +
+                    '                                <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                    '                                      d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
+                    '                                      fill="#0C0D0F"></path>\n' +
+                    '                            </svg>\n' +
+                    '                            <span>赞</span></button>\n' +
+                    '                        <button class="commentItem__interaction__reply">回复</button>\n' +
+                    '                    </div>\n' +
+                    '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
+                    '                         xmlns="http://www.w3.org/2000/svg" role="img"\n' +
+                    '                         class="dotMoreAction_trigger commentItem__moreOptions">\n' +
+                    '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                    '                              d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
+                    '                              fill="#0C0D0F"></path>\n' +
+                    '                    </svg>\n' +
+                    '                </div>\n' +
+                    '            </div>\n' +
+                    '        </div>\n' +
+                    '    </div>';
+            }
+            str += '<audio></audio></div>';
+            return str;
+        };
+
     };
     new currentPageObj().init();
 </script>

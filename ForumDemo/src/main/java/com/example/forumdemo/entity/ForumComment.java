@@ -41,12 +41,31 @@ public class ForumComment implements Serializable {
     // 回复的是哪条评论ID
     private Long replyId;
     // 评论已读0 未读1
-    private Integer isRead;
+    private Integer readState;
     // 热评
     @TableField(exist = false)
-    private boolean isHot;
+    private boolean hotState;
 
     // 评论下挂的子评论 只有2层
     @TableField(exist = false)
     private List<ForumComment> child;
+
+    /**
+     * 存在一种情况(只在子评论列表中会产生,top不存在这种情况)
+     * 在某条top评论的下方 比如说有A B C 三位回复者 他们回复的都这当前这个顶级评论
+     * top:有人在吗
+     * child:{
+     *     A:我在
+     *     B回复A:你在哪
+     *     C:我不在
+     *     A回复B:我在月球
+     * }
+     * 那么前端展示又稍微有所不同 评论内容就需要编程 @xxx的形式
+     * 所以需要返回此字段,为true时,是艾特的形式,A与B的关系  为false时,是普通形式,C的情况
+     * 数据库不用加字段,观察之后,发现当parent_Comment_id和reply_id相等时,即为C的情况 该字段设置为false
+     * 不等的时候,就是艾特的情况  该字段设置为true
+     * 顶级top 0==0 同样返回false,不影响,同样返回false
+     */
+    @TableField(exist = false)
+    private boolean aiteState;
 }

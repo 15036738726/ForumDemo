@@ -33,16 +33,42 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         // 查询正常数据
         wrapper.eq(ForumComment::getDel,queryComment.getDel());
         List<ForumComment> list = commentMapper.selectJoinList(ForumComment.class, wrapper);
+
+        /**
+         * 对返回对象进行处理,尽管可以在一个方法中处理,但这里所有的处理都单独分开写,代码更清晰,用的流,效率差不了多少
+         */
+
+        // 处理@艾特情况,给所有comment对象中的aiteState字段设值
+        handleCommentDataForFiled(list);
+
+
         // 处理层级
-        List<ForumComment> top = handleCommentData(list);
+        List<ForumComment> top = handleCommentDataForLevel(list);
         return top;
+    }
+
+    /**
+     * 处理互相回复的情况,需要给每个实体设置isAiTe字段值,实体类中有情况说明
+     * @param list
+     */
+    private void handleCommentDataForFiled(List<ForumComment> list) {
+        Optional.ofNullable(list).ifPresent(e -> {
+            e.stream().forEach(temp -> {
+                boolean equals = temp.getParentCommentId().equals(temp.getReplyId());
+                if(equals){
+                    temp.setAiteState(false);
+                }else{
+                    temp.setAiteState(true);
+                }
+            });
+        });
     }
 
     /**
      * 处理评论数据,层级问题封装
      * @param list
      */
-    private List<ForumComment> handleCommentData(List<ForumComment> list){
+    private List<ForumComment> handleCommentDataForLevel(List<ForumComment> list){
         List<ForumComment> rtn = new ArrayList<>();
         Optional.ofNullable(list).ifPresent(e -> {
             // e ->list
