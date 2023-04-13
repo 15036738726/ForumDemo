@@ -34,6 +34,9 @@ public class ForumComment implements Serializable {
     private ForumUser replyUserInfo;
     // 入库时间
     private String workTime;
+    // work_time: 3个月前
+    @TableField(exist = false)
+    private String workTimeText;
     // 删除状态
     private Integer del = 1;
     // 点赞数

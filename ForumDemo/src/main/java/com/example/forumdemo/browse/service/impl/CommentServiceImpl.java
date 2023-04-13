@@ -4,12 +4,14 @@ import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.service.CommentService;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumUser;
+import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +40,11 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
          * 对返回对象进行处理,尽管可以在一个方法中处理,但这里所有的处理都单独分开写,代码更清晰,用的流,效率差不了多少
          */
 
-        // 处理@艾特情况,给所有comment对象中的aiteState字段设值
+        /**
+         * 所有对象的字段处理
+         * 1.处理@艾特情况,给所有comment对象中的aiteState字段设值
+         * 2.处理workTimeText字段
+         */
         handleCommentDataForFiled(list);
 
 
@@ -55,11 +61,9 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         Optional.ofNullable(list).ifPresent(e -> {
             e.stream().forEach(temp -> {
                 boolean equals = temp.getParentCommentId().equals(temp.getReplyId());
-                if(equals){
-                    temp.setAiteState(false);
-                }else{
-                    temp.setAiteState(true);
-                }
+                // 设置艾特字段 相等为true 则设置该字段为false
+                temp.setAiteState(!equals);
+                temp.setWorkTimeText(Utils.workTimeText(temp.getWorkTime()));
             });
         });
     }
@@ -74,11 +78,19 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
             // e ->list
             // 收集所有顶级
             Long val = Long.valueOf("0");
-            List<ForumComment> top = e.stream().filter(temp -> temp.getParentCommentId().equals(val)).collect(Collectors.toList());
+            List<ForumComment> top = e.stream()
+                    .filter(temp -> temp.getParentCommentId().equals(val))
+                    // top层按照点赞倒排
+                    .sorted(Comparator.comparing(ForumComment::getZanCount).reversed())
+                    .collect(Collectors.toList());
             // 遍历top 把所有的子类,封装到child属性中
             top.stream().forEach(temp -> {
                 Long topCommentId = temp.getCommentId();
-                List<ForumComment> child = list.stream().filter(childTemp -> childTemp.getParentCommentId().equals(topCommentId)).collect(Collectors.toList());
+                List<ForumComment> child = list.stream()
+                        .filter(childTemp -> childTemp.getParentCommentId().equals(topCommentId))
+                        // child层按照id正拍,最早的回复放上边,保证回复从上到下,是一套合理的对话
+                        .sorted(Comparator.comparing(ForumComment::getCommentId))
+                        .collect(Collectors.toList());
                 temp.setChild(child);
             });
             // 设置返回值
