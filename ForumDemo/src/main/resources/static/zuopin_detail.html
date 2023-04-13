@@ -100,7 +100,6 @@
     <title>看谁不爽就是怼，记住我叫李宏伟！ - 西瓜视频</title>
     <meta data-react-helmet="true" name="Baiduspider" content="noarchive">
 
-
     <style type="text/css">xg-text-track.xg-text-track {
         font-family: "PingFang SC", "SF Pro SC", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
         -webkit-font-smoothing: antialiased;
@@ -5807,7 +5806,7 @@
         // 当前作品页的所有评论数据
         __THIS__.commentList = [];
         // 展开时,每次加载多少个
-        __THIS__.pageSize = 1;
+        __THIS__.pageSize = 2;
 
         /**
          * 页面功能初始化
@@ -5917,14 +5916,8 @@
                     rootDom.find(".commentList").remove();
                 }else{
                     // 展开
-                    // 根据topId,找到对应的childArray
-                    let childArray = __THIS__.getChildArray(topId,__THIS__.commentList);
-                    // 获取拼接的开始下标
-                    let startIndex = __THIS__.getStartIndex(rootDom);
-                    // 获取拼接的dom
-                    let childDom = __THIS__.openMoreCommentEventTemplate(childArray,startIndex);
-                    // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间 拼接到在commentItem__details__main之后
-                    rootDom.find(".commentItem__details__main").after(childDom);
+                    // 处理top下的评论渲染
+                    __THIS__.childCommentRender(rootDom);
                 }
 
                 // 调用评论折叠转换  把展开回复 替换为收起回复  后续需要处理每次展开多少条问题
@@ -5932,6 +5925,16 @@
 
                 // 因为存在元素的拼接,所以刚拼接的元素是没有事件的,重新加载事件绑定
                 __THIS__.commentItemEvent();
+            });
+
+            /**
+             * 绑定 [展开更多回复] 事件
+             */
+            $(".commentList__footer").unbind("click").bind("click",function(e){
+                // 获取点击的top
+                let rootDom = $(e.target).parents(".commentItem");
+                // 调用子评论渲染方法即可
+                __THIS__.childCommentRender(rootDom);
             });
         };
 
@@ -6174,26 +6177,30 @@
         };
 
         /**
-         * [展开x条回复] 单击事件 对应的  元素模板
+         * 处理top下的评论渲染 渲染child
          * @param childArr 所有child数组
-         * @param startIndex 开始拼接的下标
+         * @param rootDom 点击的top
          */
-        __THIS__.openMoreCommentEventTemplate = function(childArr,startIndex){
-            let str = '';
+        __THIS__.childCommentRender = function(rootDom){
+            let topId = rootDom.attr("data-id");
+            // 根据topId,找到对应的childArray
+            let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
+            // 获取拼接的开始下标
+            let startIndex = __THIS__.getStartIndex(rootDom);
+            // 截止位置
+            let endIndex = startIndex+__THIS__.pageSize;
+            // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
+            let subArr = childArr.slice(startIndex,endIndex);
+            // 当endIndex>= childArr时 说明完全加载完毕,需要移除[显示更多回复]标签 ;当值为false时,则要拼接
+            let last = endIndex >= childArr.length;
+            let commentListDom = '';
             // startIndex==0 说明是首次拼接  头部控制
             if(startIndex == 0){
-                str += '<div class="commentList">';
+                commentListDom += '<div class="commentList">';
             }
-
-            // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
-            let endIndex = startIndex+__THIS__.pageSize;
-            let subArr = childArr.slice(startIndex,endIndex);
-            // 当endIndex>= childArr时 说明完全加载完毕 为false,则要拼接加载更多标签
-            let last = endIndex >= childArr.length;
-
             // item项
             subArr.forEach((childTemp, index) => {
-                str += '    <div class="commentItem sub-comment-item" data-id="'+childTemp.commentId+'">\n' +
+                commentListDom += '    <div class="commentItem sub-comment-item" data-id="'+childTemp.commentId+'">\n' +
                     '        <div class="commentItem__info">\n' +
                     '            <div class="component-avatar commentItem__headImg clickable" style="width: 24px; height: 24px;"><a\n' +
                     '                    class="component-avatar__inner" title="'+childTemp.userInfo.userName+'" aria-label="'+childTemp.userInfo.userName+'"\n' +
@@ -6216,9 +6223,9 @@
                     '                <div class="commentItem__text">\n';
                 // 为true 则说明是@模式,需要增加下面标签
                 if(childTemp.aiteState){
-                    str += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
+                    commentListDom += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
                 }
-                str +='              <pre>'+childTemp.comment+'</pre>\n' +
+                commentListDom +='              <pre>'+childTemp.comment+'</pre>\n' +
                     '                </div>\n' +
                     '                <div class="commentItem__interaction_contaniner">\n' +
                     '                    <div class="commentItem__interaction">\n' +
@@ -6244,25 +6251,33 @@
                     '        </div>\n' +
                     '    </div>';
             });
-
-
-            // 是否拼接 加载更多按钮
-            if(last){
-                // 移除
-            }else{
-                // 拼接
-                // <div className="commentList__footer">
-                //     <div style="cursor: pointer;">显示更多回复</div>
-                // </div>
-            }
-
             // 首次拼接,尾部控制
             if(startIndex == 0){
-                str += '<audio></audio></div>';
+                commentListDom += '<audio></audio></div>';
+                // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间 拼接到在commentItem__details__main之后
+                rootDom.find(".commentItem__details__main").after(commentListDom);
+            }else{
+                // 在commentList内部 audio元素前 追加dom
+                rootDom.find(".commentList audio").before(commentListDom);
             }
 
-            return str;
+            // [展示更多回复]控制
+            if(last){
+                // 加载到底了,移除该标签
+                rootDom.find(".commentList .commentList__footer").remove();
+            }else if(rootDom.find(".commentList .commentList__footer").length!=1){
+                // 还有评论需要加载, 添加标签,如果已存在,则跳过拼接
+                let moreStr = '<div class="commentList__footer">\n' +
+                    '    <div style="cursor: pointer;">显示更多回复</div>\n' +
+                    '</div>';
+                // 拼接到audio,元素之后
+                rootDom.find(".commentList audio").after(moreStr);
+                // 绑定 [展开更多回复] 事件
+                __THIS__.commentItemEvent();
+            }
         };
+
+
 
     };
     new currentPageObj().init();
