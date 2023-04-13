@@ -5830,7 +5830,18 @@
             // 这里暂时不发送请求获取数据,只记录zuopinId 还有userId
             __THIS__.userInfo.userId = param.userId;
             __THIS__.zuoPinInfo.zuopinId = param.zuopinId;
-            console.log("当前页面作品Id:"+__THIS__.zuoPinInfo.zuopinId+",用户ID:"+__THIS__.userInfo.userId)
+            console.log("当前页面作品Id:"+__THIS__.zuoPinInfo.zuopinId+",用户ID:"+__THIS__.userInfo.userId);
+
+            // 加载系统config参数
+            utils.send(
+                function(temp){
+                    __THIS__.pageSize = Number(temp.data.cfg_count_fold_limit);
+                }
+                ,"/commentController/getConfigParam"
+                ,{}
+                ,utils.PUT_REQUEST
+            );
+
         };
 
         /**
@@ -6188,7 +6199,7 @@
             // 获取拼接的开始下标
             let startIndex = __THIS__.getStartIndex(rootDom);
             // 截止位置
-            let endIndex = startIndex+__THIS__.pageSize;
+            let endIndex = startIndex + __THIS__.pageSize;
             // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
             let subArr = childArr.slice(startIndex,endIndex);
             // 当endIndex>= childArr时 说明完全加载完毕,需要移除[显示更多回复]标签 ;当值为false时,则要拼接
