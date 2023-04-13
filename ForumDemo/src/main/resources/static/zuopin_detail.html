@@ -5806,6 +5806,8 @@
         __THIS__.userInfo = {};
         // 当前作品页的所有评论数据
         __THIS__.commentList = [];
+        // 展开时,每次加载多少个
+        __THIS__.pageSize = 1;
 
         /**
          * 页面功能初始化
@@ -5917,8 +5919,10 @@
                     // 展开
                     // 根据topId,找到对应的childArray
                     let childArray = __THIS__.getChildArray(topId,__THIS__.commentList);
+                    // 获取拼接的开始下标
+                    let startIndex = __THIS__.getStartIndex(rootDom);
                     // 获取拼接的dom
-                    let childDom = __THIS__.openMoreCommentEventTemplate(childArray);
+                    let childDom = __THIS__.openMoreCommentEventTemplate(childArray,startIndex);
                     // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间 拼接到在commentItem__details__main之后
                     rootDom.find(".commentItem__details__main").after(childDom);
                 }
@@ -5929,6 +5933,35 @@
                 // 因为存在元素的拼接,所以刚拼接的元素是没有事件的,重新加载事件绑定
                 __THIS__.commentItemEvent();
             });
+        };
+
+        /**
+         * [展开]时用到,返回从那个下标处开始拼接
+         * @param dom
+         */
+        __THIS__.getStartIndex = function(dom){
+            let count = dom.find(".commentList .sub-comment-item").size();
+            if(count==0){
+                // 没有找到,说明首次展开 则返回规定的页面大小-1 下标位置
+                return 0 ;
+            }else{
+                /**
+                 * 因为回复的对象 除了后台入库,也会把该数据添加到前端的评论集合中
+                 * 这个地方能够兼容回复问题 例如 展开部分5条 然后我回复了一条  页面展示6条
+                 *
+                 * 举例:
+                 * 数据 [A,B,C,D,E,F,G,H,I,J]  一共10条评论 假设每次打开5条 循环pageSzie 即循环5次 拼接到E
+                 * [ A,B,C,D,E]
+                 * 然后我回复了一条
+                 *      总集合:[New,A,B,C,D,E,F,G,H,I,J]
+                 *      页面展示:[New,A,B,C,D,E]  相当于页面拼接了6个元素  那么
+                 * 下次拼接应该拼接 从元素F这个地方开始 他的下标在总集合中是 6 即从child[6] 拼接pageSize个元素 而count正好为6
+                 *
+                 * 同样的,正常情况下 5条 [ A,B,C,D,E] 下次拼接第6个元素F 在总集合中的下标位置是 5  而count正好为5
+                 * 那么就标识 页面已有的元素个数 就是我们要的返回结果
+                 */
+                return count;
+            }
         };
 
         /**
@@ -6143,10 +6176,23 @@
         /**
          * [展开x条回复] 单击事件 对应的  元素模板
          * @param childArr 所有child数组
+         * @param startIndex 开始拼接的下标
          */
-        __THIS__.openMoreCommentEventTemplate = function(childArr){
-            let str = '<div class="commentList">';
-            for(let childTemp of childArr){
+        __THIS__.openMoreCommentEventTemplate = function(childArr,startIndex){
+            let str = '';
+            // startIndex==0 说明是首次拼接  头部控制
+            if(startIndex == 0){
+                str += '<div class="commentList">';
+            }
+
+            // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
+            let endIndex = startIndex+__THIS__.pageSize;
+            let subArr = childArr.slice(startIndex,endIndex);
+            // 当endIndex>= childArr时 说明完全加载完毕 为false,则要拼接加载更多标签
+            let last = endIndex >= childArr.length;
+
+            // item项
+            subArr.forEach((childTemp, index) => {
                 str += '    <div class="commentItem sub-comment-item" data-id="'+childTemp.commentId+'">\n' +
                     '        <div class="commentItem__info">\n' +
                     '            <div class="component-avatar commentItem__headImg clickable" style="width: 24px; height: 24px;"><a\n' +
@@ -6168,11 +6214,11 @@
                     '        <div class="commentItem__details">\n' +
                     '            <div class="commentItem__details__main">\n' +
                     '                <div class="commentItem__text">\n';
-                    // 为true 则说明是@模式,需要增加下面标签
-                    if(childTemp.aiteState){
-                        str += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
-                    }
-                    str +='              <pre>'+childTemp.comment+'</pre>\n' +
+                // 为true 则说明是@模式,需要增加下面标签
+                if(childTemp.aiteState){
+                    str += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
+                }
+                str +='              <pre>'+childTemp.comment+'</pre>\n' +
                     '                </div>\n' +
                     '                <div class="commentItem__interaction_contaniner">\n' +
                     '                    <div class="commentItem__interaction">\n' +
@@ -6197,8 +6243,24 @@
                     '            </div>\n' +
                     '        </div>\n' +
                     '    </div>';
+            });
+
+
+            // 是否拼接 加载更多按钮
+            if(last){
+                // 移除
+            }else{
+                // 拼接
+                // <div className="commentList__footer">
+                //     <div style="cursor: pointer;">显示更多回复</div>
+                // </div>
             }
-            str += '<audio></audio></div>';
+
+            // 首次拼接,尾部控制
+            if(startIndex == 0){
+                str += '<audio></audio></div>';
+            }
+
             return str;
         };
 
