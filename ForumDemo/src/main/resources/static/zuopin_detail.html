@@ -4994,6 +4994,7 @@
 <link href="util/MyUtils.css" rel="stylesheet">
 <script src="jquery/jquery.min.js"></script>
 <script src="util/MyUtils.js"></script>
+<script src="util/MyTemplateDefinition.js"></script>
 <script type="text/javascript">
     var currentPageObj = function (option){
         // 这个地方最好不要用__THIS__,防止工具类中绑定的click事件 里边使用的__THIS__被这个地方所覆盖 (处理解决:把utils中的THIS换个名字)
@@ -5050,7 +5051,7 @@
             utils.send(
                 function(temp){
                     // 渲染dom
-                    __THIS__.renderCommentData(temp);
+                    __THIS__.topCommentRender(temp);
                     // 绑定事件
                     __THIS__.commentItemEvent();
                 }
@@ -5062,10 +5063,10 @@
         };
 
         /**
-         * 拿到数据,进行页面渲染
+         * 拿到数据,进行页面渲染 只渲染top层
          * @param data
          */
-        __THIS__.renderCommentData = function(data){
+        __THIS__.topCommentRender = function(data){
             /**
              * 1.第一种,[只要有child,就显示展开x条回复,如果没有就单条处理]
              * 2.只要点击了展开,就一定存在收起回复  和第一种是互斥的,有2没1,有1没2
@@ -5085,17 +5086,66 @@
                     // console.log(temp);
                     // 这层遍历,只考虑第一种情况
                     if(temp.child.length==0){
-                        initDom += __THIS__.firstCommentTemplate_notHaveChild(temp);
-                        // dom.append(__THIS__.firstCommentTemplate_notHaveChild(temp));
+                        initDom += templateUtils.firstCommentTemplate_notHaveChild(temp);
                     }else{
-                        initDom += __THIS__.firstCommentTemplate_haveChild(temp);
-                        // dom.append(__THIS__.firstCommentTemplate_haveChild(temp));
+                        initDom += templateUtils.firstCommentTemplate_haveChild(temp);
                     }
                 }
                 dom.append(initDom);
             }
         };
 
+
+        /**
+         * 处理top下的评论渲染 渲染child
+         * @param childArr 所有child数组
+         * @param rootDom 点击的top
+         */
+        __THIS__.childCommentRender = function(rootDom){
+            let topId = rootDom.attr("data-id");
+            // 根据topId,找到对应的childArray
+            let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
+            // 获取拼接的开始下标
+            let startIndex = __THIS__.getStartIndex(rootDom);
+            // 截止位置
+            let endIndex = startIndex + __THIS__.pageSize;
+            // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
+            let subArr = childArr.slice(startIndex,endIndex);
+            // 当endIndex>= childArr时 说明完全加载完毕,需要移除[显示更多回复]标签 ;当值为false时,则要拼接
+            let last = endIndex >= childArr.length;
+            let commentListDom = '';
+            // startIndex==0 说明是首次拼接  头部控制
+            if(startIndex == 0){
+                commentListDom += '<div class="commentList">';
+            }
+            // item项
+            subArr.forEach((childTemp, index) => {
+                commentListDom += templateUtils.getchildCommentRenderDom(childTemp);
+            });
+            // 首次拼接,尾部控制
+            if(startIndex == 0){
+                commentListDom += '<audio></audio></div>';
+                // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
+                // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
+                rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+            }else{
+                // 在commentList内部 audio元素前 追加dom
+                rootDom.find(".commentList audio").before(commentListDom);
+            }
+
+            // [展示更多回复]控制
+            if(last){
+                // 加载到底了,移除该标签
+                rootDom.find(".commentList .commentList__footer").remove();
+            }else if(rootDom.find(".commentList .commentList__footer").length!=1){
+                // 还有评论需要加载, 添加标签,如果已存在,则跳过拼接
+                let moreStr = '<div class="commentList__footer">\n' +
+                    '    <div style="cursor: pointer;">显示更多回复</div>\n' +
+                    '</div>';
+                // 拼接到audio,元素之后
+                rootDom.find(".commentList audio").after(moreStr);
+            }
+        };
 
 
         /**
@@ -5158,7 +5208,7 @@
                 if(commentWriterTarget.length==0){
                     $(e.target).text('取消回复');
                     // 在这个div 后 追加同级标签
-                    let commentWriterDom = __THIS__.getCommentWriterTemplate();
+                    let commentWriterDom = templateUtils.getCommentWriterTemplate();
                     fatherDivDom.after(commentWriterDom);
                 }else{
                     $(e.target).text('回复');
@@ -5175,119 +5225,9 @@
                 let loginUser = utils.getCache("LOGIN_USER");
                 if(loginUser==null){
                     // 登录信息为空,则弹框
-                    $("body").append('<div class="Dialog-container login-dialog-container" style="background-color: rgba(0, 0, 0, 0.5); display: block;">\n' +
-                        '    <div class="Dialog__wrap">\n' +
-                        '        <div class="LoginDialog__container" role="dialog" tabindex="0" aria-modal="true"\n' +
-                        '             aria-labelledby="LoginDialog__title" style="width: 661px;">\n' +
-                        '            <div class="LoginDialog__header">\n' +
-                        '                <div class="title" id="LoginDialog__title">登录后可发评论</div>\n' +
-                        '                <button class="close" tabindex="0" aria-label="关闭"></button>\n' +
-                        '            </div>\n' +
-                        '            <div id="BD_Login_Form" class="LoginDialog__content">\n' +
-                        '                <div class="web-login-container">\n' +
-                        '                    <article class="web-login">\n' +
-                        '                        <article class="web-login-union">\n' +
-                        '                            <div class="web-login-union__login">\n' +
-                        '                                <div class="web-login-union__login__form">\n' +
-                        '                                    <div class="web-login-union__login__form__title">密码登录</div>\n' +
-                        '                                    <div class="web-login-union__login__form__content">\n' +
-                        '                                        <article class="web-login-account-password">\n' +
-                        '                                            <div class="web-login-account-password__account-input-wrapper">\n' +
-                        '                                                <div class="web-login-normal-input">\n' +
-                        '                                                    <div class="web-login-area-code">\n' +
-                        '                                                        <div class="web-login-area-code__input-wrapper"><input\n' +
-                        '                                                                type="text" size="3" name="web-login-area-code-input"\n' +
-                        '                                                                class="web-login-area-code__input-wrapper__input"\n' +
-                        '                                                                autocomplete="off" role="combobox" tabindex="0"\n' +
-                        '                                                                aria-owns="select-ul"\n' +
-                        '                                                                aria-activedescendant="areacode_item_0"\n' +
-                        '                                                                aria-label="国家/地区" value="+86"><i\n' +
-                        '                                                                class="web-login-area-code__input-wrapper__icon-arrow web-login-area-code__input-wrapper__icon-arrow__down"></i>\n' +
-                        '                                                        </div>\n' +
-                        '                                                    </div>\n' +
-                        '                                                    <input name="normal-input" type="text"\n' +
-                        '                                                           class="web-login-normal-input__input" placeholder="请输入手机号"\n' +
-                        '                                                           autocomplete="username" maxlength="50" tabindex="0"\n' +
-                        '                                                           aria-label="请输入手机号或邮箱" value=""></div>\n' +
-                        '                                            </div>\n' +
-                        '                                            <div class="web-login-account-password__password-input-wrapper">\n' +
-                        '                                                <div class="web-login-button-input">\n' +
-                        '                                                    <div class="web-login-button-input__input-wrapper"><input\n' +
-                        '                                                            name="button-input" type="password"\n' +
-                        '                                                            class="web-login-button-input__input" placeholder="请输入密码"\n' +
-                        '                                                            autocomplete="off" maxlength="20" tabindex="0"\n' +
-                        '                                                            aria-label="请输入密码" value=""></div>\n' +
-                        '                                                    <span class="web-login-button-input__button-text" tabindex="0"\n' +
-                        '                                                          aria-live="off" role="button">忘记密码</span></div>\n' +
-                        '                                            </div>\n' +
-                        '                                            <div class="web-login-error" role="alert" aria-relevant="all" tabindex="0"\n' +
-                        '                                                 aria-live="assertive" aria-atomic="true" aria-label="警告:手机号不能为空">\n' +
-                        '                                                手机号不能为空\n' +
-                        '                                            </div>\n' +
-                        '                                            <div class="web-login-account-password__remember"><span\n' +
-                        '                                                    class="web-login-account-password__remember__checkbox"></span><span\n' +
-                        '                                                    class="web-login-account-password__remember__text">记住密码</span></div>\n' +
-                        '                                            <div class="web-login-account-password__button-wrapper">\n' +
-                        '                                                <button type="submit"\n' +
-                        '                                                        class="web-login-button web-login-button__disabled">登录\n' +
-                        '                                                </button>\n' +
-                        '                                            </div>\n' +
-                        '                                        </article>\n' +
-                        '                                    </div>\n' +
-                        '                                </div>\n' +
-                        '                                <div class="web-login-union__login__scan-code">\n' +
-                        '                                    <div class="web-login-union__login__scan-code__title">扫码登录</div>\n' +
-                        '                                    <article class="web-login-scan-code">\n' +
-                        '                                        <div class="web-login-scan-code__content">\n' +
-                        '                                               <div class="web-login-scan-code__content__qrcode-wrapper web-login-scan-code__content__qrcode-tip">\n' +
-                        '                                                <img alt=""\n' +
-                        '                                                     src="img/er_wei_ma.jfif"\n' +
-                        '                                                     class="web-login-scan-code__content__qrcode-wrapper__qrcode"\n' +
-                        '                                                     tabindex="0" aria-label="二维码">' +
-                        '                                                </div>' +
-                        '                                            <div class="web-login-scan-desc"><p>打开<span class="">西瓜视频手机APP</span></p>\n' +
-                        '                                                <p>我的-扫一扫登录<span class="web-login-scan-desc__question"></span></p></div>\n' +
-                        '                                        </div>\n' +
-                        '                                    </article>\n' +
-                        '                                </div>\n' +
-                        '                            </div>\n' +
-                        '                            <div class="web-login-union__footer">\n' +
-                        '                                <div class="web-login-other-login-method">\n' +
-                        '                                    <div class="web-login-other-login-method__text">其他方式：</div>\n' +
-                        '                                    <ul class="web-login-other-login-method__list">\n' +
-                        '                                        <li class="web-login-other-login-method__list__item" tabindex="0"\n' +
-                        '                                            aria-label="抖音授权登录" role="button"><i\n' +
-                        '                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__aweme"></i>\n' +
-                        '                                        </li>\n' +
-                        '                                        <li class="web-login-other-login-method__list__item" tabindex="0"\n' +
-                        '                                            aria-label="qq授权登录" role="button"><i\n' +
-                        '                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__qzone_sns"></i>\n' +
-                        '                                        </li>\n' +
-                        '                                        <li class="web-login-other-login-method__list__item" tabindex="0"\n' +
-                        '                                            aria-label="微信授权登录" role="button"><i\n' +
-                        '                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__weixin"></i>\n' +
-                        '                                        </li>\n' +
-                        '                                    </ul>\n' +
-                        '                                </div>\n' +
-                        '                                <ul class="web-login-link-list">\n' +
-                        '                                    <li class="web-login-link-list__item">\n' +
-                        '                                        <div class="web-login-link-list__item__text" tabindex="0" aria-label="手机验证码登录"\n' +
-                        '                                             role="button">手机验证码登录\n' +
-                        '                                        </div>\n' +
-                        '                                    </li>\n' +
-                        '                                </ul>\n' +
-                        '                            </div>\n' +
-                        '                            <div class="web-login-footer"><span\n' +
-                        '                                    class="web-login-footer__checkbox web-login-footer__checkbox__checked"></span>登录即代表你同意<a\n' +
-                        '                                    href="//www.ixigua.com/user_agreement/" target="user_agreement">用户协议</a>和<a\n' +
-                        '                                    href="//www.ixigua.com/privacy_policy/" target="privacy_policy">隐私政策</a></div>\n' +
-                        '                        </article>\n' +
-                        '                    </article>\n' +
-                        '                </div>\n' +
-                        '            </div>\n' +
-                        '        </div>\n' +
-                        '    </div>\n' +
-                        '</div>');
+                    let temp = {};
+                    temp.title = "登录xxxx";
+                    $("body").append(templateUtils.getLoginDialogDom(temp));
                     $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
                 };
 
@@ -5355,22 +5295,10 @@
                 let topId = rootDom.attr("data-id");
                 // 计算 评论条数
                 let childArray = __THIS__.getChildArray(topId,__THIS__.commentList);
-                let openDom = '<button class="commentItem__interaction__moreReply"><span>展开 '+childArray.length+' 条回复</span><i class="newFoldIcon">\n' +
-                    '    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
-                    '        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                    '              d="M2.854 5.868a.5.5 0 01.353-.853h5.586a.5.5 0 01.353.853L6.354 8.661a.5.5 0 01-.708 0L2.854 5.868z"\n' +
-                    '              fill="#A3A7AD"></path>\n' +
-                    '    </svg>\n' +
-                    '</i></button>';
+                let openDom = templateUtils.getOpenCommentDom(childArray);
                 rootDom.find(".hr").before(openDom);
             }else{
-                let shrinkDom = '<button class="commentItem__interaction__moreReply"><span>收起回复</span><i class="newFoldIcon actived">\n' +
-                    '    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
-                    '        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                    '              d="M9.146 6.674a.5.5 0 01-.353.853H3.207a.5.5 0 01-.353-.853L5.646 3.88a.5.5 0 01.708 0l2.792 2.793z"\n' +
-                    '              fill="#A3A7AD"></path>\n' +
-                    '    </svg>\n' +
-                    '</i></button>';
+                let shrinkDom = templateUtils.getShrinkCommentDom();
                 rootDom.find(".hr").before(shrinkDom);
             }
         };
@@ -5428,285 +5356,10 @@
 
 
 
-
         /**
          * 评论展开部分,存在[加载更多按钮]  分析
          *
          */
-
-
-
-
-        /**
-         * 第一种情况模板  有child
-         * @param temp
-         */
-        __THIS__.firstCommentTemplate_haveChild = function(temp){
-            let str = '<div class="commentItem" data-id="'+temp.commentId+'">\n' +
-                '    <div class="commentItem__info">\n' +
-                '        <div class="component-avatar commentItem__headImg clickable" style="width: 40px; height: 40px;"><a\n' +
-                '                class="component-avatar__inner" title="'+temp.userInfo.userName+'" aria-label="'+temp.userInfo.userName+'"\n' +
-                '                target="user_'+temp.userInfo.userId+'" data-disable_default="true">\n' +
-                '            <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
-                '                                             src="'+temp.userInfo.userHead+'"\n' +
-                '                                             data-src=""\n' +
-                '                                             backup-src=""\n' +
-                '                                             alt="'+temp.userInfo.userName+'头像"\n' +
-                '                                             style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
-                '            </div>\n' +
-                '            <div class="BU-MagicImage__shadow"></div>\n' +
-                '        </a></div>\n' +
-                '        <div class="commentItem__userName"><span class="user__name">'+temp.userInfo.userName+'</span></div>\n' +
-                '        <div class="commentItem__publishTime">'+temp.workTimeText+'</div>\n' +
-                '        <div class="commentItem__ipAddress">'+temp.userInfo.address+'</div>\n' +
-                '    </div>\n' +
-                '    <div class="commentItem__details">\n' +
-                '        <div class="commentItem__details__main">\n' +
-                '            <div class="commentItem__text">\n' +
-                '                <pre>'+temp.comment+'</pre>\n' +
-                '            </div>\n' +
-                '            <div class="commentItem__interaction_contaniner">\n' +
-                '                <div class="commentItem__interaction">\n' +
-                '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                             role="img">\n' +
-                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-                '                                  fill="#0C0D0F"></path>\n' +
-                '                        </svg>\n' +
-                '                        <span>'+__THIS__.getZanCountText(temp.zanCount)+'</span></button>\n' +
-                '                    <button class="commentItem__interaction__reply">回复</button>\n' +
-                '                </div>\n' +
-                '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
-                '                    <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                          d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
-                '                          fill="#0C0D0F"></path>\n' +
-                '                </svg>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '        <button class="commentItem__interaction__moreReply"><span>展开 '+temp.child.length+' 条回复</span><i class="newFoldIcon">\n' +
-                '            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
-                '                <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                      d="M2.854 5.868a.5.5 0 01.353-.853h5.586a.5.5 0 01.353.853L6.354 8.661a.5.5 0 01-.708 0L2.854 5.868z"\n' +
-                '                      fill="#A3A7AD"></path>\n' +
-                '            </svg>\n' +
-                '        </i></button>\n' +
-                '        <div class="hr"></div>\n' +
-                '    </div>\n' +
-                '</div>';
-            return str;
-        };
-
-        /**
-         * 第一种情况模板  没有有child
-         * @param temp
-         */
-        __THIS__.firstCommentTemplate_notHaveChild = function(temp){
-            let str = '<div class="commentItem" data-id="'+temp.commentId+'">\n' +
-                '    <div class="commentItem__info">\n' +
-                '        <div class="component-avatar commentItem__headImg clickable" style="width: 40px; height: 40px;"><a\n' +
-                '                class="component-avatar__inner" title="'+temp.userInfo.userName+'" aria-label="'+temp.userInfo.userName+'" target="user_'+temp.userInfo.userId+'"\n' +
-                '                data-disable_default="true">\n' +
-                '            <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
-                '                                             src="'+temp.userInfo.userHead+'"\n' +
-                '                                             data-src=""\n' +
-                '                                             backup-src=""\n' +
-                '                                             alt="'+temp.userInfo.userName+'头像"\n' +
-                '                                             style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
-                '            </div>\n' +
-                '            <div class="BU-MagicImage__shadow"></div>\n' +
-                '        </a></div>\n' +
-                '        <div class="commentItem__userName"><span class="user__name">'+temp.userInfo.userName+'</span></div>\n' +
-                '        <div class="commentItem__publishTime">'+temp.workTimeText+'</div>\n' +
-                '        <div class="commentItem__ipAddress">'+temp.userInfo.address+'</div>\n' +
-                '    </div>\n' +
-                '    <div class="commentItem__details">\n' +
-                '        <div class="commentItem__details__main">\n' +
-                '            <div class="commentItem__text">\n' +
-                '                <pre>'+temp.comment+'</pre>\n' +
-                '            </div>\n' +
-                '            <div class="commentItem__interaction_contaniner">\n' +
-                '                <div class="commentItem__interaction">\n' +
-                '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                             role="img">\n' +
-                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-                '                                  fill="#0C0D0F"></path>\n' +
-                '                        </svg>\n' +
-                '                        <span>'+__THIS__.getZanCountText(temp.zanCount)+'</span></button>\n' +
-                '                    <button class="commentItem__interaction__reply">回复</button>\n' +
-                '                </div>\n' +
-                '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
-                '                    <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                          d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
-                '                          fill="#0C0D0F"></path>\n' +
-                '                </svg>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '        <div class="hr"></div>\n' +
-                '    </div>\n' +
-                '</div>';
-            return str;
-        };
-
-        /**
-         * 处理top下的评论渲染 渲染child
-         * @param childArr 所有child数组
-         * @param rootDom 点击的top
-         */
-        __THIS__.childCommentRender = function(rootDom){
-            let topId = rootDom.attr("data-id");
-            // 根据topId,找到对应的childArray
-            let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
-            // 获取拼接的开始下标
-            let startIndex = __THIS__.getStartIndex(rootDom);
-            // 截止位置
-            let endIndex = startIndex + __THIS__.pageSize;
-            // 根据startIndex,pageSize 取出截取到的数组 0,5  5,10   10,15
-            let subArr = childArr.slice(startIndex,endIndex);
-            // 当endIndex>= childArr时 说明完全加载完毕,需要移除[显示更多回复]标签 ;当值为false时,则要拼接
-            let last = endIndex >= childArr.length;
-            let commentListDom = '';
-            // startIndex==0 说明是首次拼接  头部控制
-            if(startIndex == 0){
-                commentListDom += '<div class="commentList">';
-            }
-            // item项
-            subArr.forEach((childTemp, index) => {
-                commentListDom += '    <div class="commentItem sub-comment-item" data-id="'+childTemp.commentId+'">\n' +
-                    '        <div class="commentItem__info">\n' +
-                    '            <div class="component-avatar commentItem__headImg clickable" style="width: 24px; height: 24px;"><a\n' +
-                    '                    class="component-avatar__inner" title="'+childTemp.userInfo.userName+'" aria-label="'+childTemp.userInfo.userName+'"\n' +
-                    '                    target="user_'+childTemp.userInfo.userId+'" data-disable_default="true">\n' +
-                    '                <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"\n' +
-                    '                                                 src="'+childTemp.userInfo.userHead+'"\n' +
-                    '                                                 data-src=""\n' +
-                    '                                                 backup-src=""\n' +
-                    '                                                 alt="'+childTemp.userInfo.userName+'头像"\n' +
-                    '                                                 style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
-                    '                </div>\n' +
-                    '                <div class="BU-MagicImage__shadow"></div>\n' +
-                    '            </a></div>\n' +
-                    '            <div class="commentItem__userName"><span class="user__name">'+childTemp.userInfo.userName+'</span></div>\n' +
-                    '            <div class="commentItem__publishTime">'+childTemp.workTimeText+'</div>\n' +
-                    '            <div class="commentItem__ipAddress">'+childTemp.userInfo.address+'</div>\n' +
-                    '        </div>\n' +
-                    '        <div class="commentItem__details">\n' +
-                    '            <div class="commentItem__details__main">\n' +
-                    '                <div class="commentItem__text">\n';
-                // 为true 则说明是@模式,需要增加下面标签
-                if(childTemp.aiteState){
-                    commentListDom += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
-                }
-                commentListDom +='              <pre>'+childTemp.comment+'</pre>\n' +
-                    '                </div>\n' +
-                    '                <div class="commentItem__interaction_contaniner">\n' +
-                    '                    <div class="commentItem__interaction">\n' +
-                    '                        <button aria-label="'+childTemp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-                    '                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
-                    '                                 xmlns="http://www.w3.org/2000/svg" role="img">\n' +
-                    '                                <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                    '                                      d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-                    '                                      fill="#0C0D0F"></path>\n' +
-                    '                            </svg>\n' +
-                    '                            <span>'+__THIS__.getZanCountText(childTemp.zanCount)+'</span></button>\n' +
-                    '                        <button class="commentItem__interaction__reply">回复</button>\n' +
-                    '                    </div>\n' +
-                    '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
-                    '                         xmlns="http://www.w3.org/2000/svg" role="img"\n' +
-                    '                         class="dotMoreAction_trigger commentItem__moreOptions">\n' +
-                    '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                    '                              d="M5.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.5.003a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM20 12a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"\n' +
-                    '                              fill="#0C0D0F"></path>\n' +
-                    '                    </svg>\n' +
-                    '                </div>\n' +
-                    '            </div>\n' +
-                    '        </div>\n' +
-                    '    </div>';
-            });
-            // 首次拼接,尾部控制
-            if(startIndex == 0){
-                commentListDom += '<audio></audio></div>';
-                // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
-                // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
-                rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
-            }else{
-                // 在commentList内部 audio元素前 追加dom
-                rootDom.find(".commentList audio").before(commentListDom);
-            }
-
-            // [展示更多回复]控制
-            if(last){
-                // 加载到底了,移除该标签
-                rootDom.find(".commentList .commentList__footer").remove();
-            }else if(rootDom.find(".commentList .commentList__footer").length!=1){
-                // 还有评论需要加载, 添加标签,如果已存在,则跳过拼接
-                let moreStr = '<div class="commentList__footer">\n' +
-                    '    <div style="cursor: pointer;">显示更多回复</div>\n' +
-                    '</div>';
-                // 拼接到audio,元素之后
-                rootDom.find(".commentList audio").after(moreStr);
-            }
-        };
-
-        /**
-         * 返回 回复事件触发时的html模板
-         */
-        __THIS__.getCommentWriterTemplate = function(){
-            let commentWriter = '<div class="commentWriter" style="">\n' +
-                '    <div class="component-avatar headImg clickable" style="width: 40px; height: 40px;"><a\n' +
-                '            class="component-avatar__inner" target="user_5758208720" data-disable_default="true">\n' +
-                '        <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage tt-img-loaded"\n' +
-                '                                         data-src=""\n' +
-                '                                         backup-src=""\n' +
-                '                                         alt="undefined头像"\n' +
-                '                                         src="img/main_index/user_head/head_me.image"\n' +
-                '                                         style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
-                '        </div>\n' +
-                '        <div class="BU-MagicImage__shadow"></div>\n' +
-                '    </a></div>\n' +
-                '    <div class="writer-wrapper">\n' +
-                '        <div class="input-wrapper"><textarea placeholder="回复虫虫不咬人：" maxlength="2000" class="ant-input"\n' +
-                '                                             style="height: 60px; min-height: 60px; max-height: 120px;"></textarea>\n' +
-                '        </div>\n' +
-                '        <div class="img-zone" style="display: none;">\n' +
-                '            <div tabindex="0" class="dropzone-initial"><input accept="image/*" multiple="" type="file"\n' +
-                '                                                              autocomplete="off" tabindex="-1" style="display: none;">\n' +
-                '                <div>点击上传图片</div>\n' +
-                '                <div>或将图片拖拽到此处上传(最多9张)</div>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '        <div class="input-opt">\n' +
-                '            <div class="input-opt-left">\n' +
-                '                <div class="input-opt-item" tabindex="0" role="button" title="表情">\n' +
-                '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                         role="img">\n' +
-                '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                              d="M3.5 12a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0ZM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2ZM9.184 14.624a.75.75 0 1 0-1.298.752A4.748 4.748 0 0 0 12 17.75c1.76 0 3.294-.957 4.114-2.374a.75.75 0 1 0-1.298-.752A3.249 3.249 0 0 1 12 16.25a3.249 3.249 0 0 1-2.816-1.626ZM9 8a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Zm7 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V9Z"\n' +
-                '                              fill="#0C0D0F"></path>\n' +
-                '                    </svg>\n' +
-                '                    <span>表情</span></div>\n' +
-                '                <div class="input-opt-item" tabindex="0" role="button" title="图片">\n' +
-                '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-                '                         role="img">\n' +
-                '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-                '                              d="M2.25 5c0-.966.784-1.75 1.75-1.75h16c.966 0 1.75.784 1.75 1.75v14A1.75 1.75 0 0 1 20 20.75H4A1.75 1.75 0 0 1 2.25 19V5ZM4 4.75a.25.25 0 0 0-.25.25v14c0 .138.112.25.25.25h1.166l7.578-8.437a1.75 1.75 0 0 1 2.584-.021l4.922 5.299V5a.25.25 0 0 0-.25-.25H4Zm16 14.5H7.182l6.678-7.434a.25.25 0 0 1 .369-.004l6.021 6.483V19a.25.25 0 0 1-.25.25ZM6.5 8.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm1-2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"\n' +
-                '                              fill="#0C0D0F"></path>\n' +
-                '                    </svg>\n' +
-                '                    <span>图片</span></div>\n' +
-                '            </div>\n' +
-                '            <div class="input-opt-right">\n' +
-                '                <button class="xg-button xg-button-primary xg-button-middle xg-button-disabled">发送</button>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '    </div>\n' +
-                '</div>';
-            return commentWriter;
-        }
-
 
 
     };
