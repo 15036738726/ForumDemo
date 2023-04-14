@@ -249,6 +249,11 @@
     <script type="application/ld+json" data-react-helmet="true">
         {"@context":"https://schema.org","@type":"VideoObject","name":"看谁不爽就是怼，记住我叫李宏伟！ - 西瓜视频","description":"看谁不爽就是怼，记住我叫李宏伟！ - 西瓜视频，于2023年02月16日上线，由刘老师说电影上传。西瓜视频为您提供高清视频，画面清晰、播放流畅，看丰富、高质量视频就上西瓜视频。","thumbnailUrl":["http://p26-sign.bdxiguaimg.com/tos-cn-i-0004/af156dc717294fd89158daf72e4af159~tplv-pk90l89vgd-crop-center:864:486.jpeg?x-expires=1712069232&x-signature=2UGGXnk6ac7DxyAAaeisIN%2BvAr4%3D"],"author":{"@type":"Person","name":"刘老师说电影"},"uploadDate":"2023-02-16T03:30:00.000Z","duration":"PT9M54S","embedUrl":"https://www.ixigua.com/embed?group_id=7200553229971784231","interactionStatistic":{"@type":"InteractionCounter","interactionType":{"@type":"http://schema.org/WatchAction"},"userInteractionCount":186898}}
     </script>
+
+    <link rel="stylesheet" type="text/css"
+          href="off_line_file/zuopin_detail/web-login.9dea969f0e.chunk.css">
+    <link rel="stylesheet" type="text/css"
+          href="off_line_file/zuopin_detail/3114.49907f4bea.chunk.css">
 </head>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -5168,7 +5173,6 @@
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
                 // 从本地存储中获取当前登录用户信息
                 let loginUser = utils.getCache("LOGIN_USER");
-                debugger;
                 if(loginUser==null){
                     // 登录信息为空,则弹框
                     $("body").append('<div class="Dialog-container login-dialog-container" style="background-color: rgba(0, 0, 0, 0.5); display: block;">\n' +
@@ -5235,19 +5239,12 @@
                         '                                    <div class="web-login-union__login__scan-code__title">扫码登录</div>\n' +
                         '                                    <article class="web-login-scan-code">\n' +
                         '                                        <div class="web-login-scan-code__content">\n' +
-                        '                                            <div class="web-login-scan-code__content__qrcode-wrapper"><img alt=""\n' +
-                        '                                                                                                           src="data:image/jpeg;base64,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"\n' +
-                        '                                                                                                           class="web-login-scan-code__content__qrcode-wrapper__qrcode"\n' +
-                        '                                                                                                           tabindex="0"\n' +
-                        '                                                                                                           aria-label="二维码">\n' +
-                        '                                                <div class="web-login-scan-code__content__qrcode-wrapper__mask">\n' +
-                        '                                                    <div class="web-login-scan-code__content__qrcode-wrapper__mask__toast">\n' +
-                        '                                                        <p class="web-login-scan-code__content__qrcode-wrapper__mask__toast__icon refresh">\n' +
-                        '                                                            点击刷新</p>\n' +
-                        '                                                        <p class="web-login-scan-code__content__qrcode-wrapper__mask__toast__text refresh">\n' +
-                        '                                                            二维码已失效</p></div>\n' +
-                        '                                                </div>\n' +
-                        '                                            </div>\n' +
+                        '                                               <div class="web-login-scan-code__content__qrcode-wrapper web-login-scan-code__content__qrcode-tip">\n' +
+                        '                                                <img alt=""\n' +
+                        '                                                     src="img/er_wei_ma.jfif"\n' +
+                        '                                                     class="web-login-scan-code__content__qrcode-wrapper__qrcode"\n' +
+                        '                                                     tabindex="0" aria-label="二维码">' +
+                        '                                                </div>' +
                         '                                            <div class="web-login-scan-desc"><p>打开<span class="">西瓜视频手机APP</span></p>\n' +
                         '                                                <p>我的-扫一扫登录<span class="web-login-scan-desc__question"></span></p></div>\n' +
                         '                                        </div>\n' +
@@ -5291,8 +5288,20 @@
                         '        </div>\n' +
                         '    </div>\n' +
                         '</div>');
+                    $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
+                };
 
-                }
+                __THIS__.commentItemEvent();
+            });
+
+            /**
+             * 登录弹框关闭事件
+             */
+            $(".close").unbind("click").bind("click",function(e){
+                // $(".login-dialog-container")
+                $(e.target).parents(".login-dialog-container").remove();
+                $('body').removeAttr("style");
+                $('body').removeClass("Dialog-lockscroll");
             });
 
             /**
