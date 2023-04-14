@@ -321,3 +321,8 @@ https://blog.csdn.net/sofeware333/article/details/99583076?utm_source=app&app_ve
 
 本地存储的sessionStoreage和localStorag的区别和使用
 https://blog.csdn.net/h18377528386/article/details/122692687
+
+
+设置localStorage有效期和过期时间的简单方法
+总所周知localStorage默认是不会过期的，也没有可设置过期的api，如果要实现过期清除就需要自己实现一个api
+https://www.jb51.net/article/239130.htm

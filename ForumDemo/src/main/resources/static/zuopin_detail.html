@@ -1343,6 +1343,7 @@
                             <div class="commentList">
                                 <!--一个个评论Top-->
                                 <!--<div class="commentItem" data-id="7216340102652511016"></div>-->
+
                             </div>
                         </div>
                     </div>
@@ -5101,7 +5102,7 @@
             /**
              * [展开x条回复] / [收起回复] 事件控制
              */
-            $(".commentItem__interaction__moreReply").unbind("click").bind("click",function(e){
+            $(".Page_Projection__comment .commentItem__interaction__moreReply").unbind("click").bind("click",function(e){
                 let rootDom = $(e.target).parents(".commentItem");
                 // 获取点击的top的评论ID
                 let topId = rootDom.attr("data-id");
@@ -5134,11 +5135,29 @@
             /**
              * 绑定 [展开更多回复] 事件
              */
-            $(".commentList__footer").unbind("click").bind("click",function(e){
+            $(".Page_Projection__comment .commentList__footer").unbind("click").bind("click",function(e){
                 // 获取点击的top
                 let rootDom = $(e.target).parents(".commentItem");
                 // 调用子评论渲染方法即可
                 __THIS__.childCommentRender(rootDom);
+            });
+
+            /**
+             * 绑定回复事件
+             */
+            $(".Page_Projection__comment .commentItem__interaction__reply").unbind("click").bind("click",function(e){
+                let fatherDivDom = $(e.target).parents(".commentItem__details__main");
+                // toogle模式,如果存在则移除,如果不在就添加
+                let commentWriterTarget = fatherDivDom.siblings(".commentWriter");
+                if(commentWriterTarget.length==0){
+                    $(e.target).text('取消回复');
+                    // 在这个div 后 追加同级标签
+                    let commentWriterDom = __THIS__.getCommentWriterTemplate();
+                    fatherDivDom.after(commentWriterDom);
+                }else{
+                    $(e.target).text('回复');
+                    commentWriterTarget.remove();
+                }
             });
         };
 
@@ -5458,8 +5477,9 @@
             // 首次拼接,尾部控制
             if(startIndex == 0){
                 commentListDom += '<audio></audio></div>';
-                // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间 拼接到在commentItem__details__main之后
-                rootDom.find(".commentItem__details__main").after(commentListDom);
+                // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
+                // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
+                rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
             }else{
                 // 在commentList内部 audio元素前 追加dom
                 rootDom.find(".commentList audio").before(commentListDom);
@@ -5476,10 +5496,65 @@
                     '</div>';
                 // 拼接到audio,元素之后
                 rootDom.find(".commentList audio").after(moreStr);
-                // 绑定 [展开更多回复] 事件
-                __THIS__.commentItemEvent();
             }
+            // 重新绑定评论区事件
+            __THIS__.commentItemEvent();
         };
+
+        /**
+         * 返回 回复事件触发时的html模板
+         */
+        __THIS__.getCommentWriterTemplate = function(){
+            let commentWriter = '<div class="commentWriter" style="">\n' +
+                '    <div class="component-avatar headImg clickable" style="width: 40px; height: 40px;"><a\n' +
+                '            class="component-avatar__inner" target="user_5758208720" data-disable_default="true">\n' +
+                '        <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage tt-img-loaded"\n' +
+                '                                         data-src=""\n' +
+                '                                         backup-src=""\n' +
+                '                                         alt="undefined头像"\n' +
+                '                                         src="img/main_index/user_head/head_me.image"\n' +
+                '                                         style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
+                '        </div>\n' +
+                '        <div class="BU-MagicImage__shadow"></div>\n' +
+                '    </a></div>\n' +
+                '    <div class="writer-wrapper">\n' +
+                '        <div class="input-wrapper"><textarea placeholder="回复虫虫不咬人：" maxlength="2000" class="ant-input"\n' +
+                '                                             style="height: 60px; min-height: 60px; max-height: 120px;"></textarea>\n' +
+                '        </div>\n' +
+                '        <div class="img-zone" style="display: none;">\n' +
+                '            <div tabindex="0" class="dropzone-initial"><input accept="image/*" multiple="" type="file"\n' +
+                '                                                              autocomplete="off" tabindex="-1" style="display: none;">\n' +
+                '                <div>点击上传图片</div>\n' +
+                '                <div>或将图片拖拽到此处上传(最多9张)</div>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '        <div class="input-opt">\n' +
+                '            <div class="input-opt-left">\n' +
+                '                <div class="input-opt-item" tabindex="0" role="button" title="表情">\n' +
+                '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                         role="img">\n' +
+                '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                              d="M3.5 12a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0ZM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2ZM9.184 14.624a.75.75 0 1 0-1.298.752A4.748 4.748 0 0 0 12 17.75c1.76 0 3.294-.957 4.114-2.374a.75.75 0 1 0-1.298-.752A3.249 3.249 0 0 1 12 16.25a3.249 3.249 0 0 1-2.816-1.626ZM9 8a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Zm7 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V9Z"\n' +
+                '                              fill="#0C0D0F"></path>\n' +
+                '                    </svg>\n' +
+                '                    <span>表情</span></div>\n' +
+                '                <div class="input-opt-item" tabindex="0" role="button" title="图片">\n' +
+                '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                         role="img">\n' +
+                '                        <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                              d="M2.25 5c0-.966.784-1.75 1.75-1.75h16c.966 0 1.75.784 1.75 1.75v14A1.75 1.75 0 0 1 20 20.75H4A1.75 1.75 0 0 1 2.25 19V5ZM4 4.75a.25.25 0 0 0-.25.25v14c0 .138.112.25.25.25h1.166l7.578-8.437a1.75 1.75 0 0 1 2.584-.021l4.922 5.299V5a.25.25 0 0 0-.25-.25H4Zm16 14.5H7.182l6.678-7.434a.25.25 0 0 1 .369-.004l6.021 6.483V19a.25.25 0 0 1-.25.25ZM6.5 8.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm1-2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"\n' +
+                '                              fill="#0C0D0F"></path>\n' +
+                '                    </svg>\n' +
+                '                    <span>图片</span></div>\n' +
+                '            </div>\n' +
+                '            <div class="input-opt-right">\n' +
+                '                <button class="xg-button xg-button-primary xg-button-middle xg-button-disabled">发送</button>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '</div>';
+            return commentWriter;
+        }
 
 
 
