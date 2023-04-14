@@ -1566,3 +1566,236 @@
         </div>
     </div>
 </div>
+
+
+<!--手机号登录-->
+<div class="Dialog-container login-dialog-container" style="background-color: rgba(0, 0, 0, 0.5); display: block;">
+    <div class="Dialog__wrap">
+        <div class="LoginDialog__container" role="dialog" tabindex="0" aria-modal="true"
+             aria-labelledby="LoginDialog__title" style="width: 661px;">
+            <div class="LoginDialog__header">
+                <div class="title" id="LoginDialog__title">登录后可发评论</div>
+                <button class="close" tabindex="0" aria-label="关闭"></button>
+            </div>
+            <div id="BD_Login_Form" class="LoginDialog__content">
+                <div class="web-login-container">
+                    <article class="web-login">
+                        <article class="web-login-union">
+                            <div class="web-login-union__login">
+                                <div class="web-login-union__login__form">
+                                    <div class="web-login-union__login__form__title">验证码登录</div>
+                                    <div class="web-login-union__login__form__content">
+                                        <article class="web-login-mobile-code">
+                                            <div class="web-login-mobile-code__mobile-input-wrapper">
+                                                <div class="web-login-normal-input">
+                                                    <div class="web-login-area-code">
+                                                        <div class="web-login-area-code__input-wrapper"><input
+                                                                type="text" size="3" name="web-login-area-code-input"
+                                                                class="web-login-area-code__input-wrapper__input"
+                                                                autocomplete="off" role="combobox" tabindex="0"
+                                                                aria-owns="select-ul"
+                                                                aria-activedescendant="areacode_item_0"
+                                                                aria-label="国家/地区" value="+86"><i
+                                                                class="web-login-area-code__input-wrapper__icon-arrow web-login-area-code__input-wrapper__icon-arrow__down"></i>
+                                                        </div>
+                                                    </div>
+                                                    <input name="normal-input" type="tel"
+                                                           class="web-login-normal-input__input" placeholder="请输入手机号"
+                                                           autocomplete="tel" maxlength="50" tabindex="0"
+                                                           aria-label="请输入手机号" value=""></div>
+                                            </div>
+                                            <div class="web-login-mobile-code__code-input-wrapper">
+                                                <div class="web-login-button-input"><span
+                                                        class="web-login-button-input__button-text send-input"
+                                                        tabindex="0" aria-live="off" role="button">获取验证码</span>
+                                                    <div class="web-login-button-input__input-wrapper send-input"><input
+                                                            name="button-input" type="tel"
+                                                            class="web-login-button-input__input" placeholder="请输入验证码"
+                                                            autocomplete="off" maxlength="50" tabindex="0"
+                                                            aria-label="请输入验证码" value=""></div>
+                                                </div>
+                                            </div>
+                                            <div class="web-login-error" role="alert" aria-relevant="all" tabindex="0"
+                                                 aria-live="assertive" aria-atomic="true" aria-label="警告:无"></div>
+                                            <div class="web-login-mobile-code__button-wrapper">
+                                                <button type="submit"
+                                                        class="web-login-button web-login-button__disabled">登录/注册
+                                                </button>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </div>
+                                <div class="web-login-union__login__scan-code">
+                                    <div class="web-login-union__login__scan-code__title">扫码登录</div>
+                                    <article class="web-login-scan-code">
+                                        <div class="web-login-scan-code__content">
+                                            <div class="web-login-scan-code__content__qrcode-wrapper web-login-scan-code__content__qrcode-tip">
+                                                <img alt=""
+                                                     src="data:image/jpeg;base64,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"
+                                                     class="web-login-scan-code__content__qrcode-wrapper__qrcode"
+                                                     tabindex="0" aria-label="二维码"></div>
+                                            <div class="web-login-scan-desc"><p>打开<span class="">西瓜视频手机APP</span></p>
+                                                <p>我的-扫一扫登录<span class="web-login-scan-desc__question"></span></p></div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                            <div class="web-login-union__footer">
+                                <div class="web-login-other-login-method">
+                                    <div class="web-login-other-login-method__text">其他方式：</div>
+                                    <ul class="web-login-other-login-method__list">
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="抖音授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__aweme"></i>
+                                        </li>
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="qq授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__qzone_sns"></i>
+                                        </li>
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="微信授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__weixin"></i>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <ul class="web-login-link-list">
+                                    <li class="web-login-link-list__item">
+                                        <div class="web-login-link-list__item__text" tabindex="0" aria-label="密码登录"
+                                             role="button">密码登录
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="web-login-footer"><span
+                                    class="web-login-footer__checkbox web-login-footer__checkbox__checked"></span>登录即代表你同意<a
+                                    href="//www.ixigua.com/user_agreement/" target="user_agreement">用户协议</a>和<a
+                                    href="//www.ixigua.com/privacy_policy/" target="privacy_policy">隐私政策</a></div>
+                        </article>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--密码登录-->
+<div class="Dialog-container login-dialog-container" style="background-color: rgba(0, 0, 0, 0.5); display: block;">
+    <div class="Dialog__wrap">
+        <div class="LoginDialog__container" role="dialog" tabindex="0" aria-modal="true"
+             aria-labelledby="LoginDialog__title" style="width: 661px;">
+            <div class="LoginDialog__header">
+                <div class="title" id="LoginDialog__title">登录后可发评论</div>
+                <button class="close" tabindex="0" aria-label="关闭"></button>
+            </div>
+            <div id="BD_Login_Form" class="LoginDialog__content">
+                <div class="web-login-container">
+                    <article class="web-login">
+                        <article class="web-login-union">
+                            <div class="web-login-union__login">
+                                <div class="web-login-union__login__form">
+                                    <div class="web-login-union__login__form__title">密码登录</div>
+                                    <div class="web-login-union__login__form__content">
+                                        <article class="web-login-account-password">
+                                            <div class="web-login-account-password__account-input-wrapper">
+                                                <div class="web-login-normal-input">
+                                                    <div class="web-login-area-code">
+                                                        <div class="web-login-area-code__input-wrapper"><input
+                                                                type="text" size="3" name="web-login-area-code-input"
+                                                                class="web-login-area-code__input-wrapper__input"
+                                                                autocomplete="off" role="combobox" tabindex="0"
+                                                                aria-owns="select-ul"
+                                                                aria-activedescendant="areacode_item_0"
+                                                                aria-label="国家/地区" value="+86"><i
+                                                                class="web-login-area-code__input-wrapper__icon-arrow web-login-area-code__input-wrapper__icon-arrow__down"></i>
+                                                        </div>
+                                                    </div>
+                                                    <input name="normal-input" type="text"
+                                                           class="web-login-normal-input__input" placeholder="请输入手机号"
+                                                           autocomplete="username" maxlength="50" tabindex="0"
+                                                           aria-label="请输入手机号或邮箱" value=""></div>
+                                            </div>
+                                            <div class="web-login-account-password__password-input-wrapper">
+                                                <div class="web-login-button-input">
+                                                    <div class="web-login-button-input__input-wrapper"><input
+                                                            name="button-input" type="password"
+                                                            class="web-login-button-input__input" placeholder="请输入密码"
+                                                            autocomplete="off" maxlength="20" tabindex="0"
+                                                            aria-label="请输入密码" value=""></div>
+                                                    <span class="web-login-button-input__button-text" tabindex="0"
+                                                          aria-live="off" role="button">忘记密码</span></div>
+                                            </div>
+                                            <div class="web-login-error" role="alert" aria-relevant="all" tabindex="0"
+                                                 aria-live="assertive" aria-atomic="true" aria-label="警告:手机号不能为空">
+                                                手机号不能为空
+                                            </div>
+                                            <div class="web-login-account-password__remember"><span
+                                                    class="web-login-account-password__remember__checkbox"></span><span
+                                                    class="web-login-account-password__remember__text">记住密码</span></div>
+                                            <div class="web-login-account-password__button-wrapper">
+                                                <button type="submit"
+                                                        class="web-login-button web-login-button__disabled">登录
+                                                </button>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </div>
+                                <div class="web-login-union__login__scan-code">
+                                    <div class="web-login-union__login__scan-code__title">扫码登录</div>
+                                    <article class="web-login-scan-code">
+                                        <div class="web-login-scan-code__content">
+                                            <div class="web-login-scan-code__content__qrcode-wrapper"><img alt=""
+                                                                                                           src="data:image/jpeg;base64,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"
+                                                                                                           class="web-login-scan-code__content__qrcode-wrapper__qrcode"
+                                                                                                           tabindex="0"
+                                                                                                           aria-label="二维码">
+                                                <div class="web-login-scan-code__content__qrcode-wrapper__mask">
+                                                    <div class="web-login-scan-code__content__qrcode-wrapper__mask__toast">
+                                                        <p class="web-login-scan-code__content__qrcode-wrapper__mask__toast__icon refresh">
+                                                            点击刷新</p>
+                                                        <p class="web-login-scan-code__content__qrcode-wrapper__mask__toast__text refresh">
+                                                            二维码已失效</p></div>
+                                                </div>
+                                            </div>
+                                            <div class="web-login-scan-desc"><p>打开<span class="">西瓜视频手机APP</span></p>
+                                                <p>我的-扫一扫登录<span class="web-login-scan-desc__question"></span></p></div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                            <div class="web-login-union__footer">
+                                <div class="web-login-other-login-method">
+                                    <div class="web-login-other-login-method__text">其他方式：</div>
+                                    <ul class="web-login-other-login-method__list">
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="抖音授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__aweme"></i>
+                                        </li>
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="qq授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__qzone_sns"></i>
+                                        </li>
+                                        <li class="web-login-other-login-method__list__item" tabindex="0"
+                                            aria-label="微信授权登录" role="button"><i
+                                                class="web-login-other-login-method__list__item__icon web-login-other-login-method__list__item__icon__weixin"></i>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <ul class="web-login-link-list">
+                                    <li class="web-login-link-list__item">
+                                        <div class="web-login-link-list__item__text" tabindex="0" aria-label="手机验证码登录"
+                                             role="button">手机验证码登录
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="web-login-footer"><span
+                                    class="web-login-footer__checkbox web-login-footer__checkbox__checked"></span>登录即代表你同意<a
+                                    href="//www.ixigua.com/user_agreement/" target="user_agreement">用户协议</a>和<a
+                                    href="//www.ixigua.com/privacy_policy/" target="privacy_policy">隐私政策</a></div>
+                        </article>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
