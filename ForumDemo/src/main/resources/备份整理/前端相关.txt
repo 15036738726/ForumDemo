@@ -326,3 +326,14 @@ https://blog.csdn.net/h18377528386/article/details/122692687
 设置localStorage有效期和过期时间的简单方法
 总所周知localStorage默认是不会过期的，也没有可设置过期的api，如果要实现过期清除就需要自己实现一个api
 https://www.jb51.net/article/239130.htm
+
+JavaScript时间戳的应用
+https://blog.csdn.net/m0_51573433/article/details/125754201
+
+时间戳说明:
+时间戳：是指从格林威治时间1970年01月01日00时00分00秒（UTC/GMT的午夜，即北京时间1970年01月01日08时00分00秒）起至现在的总秒数
+var init = new Date('1970-01-01 08:00:00');
+console.log(init.getTime());// 0
+var init = new Date('1970-01-01 09:00:00');
+console.log(init.getTime());// 3600000
+一天的毫秒数:3600*24*1000 = 86400000
