@@ -28,8 +28,43 @@ class Init {
     @Autowired
     private PlayMapper playMapper;
 
+
     /**
-     * 作品表和用户表数据初始化
+     * 初始化4个评论员
+     */
+    @Test
+    void initCommentUser(){
+        List<String> nameList = new ArrayList<>();
+        List<String> addressList = new ArrayList<>();
+        nameList.add("网络喷子");
+        nameList.add("小学生");
+        nameList.add("鲁班七号");
+        nameList.add("酱爆");
+        addressList.add("洛兰");
+        addressList.add("爱尔兰");
+        addressList.add("山东");
+        addressList.add("猪笼寨");
+        for(int i = 0;i<nameList.size();i++){
+            ForumUser userTemp = new ForumUser();
+            // 密码
+            userTemp.setPassword("1");
+            // 姓名
+            userTemp.setUserName(nameList.get(i));
+            // 性别
+            userTemp.setSex(i%2);
+            // 地址
+            userTemp.setAddress(addressList.get(i));
+            // 邮箱
+            userTemp.setEmail("999"+i+".@qq.com");
+            // 用户头像
+            userTemp.setUserHead("img/main_index/user_head/head"+(i+12)+".image");
+            userOpeMapper.insert(userTemp);
+        }
+    }
+
+
+    /**
+     * 作品表和用户表数据初始化,一个用户分配一个作品
      */
     @Test
     void initData(){
