@@ -5223,7 +5223,18 @@
              * 绑定回复文本框点击事件,如果没有登录,这弹出登录框
              */
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
-                // 从本地存储中获取当前登录用户信息
+
+                let tempCallback = function (temp){
+                    if(temp.code == 200){
+                        alert("登录成功")
+                    }else{
+                        $(".web-login-account-password .web-login-error").text('账号或密码不正确,请检查');
+                    }
+                };
+                // 调用用户登录服务,传入登录成功之后回调,因为每个页面都有登录入口,处理的内容是不一样的
+                utils.userLoginService(tempCallback);
+
+   /*             // 从本地存储中获取当前登录用户信息
                 let loginUser = utils.getCache("LOGIN_USER");
                 if(loginUser==null){
                     // 登录信息为空,则弹框
@@ -5233,7 +5244,8 @@
                     $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
                 };
 
-                __THIS__.commentItemEvent();
+                __THIS__.commentItemEvent();*/
+
             });
 
             /**

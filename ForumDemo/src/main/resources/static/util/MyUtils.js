@@ -331,6 +331,21 @@ var MyUtils = function(option){
         return paramMap;
     };
 
+    __ROOT__.userLoginService = function(callback){
+        alert("请先登录");
+        callback({"code":200});
+        // debugger;
+        // import {} as myModule from '/util/UserLoginService.js';
+        // myModule.Rotation();
+        $('body').append('<script src="../util/ModuleApi.js"><\/script>');
+        //debugger;
+        new textService().test();
+        new userLoginService().test();
+
+        alert(__SERVICE__.name);
+    };
+
+
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部
