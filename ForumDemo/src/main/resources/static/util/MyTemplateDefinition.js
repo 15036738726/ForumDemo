@@ -62,8 +62,7 @@ var MyTemplateDefinition = function(option){
             '                                                          aria-live="off" role="button">忘记密码</span></div>\n' +
             '                                            </div>\n' +
             '                                            <div class="web-login-error" role="alert" aria-relevant="all" tabindex="0"\n' +
-            '                                                 aria-live="assertive" aria-atomic="true" aria-label="警告:手机号不能为空">\n' +
-            '                                                手机号不能为空\n' +
+            '                                                 aria-live="assertive" aria-atomic="true" aria-label="">\n' +
             '                                            </div>\n' +
             '                                            <div class="web-login-account-password__remember"><span\n' +
             '                                                    class="web-login-account-password__remember__checkbox"></span><span\n' +
@@ -337,17 +336,23 @@ var MyTemplateDefinition = function(option){
 
     /**
      * [作品详情页使用]
-     * 返回 回复事件触发时的html模板
+     * 回复事件触发时的html模板
      */
-    __Template__.getCommentWriterTemplate = function(){
+    __Template__.getCommentWriterTemplate = function(temp){
+        // 从本地缓存获取登录用户的头像,如果没有就展示游客头像,真正回复的时候,会拦截用户登录
+        let userInfo = utils.getCache("LOGIN_USER");
+        let userHead = 'img/no_login.png';
+        if(userInfo!=null){
+            userHead = userInfo.userHead;
+        }
         let commentWriter = '<div class="commentWriter" style="">\n' +
             '    <div class="component-avatar headImg clickable" style="width: 40px; height: 40px;"><a\n' +
             '            class="component-avatar__inner" target="user_5758208720" data-disable_default="true">\n' +
             '        <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage tt-img-loaded"\n' +
             '                                         data-src=""\n' +
             '                                         backup-src=""\n' +
-            '                                         alt="undefined头像"\n' +
-            '                                         src="img/main_index/user_head/head_me.image"\n' +
+            '                                         alt=""\n' +
+            '                                         src="'+userHead+'"\n' +
             '                                         style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">\n' +
             '        </div>\n' +
             '        <div class="BU-MagicImage__shadow"></div>\n' +

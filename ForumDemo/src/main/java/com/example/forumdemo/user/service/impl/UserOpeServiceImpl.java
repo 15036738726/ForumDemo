@@ -1,5 +1,6 @@
 package com.example.forumdemo.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forumdemo.entity.ForumUser;
@@ -38,16 +39,12 @@ public class UserOpeServiceImpl extends ServiceImpl<UserOpeMapper,ForumUser> imp
      * @return
      */
     @Override
-    public boolean userLogin(ForumUser forumUser) {
-        QueryWrapper<ForumUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_name",forumUser.getUserName());
-        queryWrapper.eq("password",forumUser.getPassword());
+    public ForumUser userLogin(ForumUser forumUser) {
+        LambdaQueryWrapper<ForumUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ForumUser::getUserName,forumUser.getUserName());
+        queryWrapper.eq(ForumUser::getPassword,forumUser.getPassword());
         ForumUser user = userOpeMapper.selectOne(queryWrapper);
-        // 账号存在,则登录成功
-        if(user!=null) {
-            return true;
-        }
-        return false;
+        return  user;
     }
 
     /**

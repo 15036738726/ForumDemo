@@ -1297,10 +1297,10 @@
                                         class="component-avatar__inner" target="_blank"><div class="tt-img-wrapper">
                                     <img
                                         class="tt-img BU-MagicImage tt-img-loaded"
-                                        data-src="//lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/default_avatar.acb9d677.png"
-                                        backup-src="//lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/default_avatar.acb9d677.png"
-                                        alt="undefined头像"
-                                        src="https://lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/default_avatar.acb9d677.png"
+                                        data-src=""
+                                        backup-src=""
+                                        alt=""
+                                        src="img/no_login.png"
                                         style="width: 100%; transition: transform 0.3s ease 0s; object-fit: cover;"></div><div
                                         class="BU-MagicImage__shadow"></div></span></div>
                                 <div class="writer-wrapper">
@@ -5208,7 +5208,9 @@
                 if(commentWriterTarget.length==0){
                     $(e.target).text('取消回复');
                     // 在这个div 后 追加同级标签
-                    let commentWriterDom = templateUtils.getCommentWriterTemplate();
+                    // 后续需要把被回复的用户信息获取到,然后传入,提交评论时要用到
+                    let temp = {};
+                    let commentWriterDom = templateUtils.getCommentWriterTemplate(temp);
                     fatherDivDom.after(commentWriterDom);
                 }else{
                     $(e.target).text('回复');
@@ -5237,11 +5239,39 @@
             /**
              * 登录弹框关闭事件
              */
-            $(".close").unbind("click").bind("click",function(e){
-                // $(".login-dialog-container")
-                $(e.target).parents(".login-dialog-container").remove();
-                $('body').removeAttr("style");
-                $('body').removeClass("Dialog-lockscroll");
+            $(".login-dialog-container .close").unbind("click").bind("click",function(e){
+                // $(e.target).parents(".login-dialog-container").remove();
+                // $('body').removeAttr("style");
+                // $('body').removeClass("Dialog-lockscroll");
+                __THIS__.closeLoginDialog();
+            });
+
+            /**
+             * 登录事件
+             */
+            $(".login-dialog-container .web-login-button").unbind("click").bind("click",function(e){
+                let userName = $(".web-login-account-password").find('input[autocomplete="username"]').val().trim();
+                let password = $(".web-login-account-password").find('input[type="password"]').val().trim();
+                if(userName==''){
+                    $(".web-login-account-password .web-login-error").text('账号不能为空');
+                    return;
+                }
+                if(password==''){
+                    $(".web-login-account-password .web-login-error").text('密码不能为空');
+                    return;
+                }
+                // 验证账号正确性, 如果正确则把用户信息写入到本地缓存中,有效期1天
+                // 设置登录操作回调
+                let tempCallback = function (temp){
+                    if(temp.code == 200){
+                        utils.setCache("LOGIN_USER",temp.data,1/24/60/60*10);
+                        __THIS__.loginSucessCallback();
+                        __THIS__.closeLoginDialog();
+                    }else{
+                        $(".web-login-account-password .web-login-error").text('账号或密码不正确,请检查');
+                    }
+                };
+                utils.send(tempCallback,'/userOpe/userLoginNew',{"userName":userName,"password":password},utils.PUT_REQUEST);
             });
 
             /**
@@ -5253,6 +5283,28 @@
             });
 
         };
+
+        /**
+         * 用户登录成功之后的回调,重设页面回复框的头像,主要是用户登录之后调用
+         */
+        __THIS__.loginSucessCallback = function(){
+            let userInfo = utils.getCache("LOGIN_USER");
+            let userHead = 'img/no_login.png';
+            if(userInfo!=null){
+                userHead = userInfo.userHead;
+            }
+            $(".Page_Projection__comment").find(".commentWriter .BU-MagicImage").attr("src",userInfo.userHead);
+        };
+
+        /**
+         * 登录dialog关闭事件
+         * @param e
+         */
+        __THIS__.closeLoginDialog = function(e){
+            $(".login-dialog-container").remove();
+            $('body').removeAttr("style");
+            $('body').removeClass("Dialog-lockscroll");
+        }
 
         /**
          * [展开]时用到,返回从那个下标处开始拼接
