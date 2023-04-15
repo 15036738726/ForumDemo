@@ -4997,8 +4997,7 @@
 <script src="util/MyTemplateDefinition.js"></script>
 <script type="text/javascript">
     var currentPageObj = function (option){
-        // 这个地方最好不要用__THIS__,防止工具类中绑定的click事件 里边使用的__THIS__被这个地方所覆盖 (处理解决:把utils中的THIS换个名字)
-        __THIS__ = this;
+        let __THIS__ = this;
         // 作品信息
         __THIS__.zuoPinInfo = {};
         // 当前作品对应的用户信息
@@ -5199,7 +5198,7 @@
             });
 
             /**
-             * 绑定[回复]事件
+             * 绑定[回复]事件,打开回复对话框
              */
             $(".Page_Projection__comment .commentItem__interaction__reply").unbind("click").bind("click",function(e){
                 let fatherDivDom = $(e.target).parents(".commentItem__details__main");
@@ -5220,71 +5219,25 @@
             });
 
             /**
-             * 绑定回复文本框点击事件,如果没有登录,这弹出登录框
+             * 绑定回复文本框点击事件,如果没有登录,这弹出登录框,提示用户登录
              */
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
-
-                let tempCallback = function (temp){
-                    if(temp.code == 200){
-                        alert("登录成功")
-                    }else{
-                        $(".web-login-account-password .web-login-error").text('账号或密码不正确,请检查');
-                    }
-                };
-                // 调用用户登录服务,传入登录成功之后回调,因为每个页面都有登录入口,处理的内容是不一样的
-                utils.userLoginService(tempCallback);
-
-   /*             // 从本地存储中获取当前登录用户信息
+                // 从本地存储中获取当前登录用户信息
                 let loginUser = utils.getCache("LOGIN_USER");
                 if(loginUser==null){
                     // 登录信息为空,则弹框
                     let temp = {};
-                    temp.title = "登录xxxx";
+                    temp.title = "登录后可发表评论";
                     $("body").append(templateUtils.getLoginDialogDom(temp));
                     $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
+                    /**
+                     * 然后整个登录的过程控制,则交给用户登录服务组件控制,我们只需要传入登录成功之后,需要做出那些页面变化的回调
+                     * 每个页面都有登录入口,处理的内容是不一样的,比如这里只需要处理,评论文本区域中的用户头像
+                     */
+                    utils.userLoginService(__THIS__.loginSucessCallback);
                 };
-
-                __THIS__.commentItemEvent();*/
-
             });
 
-            /**
-             * 登录弹框关闭事件
-             */
-            $(".login-dialog-container .close").unbind("click").bind("click",function(e){
-                // $(e.target).parents(".login-dialog-container").remove();
-                // $('body').removeAttr("style");
-                // $('body').removeClass("Dialog-lockscroll");
-                __THIS__.closeLoginDialog();
-            });
-
-            /**
-             * 登录事件
-             */
-            $(".login-dialog-container .web-login-button").unbind("click").bind("click",function(e){
-                let userName = $(".web-login-account-password").find('input[autocomplete="username"]').val().trim();
-                let password = $(".web-login-account-password").find('input[type="password"]').val().trim();
-                if(userName==''){
-                    $(".web-login-account-password .web-login-error").text('账号不能为空');
-                    return;
-                }
-                if(password==''){
-                    $(".web-login-account-password .web-login-error").text('密码不能为空');
-                    return;
-                }
-                // 验证账号正确性, 如果正确则把用户信息写入到本地缓存中,有效期1天
-                // 设置登录操作回调
-                let tempCallback = function (temp){
-                    if(temp.code == 200){
-                        utils.setCache("LOGIN_USER",temp.data,1/24/60/60*10);
-                        __THIS__.loginSucessCallback();
-                        __THIS__.closeLoginDialog();
-                    }else{
-                        $(".web-login-account-password .web-login-error").text('账号或密码不正确,请检查');
-                    }
-                };
-                utils.send(tempCallback,'/userOpe/userLoginNew',{"userName":userName,"password":password},utils.PUT_REQUEST);
-            });
 
             /**
              * 绑定回复文本框输入事件,如果存在输入,则激活发送按钮
@@ -5305,18 +5258,8 @@
             if(userInfo!=null){
                 userHead = userInfo.userHead;
             }
-            $(".Page_Projection__comment").find(".commentWriter .BU-MagicImage").attr("src",userInfo.userHead);
+            $(".Page_Projection__comment").find(".commentWriter .BU-MagicImage").attr("src",userHead);
         };
-
-        /**
-         * 登录dialog关闭事件
-         * @param e
-         */
-        __THIS__.closeLoginDialog = function(e){
-            $(".login-dialog-container").remove();
-            $('body').removeAttr("style");
-            $('body').removeClass("Dialog-lockscroll");
-        }
 
         /**
          * [展开]时用到,返回从那个下标处开始拼接
@@ -5380,12 +5323,7 @@
             }
         };
 
-        /**
-         * 处理赞显示文本 赞=0 显示赞,>0 显示实际的数量
-         */
-        __THIS__.getZanCountText = function(num){
-            return num>=1?num:"赞";
-        }
+
 
         /**
          *  [回复]功能,评论追加 分析

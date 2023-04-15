@@ -4,7 +4,7 @@
  */
 var MyTemplateDefinition = function(option){
 
-    __Template__ = this;
+    let __Template__ = this;
     __Template__.init = function () {
 
     };
@@ -196,7 +196,7 @@ var MyTemplateDefinition = function(option){
             '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
             '                                  fill="#0C0D0F"></path>\n' +
             '                        </svg>\n' +
-            '                        <span>'+__THIS__.getZanCountText(temp.zanCount)+'</span></button>\n' +
+            '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span></button>\n' +
             '                    <button class="commentItem__interaction__reply">回复</button>\n' +
             '                </div>\n' +
             '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
@@ -219,6 +219,13 @@ var MyTemplateDefinition = function(option){
             '</div>';
         return str;
     };
+
+    /**
+     * 处理赞显示文本 赞=0 显示赞,>0 显示实际的数量
+     */
+    __Template__.getZanCountText = function(num){
+        return num>=1?num:"赞";
+    }
 
     /**
      * [作品详情页使用]
@@ -258,7 +265,7 @@ var MyTemplateDefinition = function(option){
             '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
             '                                  fill="#0C0D0F"></path>\n' +
             '                        </svg>\n' +
-            '                        <span>'+__THIS__.getZanCountText(temp.zanCount)+'</span></button>\n' +
+            '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span></button>\n' +
             '                    <button class="commentItem__interaction__reply">回复</button>\n' +
             '                </div>\n' +
             '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
@@ -317,7 +324,7 @@ var MyTemplateDefinition = function(option){
             '                                      d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
             '                                      fill="#0C0D0F"></path>\n' +
             '                            </svg>\n' +
-            '                            <span>'+__THIS__.getZanCountText(childTemp.zanCount)+'</span></button>\n' +
+            '                            <span>'+__Template__.getZanCountText(childTemp.zanCount)+'</span></button>\n' +
             '                        <button class="commentItem__interaction__reply">回复</button>\n' +
             '                    </div>\n' +
             '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +

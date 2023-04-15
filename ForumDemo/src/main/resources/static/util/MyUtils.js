@@ -4,7 +4,7 @@
  * @constructor
  */
 var MyUtils = function(option){
-    __ROOT__ = this;
+    let __ROOT__ = this;
 
     /**
      * restful请求风格 请求方式枚举
@@ -331,20 +331,14 @@ var MyUtils = function(option){
         return paramMap;
     };
 
+    /**
+     * 系统登录模块 通过util工具类调用,util往页面写入对应的js
+     * @param callback
+     */
     __ROOT__.userLoginService = function(callback){
-        alert("请先登录");
-        callback({"code":200});
-        // debugger;
-        // import {} as myModule from '/util/UserLoginService.js';
-        // myModule.Rotation();
         $('body').append('<script src="../util/ModuleApi.js"><\/script>');
-        //debugger;
-        new textService().test();
-        new userLoginService().test();
-
-        alert(__SERVICE__.name);
+        new userLoginService(callback).start();
     };
-
 
 };
 
