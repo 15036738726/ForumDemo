@@ -9,6 +9,16 @@ public class Utils {
     private Utils(){};
 
     /**
+     * 返回当前时间
+     * @return
+     */
+    public static String getCurrentData(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(LocalDateTime.now());
+    }
+
+
+    /**
      * 观看次数处理
      * @return
      */

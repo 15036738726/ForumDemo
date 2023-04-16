@@ -44,7 +44,7 @@ public class ForumComment implements Serializable {
     // 回复的是哪条评论ID
     private Long replyId;
     // 评论已读0 未读1
-    private Integer readState;
+    private Integer readState = 1;
     // 热评
     @TableField(exist = false)
     private boolean hotState;

@@ -352,9 +352,14 @@ var MyTemplateDefinition = function(option){
         if(userInfo!=null){
             userHead = userInfo.userHead;
         }
+        // 被回复者ID
+        let replyUserId = temp.replyUserId;
+        // 被回复者姓名
+        let replyUserName = temp.replyUserName
+
         let commentWriter = '<div class="commentWriter" style="">\n' +
             '    <div class="component-avatar headImg clickable" style="width: 40px; height: 40px;"><a\n' +
-            '            class="component-avatar__inner" target="user_5758208720" data-disable_default="true">\n' +
+            '            class="component-avatar__inner" target="" data-disable_default="true">\n' +
             '        <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage tt-img-loaded"\n' +
             '                                         data-src=""\n' +
             '                                         backup-src=""\n' +
@@ -365,7 +370,7 @@ var MyTemplateDefinition = function(option){
             '        <div class="BU-MagicImage__shadow"></div>\n' +
             '    </a></div>\n' +
             '    <div class="writer-wrapper">\n' +
-            '        <div class="input-wrapper"><textarea placeholder="回复虫虫不咬人：" maxlength="2000" class="ant-input"\n' +
+            '        <div class="input-wrapper"><textarea replyUserId="'+replyUserId+'" placeholder="回复'+replyUserName+'：" maxlength="2000" class="ant-input"\n' +
             '                                             style="height: 60px; min-height: 60px; max-height: 120px;"></textarea>\n' +
             '        </div>\n' +
             '        <div class="img-zone" style="display: none;">\n' +

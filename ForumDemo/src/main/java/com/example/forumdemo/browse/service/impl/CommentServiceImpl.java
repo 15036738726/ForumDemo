@@ -21,6 +21,15 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
     @Autowired
     private CommentMapper commentMapper;
 
+    /**
+     * 保存方法,保存评论
+     * @param comment
+     */
+    @Override
+    public void saveComment(ForumComment comment) {
+        comment.setWorkTime(Utils.getCurrentData());
+        commentMapper.insert(comment);
+    }
 
     @Override
     public List<ForumComment> queryCommentData(ForumComment queryComment) {

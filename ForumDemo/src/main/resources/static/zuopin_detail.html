@@ -5027,7 +5027,7 @@
             // 这里暂时不发送请求获取数据,只记录zuopinId 还有userId
             __THIS__.userInfo.userId = param.userId;
             __THIS__.zuoPinInfo.zuopinId = param.zuopinId;
-            console.log("当前页面作品Id:"+__THIS__.zuoPinInfo.zuopinId+",用户ID:"+__THIS__.userInfo.userId);
+            console.log("当前页面作品Id:"+__THIS__.zuoPinInfo.zuopinId+",作品所属用户ID:"+__THIS__.userInfo.userId);
 
             // 加载系统config参数
             utils.send(
@@ -5208,7 +5208,14 @@
                     $(e.target).text('取消回复');
                     // 在这个div 后 追加同级标签
                     // 后续需要把被回复的用户信息获取到,然后传入,提交评论时要用到
+
+                    // 被回复者用户Dom
+                    let replyUserDom = fatherDivDom.parent(".commentItem__details").prev(".commentItem__info");
+                    let replyUserName = replyUserDom.find(".component-avatar .component-avatar__inner").attr("title");
+                    let replyUserId = replyUserDom.find(".component-avatar .component-avatar__inner").attr("target");
                     let temp = {};
+                    temp.replyUserName = replyUserName;
+                    temp.replyUserId = replyUserId.replace("user_","");
                     let commentWriterDom = templateUtils.getCommentWriterTemplate(temp);
                     fatherDivDom.after(commentWriterDom);
                 }else{
@@ -5228,25 +5235,102 @@
                     // 登录信息为空,则弹框
                     let temp = {};
                     temp.title = "登录后可发表评论";
-                    $("body").append(templateUtils.getLoginDialogDom(temp));
-                    $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
                     /**
                      * 然后整个登录的过程控制,则交给用户登录服务组件控制,我们只需要传入登录成功之后,需要做出那些页面变化的回调
                      * 每个页面都有登录入口,处理的内容是不一样的,比如这里只需要处理,评论文本区域中的用户头像
                      */
-                    utils.userLoginService(__THIS__.loginSucessCallback);
+                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
                 };
             });
-
 
             /**
              * 绑定回复文本框输入事件,如果存在输入,则激活发送按钮
              */
-            $(".Page_Projection__comment .ant-input").unbind("input").bind("input",function(){
+            $(".Page_Projection__comment .ant-input").unbind("input").bind("input",function(e){
                 // 如果没激活,则激活,否则 跳过,什么动作也不做
-
+                let _target = $(e.target)
+                let inputVal = _target.val();
+                // 前后空格保留,点击提交的时候在验证是否全都是空格的问题
+                if(inputVal==''){
+                    $(e.target).parents(".commentWriter").find(".input-opt .input-opt-right").find("button").addClass("xg-button-disabled");
+                }else{
+                    $(e.target).parents(".commentWriter").find(".input-opt .input-opt-right").find("button").removeClass("xg-button-disabled");
+                }
             });
 
+            /**
+             * 绑定发送按钮事件
+             */
+            $(".Page_Projection__comment .input-opt .input-opt-right button").unbind("click").bind("click",function(e){
+                // 点击发送之前,把userId取出,如果没有则调用登录服务
+                let loginUser = utils.getCache("LOGIN_USER");
+                if(loginUser==null){
+                    let temp = {};
+                    temp.title = "登录后可发表评论";
+                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
+                    return;
+                }
+                // 这个地方一会测试一下 null调用callback 应该会报错
+                let _target = $(e.target).parents(".commentWriter");
+                let inputVal = _target.find(".input-wrapper textarea").val();
+
+                if(inputVal.trim() == ''){
+                    alert("内容不符合规定");
+                    utils.msgDialog("内容不符合规定");
+                    return;
+                }else{
+                    /**
+                     * 封装数据保存需要的所有参数
+                     * commentId 当前数据入库Id,后台生成
+                     * zuopin_id 当前作品ID,从this中获取
+                     * user_id 回复人ID,当前登录用户,从loginUser中取
+                     * comment:inputVal
+                     * parent_comment_id: 判断 commentWriter 的parent 是否包含commentItem__details 是则,获取对应的top,否则0
+                     * reply_id:回复的是那条评论:commentWriter找到父类 commentItem__details 在找父类.commentItem上的data-id 否则0
+                     * reply_userId: 被回复的用户
+                     * work_time:后台
+                     * del:后台 1
+                     * zan_count:后台 0
+                     * read_state:后台 1
+                     */
+                    let replyUserId = _target.find(".input-wrapper textarea").attr("replyuserid");
+                    let sendData = {};
+                    sendData.zuopinId = __THIS__.zuoPinInfo.zuopinId;
+                    sendData.userId = loginUser.userId;
+                    sendData.comment = inputVal;
+
+                    if(_target.parent().hasClass("commentItem__details")){
+                        sendData.parentCommentId = _target.parent().parents(".commentItem:not('.sub-comment-item')").attr("data-id");
+                        sendData.replyId = _target.parent().parent(".commentItem").attr("data-id");
+                        sendData.replyUserId = replyUserId;
+                    }else{
+                        // 表示 在最上面的回复框回复,他回复对象是整个作品,而非某一条评论的用户
+                        sendData.parentCommentId = 0;
+                        sendData.replyId = 0;
+                        sendData.replyUserId = __THIS__.userInfo.userId;
+                    }
+                    // console.log(sendData);
+                    // 保存评论,并且传入保存成功之后的回调
+
+                    let callback = function(temp){
+                        // 页面如何展示问题  评论拼接后续补充
+                        // alert("数据保存成功");
+                        // 文本框移除或者清除操作
+                        if(_target.parent(".Page_Projection__comment").length==0){
+                            _target.siblings(".commentItem__details__main").find(".commentItem__interaction_contaniner .commentItem__interaction").find("button[class='commentItem__interaction__reply']").text("回复");
+                            _target.remove();
+                        }else{
+                            // 跟评论框,只清除,不移除
+                            _target.find("textarea").val("");
+                            _target.find(".input-opt .input-opt-right").find("button").addClass("xg-button-disabled");
+                        }
+                        alert("发布成功!!!!");
+                        utils.feedback(temp);
+
+                    };
+                    utils.send(callback,"/commentController/saveComment",sendData,utils.PUT_REQUEST);
+                }
+            });
         };
 
         /**

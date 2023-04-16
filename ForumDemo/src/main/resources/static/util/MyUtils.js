@@ -335,9 +335,13 @@ var MyUtils = function(option){
      * 系统登录模块 通过util工具类调用,util往页面写入对应的js
      * @param callback
      */
-    __ROOT__.userLoginService = function(callback){
+    __ROOT__.userLoginService = function(temp,callback){
         $('body').append('<script src="../util/ModuleApi.js"><\/script>');
-        new userLoginService(callback).start();
+        let service = new userLoginService(callback);
+        // 打开登录弹框
+        service.open(temp);
+        // 启动组件处理
+        service.start();
     };
 
 };

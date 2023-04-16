@@ -15,6 +15,15 @@ var userLoginService = function(callback){
     };
 
     /**
+     * 登录弹框打开
+     * @param temp
+     */
+    __SERVICE__.open = function(temp){
+        $("body").append(templateUtils.getLoginDialogDom(temp));
+        $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
+    };
+
+    /**
      * 登录成功,弹框关闭  由模块自己负责
      */
     __SERVICE__.close = function (){
@@ -53,9 +62,9 @@ var userLoginService = function(callback){
             // 设置登录操作回调
             let tempCallback = function (temp){
                 if(temp.code == 200){
-                    utils.setCache("LOGIN_USER",temp.data,1/24/60/60*10);
+                    utils.setCache("LOGIN_USER",temp.data,1/24/60*30);// 1/24/60/60*10
                     // 登录成功,则调用创建对象时传入的回调,由具体页面定义
-                    __SERVICE__.callback();
+                    if(__SERVICE__.callback)__SERVICE__.callback();
                     // 关闭弹框
                     __SERVICE__.close();
                 }else{

@@ -12,4 +12,10 @@ public interface CommentService extends MPJBaseService<ForumComment> {
      * @return
      */
     List<ForumComment> queryCommentData(ForumComment queryComment);
+
+    /**
+     * 保存方法,保存评论
+     * @param comment
+     */
+    void saveComment(ForumComment comment);
 }

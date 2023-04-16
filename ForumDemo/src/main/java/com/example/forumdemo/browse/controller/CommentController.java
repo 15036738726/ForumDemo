@@ -18,6 +18,17 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    /**
+     * 保存
+     * @param comment
+     * @return
+     */
+    @PutMapping("/saveComment")
+    public Result<String> saveComment(@RequestBody ForumComment comment){
+        commentService.saveComment(comment);
+        return Result.success("发布成功");
+    };
+
 
     /**
      * 根据作品id,查询当前作品下的所有评论,先加载全部,后续在看要不要优化
