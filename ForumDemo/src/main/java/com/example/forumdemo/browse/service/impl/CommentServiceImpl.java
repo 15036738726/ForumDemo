@@ -9,6 +9,7 @@ import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -56,9 +57,11 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
          */
         handleCommentDataForFiled(list);
 
-
         // 处理层级
         List<ForumComment> top = handleCommentDataForLevel(list);
+
+        // 打包链模型问题处理
+        top = handleCommentDataForPackage(top,queryComment);
         return top;
     }
 
@@ -104,6 +107,49 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
             });
             // 设置返回值
             rtn.addAll(top);
+        });
+        return rtn;
+    }
+
+    // 打包链问题处理
+    private List<ForumComment> handleCommentDataForPackage(List<ForumComment> list,ForumComment comment) {
+        // 传入的有userId,才排序,否则直接返回
+        if(ObjectUtils.isEmpty(comment.getUserId())) return list;
+        List<ForumComment> rtn = new ArrayList<>();
+
+        Optional.ofNullable(list).ifPresent(e -> {
+            // 排child
+            e.stream().forEach(temp -> {
+                List<ForumComment> child = temp.getChild();
+                if(child.size()>0){
+                    List<ForumComment> first = child.stream()
+                            .filter(tempChild -> tempChild.getUserId().equals(comment.getUserId()))
+                            .sorted(Comparator.comparing(ForumComment::getCommentId))
+                            .collect(Collectors.toList());
+
+                    List<ForumComment> second = child.stream()
+                            .filter(tempChild -> !tempChild.getUserId().equals(comment.getUserId()))
+                            .sorted(Comparator.comparing(ForumComment::getCommentId))
+                            .collect(Collectors.toList());
+                    child.clear();
+                    child.addAll(first);
+                    child.addAll(second);
+                }
+            });
+
+            // 顶层排序
+            // 找所有所有是当前用户的评论,按照时间倒排,commentId是有序的,并且效率比workTime字符串效率高
+            List<ForumComment> first = e.stream()
+                    .filter(temp -> temp.getUserId().equals(comment.getUserId()))
+                    .sorted(Comparator.comparing(ForumComment::getCommentId))
+                    .collect(Collectors.toList());
+
+            List<ForumComment> sencond = e.stream()
+                    .filter(temp -> !temp.getUserId().equals(comment.getUserId()))
+                    .sorted(Comparator.comparing(ForumComment::getCommentId))
+                    .collect(Collectors.toList());
+            rtn.addAll(first);
+            rtn.addAll(sencond);
         });
         return rtn;
     }

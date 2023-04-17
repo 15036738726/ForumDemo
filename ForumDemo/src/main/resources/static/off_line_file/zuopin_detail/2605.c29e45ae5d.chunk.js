@@ -15068,4 +15068,8 @@
         e.exports = n.p + "static/media/qi_hei.a539de7f.ttf"
     }
 }]);
+/*
+连接错误注释
 //# sourceMappingURL=https://sourcemap.ixigua.com/obj/xigua-video-web-pc-sourcemap/xgpc/sourcemap/js/2605.c29e45ae5d.chunk.js.map
+
+ */

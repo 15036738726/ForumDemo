@@ -349,4 +349,7 @@
         a.forEach(t.bind(null, 0)), a.push = t.bind(null, a.push.bind(a))
     }()
 }();
+/*
+连接错误注释
 //# sourceMappingURL=https://sourcemap.ixigua.com/obj/xigua-video-web-pc-sourcemap/xgpc/sourcemap/js/runtime_main.26b8c1dded.js.map
+ */
