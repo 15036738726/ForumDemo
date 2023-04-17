@@ -17,5 +17,5 @@ public interface CommentService extends MPJBaseService<ForumComment> {
      * 保存方法,保存评论
      * @param comment
      */
-    void saveComment(ForumComment comment);
+    ForumComment saveComment(ForumComment comment);
 }

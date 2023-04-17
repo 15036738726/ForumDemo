@@ -97,7 +97,7 @@
     <link rel="shortcut icon" href="//sf1-cdn-tos.douyinstatic.com/obj/eden-cn/lpqpflo/ixigua_favicon.ico">
     <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="西瓜视频">
     <!-- resourceBasePath --><!-- fontPrefetch --><!-- link --><!-- prod -->
-    <title>评论详情</title>
+    <title>-</title>
     <meta data-react-helmet="true" name="Baiduspider" content="noarchive">
 
     <style type="text/css">xg-text-track.xg-text-track {
@@ -5109,6 +5109,7 @@
          * @param rootDom 点击的top
          */
         __THIS__.childCommentRender = function(rootDom){
+            debugger;
             let topId = rootDom.attr("data-id");
             // 根据topId,找到对应的childArray
             let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
@@ -5164,10 +5165,8 @@
              * [展开x条回复] / [收起回复] 事件控制
              */
             $(".Page_Projection__comment .commentItem__interaction__moreReply").unbind("click").bind("click",function(e){
+                debugger;
                 let rootDom = $(e.target).parents(".commentItem");
-                // 获取点击的top的评论ID
-                let topId = rootDom.attr("data-id");
-
                 /**
                  * 因为牵涉递归调用,所以需要动态的判断是展开还是收起,即这个方法需要同时处理2事件情况,
                  * 他们的类名是一模一样的都是commentItem__interaction__moreReply,每次触发dom变更,方法最后都重新执行绑定事件函数
@@ -5184,7 +5183,6 @@
                     // 展开
                     // 处理top下的评论渲染
                     __THIS__.childCommentRender(rootDom);
-                    __THIS__.commentItemEvent();
                 }
 
                 // 调用评论折叠转换  把展开回复 替换为收起回复  后续需要处理每次展开多少条问题
@@ -5322,7 +5320,7 @@
 
                     let callback = function(temp){
                         // 追加刚评论的内容到指定位置
-                        __THIS__.appendComment(temp.data);
+                        //__THIS__.appendComment(temp.data);
                         // 文本框移除或者清除操作
                         if(_target.parent(".Page_Projection__comment").length==0){
                             _target.siblings(".commentItem__details__main").find(".commentItem__interaction_contaniner .commentItem__interaction").find("button[class='commentItem__interaction__reply']").text("回复");
@@ -5459,7 +5457,60 @@
          * @param temp
          */
         __THIS__.appendComment = function(temp){
+            // 判断是顶层回复框  还是在某条评论上的回复
+            console.log(temp);
+            if(temp.parentCommentId == 0){
+                // 参考 top层数据渲染 topCommentRender方法
+                let dom = $(".commentList");
+                let initDom = templateUtils.firstCommentTemplate_notHaveChild(temp);
+                // 插入到top层的第一个
+                dom.prepend(initDom);
+            }else{
+                debugger;
+                // 参考 [展开x条回复] / [收起回复] 事件控制 和childCommentRender 方法
+                let rootDom = $('div[data-id='+temp.parentCommentId+']');
 
+
+
+                let subArr = [];
+                subArr.push(temp);
+                let commentListDom = '';
+                // startIndex==0 说明是首次拼接  头部控制
+                if(startIndex == 0){
+                    commentListDom += '<div class="commentList">';
+                }
+                // item项
+                commentListDom += templateUtils.getchildCommentRenderDom(temp);
+                // 首次拼接,尾部控制
+                if(startIndex == 0){
+                    commentListDom += '<audio></audio></div>';
+                    // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
+                    // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
+                    rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                }else{
+                    // 在commentList内部 audio元素前 追加dom
+                    rootDom.find(".commentList audio").before(commentListDom);
+                }
+
+                // [展示更多回复]控制
+                if(last){
+                    // 加载到底了,移除该标签
+                    rootDom.find(".commentList .commentList__footer").remove();
+                }else if(rootDom.find(".commentList .commentList__footer").length!=1){
+                    // 还有评论需要加载, 添加标签,如果已存在,则跳过拼接
+                    let moreStr = '<div class="commentList__footer">\n' +
+                        '    <div style="cursor: pointer;">显示更多回复</div>\n' +
+                        '</div>';
+                    // 拼接到audio,元素之后
+                    rootDom.find(".commentList audio").after(moreStr);
+                }
+
+
+
+                // 追加 收起回复
+                __THIS__.commentFoldToogle(false,rootDom);
+                __THIS__.commentItemEvent();
+            }
         };
     };
     new currentPageObj().init();

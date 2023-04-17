@@ -10,6 +10,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,9 +28,13 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
      * @param comment
      */
     @Override
-    public void saveComment(ForumComment comment) {
+    public ForumComment saveComment(ForumComment comment) {
         comment.setWorkTime(Utils.getCurrentData());
         commentMapper.insert(comment);
+        // 该条数据入库之后,调用一次查询方法查询对应的所有信息,用户页面渲染
+        List<ForumComment> list = queryCommentData(comment);
+        Optional<ForumComment> first = list.stream().findFirst();
+        return first.get();
     }
 
     @Override
@@ -42,6 +47,8 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
                 .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getReplyUserId);
         // 设置作品id参数
         wrapper.eq(ForumComment::getZuopinId,queryComment.getZuopinId());
+        // 如果存在commentId,则加上该条件
+        wrapper.eq(queryComment.getCommentId()!=null,ForumComment::getCommentId,String.valueOf(queryComment.getCommentId()));
         // 查询正常数据
         wrapper.eq(ForumComment::getDel,queryComment.getDel());
         List<ForumComment> list = commentMapper.selectJoinList(ForumComment.class, wrapper);
