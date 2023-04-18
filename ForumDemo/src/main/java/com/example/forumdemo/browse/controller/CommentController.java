@@ -37,7 +37,7 @@ public class CommentController {
      */
     @PutMapping("/queryCommentData")
     public Result<List<ForumComment>> queryCommentData(@RequestBody ForumComment queryComment){
-        List<ForumComment> list = commentService.queryCommentData(queryComment);
+        List<ForumComment> list = commentService.queryCommentData(queryComment,true);
         return Result.success("查询成功",list);
     }
 

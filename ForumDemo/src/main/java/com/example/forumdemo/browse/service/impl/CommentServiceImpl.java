@@ -31,14 +31,14 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
     public ForumComment saveComment(ForumComment comment) {
         comment.setWorkTime(Utils.getCurrentData());
         commentMapper.insert(comment);
-        // 该条数据入库之后,调用一次查询方法查询对应的所有信息,用户页面渲染
-        List<ForumComment> list = queryCommentData(comment);
+        // 该条数据入库之后,调用一次查询方法查询对应的所有信息,用户页面渲染 跳过某些方法处理
+        List<ForumComment> list = queryCommentData(comment,false);
         Optional<ForumComment> first = list.stream().findFirst();
         return first.get();
     }
 
     @Override
-    public List<ForumComment> queryCommentData(ForumComment queryComment) {
+    public List<ForumComment> queryCommentData(ForumComment queryComment,boolean skipHandle) {
         MPJLambdaWrapper<ForumComment> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(ForumComment.class)
                 .selectAssociation("t1",ForumUser.class,ForumComment::getUserInfo)
@@ -64,11 +64,15 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
          */
         handleCommentDataForFiled(list);
 
-        // 处理层级
-        List<ForumComment> top = handleCommentDataForLevel(list);
-
-        // 打包链模型问题处理
-        top = handleCommentDataForPackage(top,queryComment);
+        List<ForumComment> top = new ArrayList<>();
+        if(skipHandle){
+            // 处理层级
+            top = handleCommentDataForLevel(list);
+            // 打包链模型问题处理
+            top = handleCommentDataForPackage(top,queryComment);
+        }else{
+            top.addAll(list);
+        }
         return top;
     }
 

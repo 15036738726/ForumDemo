@@ -5105,14 +5105,15 @@
 
         /**
          * 处理top下的评论渲染 渲染child
-         * @param childArr 所有child数组
          * @param rootDom 点击的top
          */
         __THIS__.childCommentRender = function(rootDom){
-            debugger;
             let topId = rootDom.attr("data-id");
             // 根据topId,找到对应的childArray
             let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
+            if(childArr.length==0){
+                return;
+            }
             // 获取拼接的开始下标
             let startIndex = __THIS__.getStartIndex(rootDom);
             // 截止位置
@@ -5134,8 +5135,8 @@
             if(startIndex == 0){
                 commentListDom += '<audio></audio></div>';
                 // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
-                // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
-                rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                // rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                rootDom.find(".commentItem__details__main").after(commentListDom);
             }else{
                 // 在commentList内部 audio元素前 追加dom
                 rootDom.find(".commentList audio").before(commentListDom);
@@ -5165,7 +5166,6 @@
              * [展开x条回复] / [收起回复] 事件控制
              */
             $(".Page_Projection__comment .commentItem__interaction__moreReply").unbind("click").bind("click",function(e){
-                debugger;
                 let rootDom = $(e.target).parents(".commentItem");
                 /**
                  * 因为牵涉递归调用,所以需要动态的判断是展开还是收起,即这个方法需要同时处理2事件情况,
@@ -5320,7 +5320,7 @@
 
                     let callback = function(temp){
                         // 追加刚评论的内容到指定位置
-                        //__THIS__.appendComment(temp.data);
+                        __THIS__.appendComment(temp.data);
                         // 文本框移除或者清除操作
                         if(_target.parent(".Page_Projection__comment").length==0){
                             _target.siblings(".commentItem__details__main").find(".commentItem__interaction_contaniner .commentItem__interaction").find("button[class='commentItem__interaction__reply']").text("回复");
@@ -5337,8 +5337,6 @@
                 }
             });
         };
-
-
 
         /**
          * 用户登录成功之后的回调,重设页面回复框的头像,主要是用户登录之后调用
@@ -5409,48 +5407,28 @@
         __THIS__.getChildArray = function(topId,data){
             for(let tempObj of data){
                 if(tempObj.commentId == topId){
-                    return tempObj.child;
+                    let arr = tempObj.child;
+                    if(arr==null){
+                        arr = [];
+                    }
+                    return arr;
                 }
             }
         };
 
         /**
-         *  [回复]功能,评论追加 分析
-         *  1.首先用户需要登录,存在登录信息是这个功能的前置条件
-         *  2.正常评论/@评论  下方都存在回复 此时回复,当前自己的评论立刻追加到top下第一个 这个都一样,区别在于下次刷新详情页,或者收起之后在展开的展示问题
-         *  2.1 正常
-         *      2.1.1被回复人的 在top下的 第一条
-         *      自己回复的在top下的 第二条
-         *      2.1.2:如果存在多个 则把最近时间的 放在上边
-         *      举例:乔克回复了张三  则2条评论在top下这样展示
-         *          张三: xxxxx1
-         *          乔克: @张三  xxxx2
-         *
-         *
-         *  2.2 @的情况
-         *     A: xxx1
-         *     B @ A:bbb1
-         *     C @ B:ccc1
-         *     D @ C: ddd1
-         *     假设:
-         *     你@D: .....  最终展示: A,B,C,D,你   这个我们定义为一个打包链
-         *     你@C: .....  最终展示: A,B,C,你
-         *     你@B: .....  最终展示: A,B,你
-         *     你@A: .....  最终展示:A 你   同2.1情况是一样的
-         *
-         *     所以最终的结论就是 2这种情况是包含了1的
-         *     在child中 判断你回复的评论 一直找到 被回复者 他的 replayId = commentId(顶部评论ID,即top)
-         *     这样产生的一条链  就是首先要展示在top中的最顶层位置
-         *     如果存在多个这种情况(你在某条top下@多个) 则有多个 打包链 则按照你的评论时间 倒叙(时间越靠后,最新的放上边)
-         *
-         * 2.3重叠情况分析
-         * t(top层): 我是top,T1111111
-         *      A @ t : A1111;
-         *      B @ A : B1111;
-         *      C @ B : C1111;
-         *
-         *
+         * 把child设置到对应的位置  覆盖原有的child
+         * @param topId
+         * @param data
+         * @param tempChild 最新的child
          */
+        __THIS__.setChildArray = function(topId,data,tempChild){
+            for(let tempObj of data){
+                if(tempObj.commentId == topId){
+                    tempObj.child = tempChild;
+                }
+            }
+        }
 
         /**
          * 评论回复成功之后,把该评论追加到页面
@@ -5458,59 +5436,37 @@
          */
         __THIS__.appendComment = function(temp){
             // 判断是顶层回复框  还是在某条评论上的回复
-            console.log(temp);
             if(temp.parentCommentId == 0){
                 // 参考 top层数据渲染 topCommentRender方法
                 let dom = $(".commentList");
                 let initDom = templateUtils.firstCommentTemplate_notHaveChild(temp);
                 // 插入到top层的第一个
                 dom.prepend(initDom);
+                // 插入页面评论到页面评论list集合中
+                __THIS__.commentList.unshift(temp);
             }else{
-                debugger;
                 // 参考 [展开x条回复] / [收起回复] 事件控制 和childCommentRender 方法
-                let rootDom = $('div[data-id='+temp.parentCommentId+']');
+                let topId = temp.parentCommentId;
+                let rootDom = $('div[data-id='+topId+']');
+                // 取出对应的child,设置到数组中的第一个元素,然后还把childArr设置到对应的top中
+                let childArr = __THIS__.getChildArray(topId,__THIS__.commentList);
+                childArr.unshift(temp);
+                __THIS__.setChildArray(topId,__THIS__.commentList,childArr);
 
-
-
-                let subArr = [];
-                subArr.push(temp);
-                let commentListDom = '';
-                // startIndex==0 说明是首次拼接  头部控制
-                if(startIndex == 0){
-                    commentListDom += '<div class="commentList">';
-                }
-                // item项
-                commentListDom += templateUtils.getchildCommentRenderDom(temp);
-                // 首次拼接,尾部控制
-                if(startIndex == 0){
-                    commentListDom += '<audio></audio></div>';
-                    // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
-                    // 拼接到commentItem__interaction__moreReply之前 防止与评论回复之后  拼接在在commentItem__details__main之后的位置冲突
-                    rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                // 判断子类是否展开
+                let commentListDom = rootDom.find(".commentList");
+                if(commentListDom.length==1){
+                    // 是,则拼接temp到top下的第一个
+                    let tempDom = templateUtils.getchildCommentRenderDom(temp);
+                    commentListDom.prepend(tempDom);
                 }else{
-                    // 在commentList内部 audio元素前 追加dom
-                    rootDom.find(".commentList audio").before(commentListDom);
+                    // 否,直接调用childCommentRender方法,进行类似于展开更多情况的渲染,因为已经把数据加入到了页面评论集合中
+                    __THIS__.childCommentRender(rootDom);
+                    // 调用评论折叠转换 因为是未展开时的状态,所以下次渲染成收起 传入false
+                    __THIS__.commentFoldToogle(false,rootDom);
                 }
-
-                // [展示更多回复]控制
-                if(last){
-                    // 加载到底了,移除该标签
-                    rootDom.find(".commentList .commentList__footer").remove();
-                }else if(rootDom.find(".commentList .commentList__footer").length!=1){
-                    // 还有评论需要加载, 添加标签,如果已存在,则跳过拼接
-                    let moreStr = '<div class="commentList__footer">\n' +
-                        '    <div style="cursor: pointer;">显示更多回复</div>\n' +
-                        '</div>';
-                    // 拼接到audio,元素之后
-                    rootDom.find(".commentList audio").after(moreStr);
-                }
-
-
-
-                // 追加 收起回复
-                __THIS__.commentFoldToogle(false,rootDom);
-                __THIS__.commentItemEvent();
             }
+            __THIS__.commentItemEvent();
         };
     };
     new currentPageObj().init();
