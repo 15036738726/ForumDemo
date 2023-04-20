@@ -60,19 +60,24 @@ public class Test {
         ForumComment t1 = new ForumComment();
         t1.setReplyId(5L);
         t1.setCommentId(6L);
+        t1.setParentCommentId(1L);
         ForumComment t2 = new ForumComment();
-        t1.setReplyId(4L);
-        t1.setCommentId(5L);
+        t2.setReplyId(4L);
+        t2.setCommentId(5L);
+        t2.setParentCommentId(1L);
         ForumComment t3 = new ForumComment();
         t3.setReplyId(3L);
         t3.setCommentId(4L);
+        t3.setParentCommentId(1L);
         ForumComment t4 = new ForumComment();
         t4.setReplyId(2L);
         t4.setCommentId(3L);
+        t4.setParentCommentId(1L);
         ForumComment t5 = new ForumComment();
         //
         t5.setReplyId(1L);
         t5.setCommentId(2L);
+        t5.setParentCommentId(1L);
 
         Chain ct1 = new Chain(t1);
         Chain ct2 = new Chain(t2);
@@ -80,13 +85,24 @@ public class Test {
         Chain ct4 = new Chain(t4);
         Chain ct5 = new Chain(t5);
 
-        Long topCommentId = 1L;
-        List<ForumComment> data = new ArrayList<>();
-        List<ForumComment> target = new ArrayList<>();
+        List<ForumComment> dataAll = new ArrayList<>();
+        dataAll.add(t1);
+        dataAll.add(t2);
+        dataAll.add(t3);
+        dataAll.add(t4);
+        dataAll.add(t5);
+        List<ForumComment> targetUser = new ArrayList<>();
+        //targetUser.add(t1);
+        //targetUser.add(t5);
+        targetUser.add(t4);
 
         List<Chain> result = new ArrayList<>();
         ForumComment root = new ForumComment();
-        getChain(data,target,root,result);
+        root.setReplyId(0L);
+        root.setParentCommentId(0L);
+        root.setCommentId(1L);
+
+        getChain(dataAll,targetUser,root,result);
 
         // 直接设置即可
 
@@ -97,27 +113,53 @@ public class Test {
 
         // 先找每个target 对应的打包链
         target.stream().forEach(e -> {
-            data.stream().forEach(all -> {
-                // 回复ID
-                Long replayCommentId = e.getReplyId();
-                if(replayCommentId!=top.getCommentId()){
-                    // 还要继续往上找
-
-
-                }else{
-                    // 单个回复的情况
-                    Chain<ForumComment> chain = new Chain<>(e);
-                    Chain<ForumComment> root = new Chain<>(top);
-                    chain.setNext(root);
-                    // 单个回复顶级节点的链
-                    result.add(chain);
-                }
-
-            });
+            System.out.println("第一条链START");
+            Chain temp = new Chain(e);
+            xxx(data,e,top,result,temp);
+            result.add(temp);
+            System.out.println("第一条链END");
         });
-        return null;
+        System.out.println(result);
 
     }
+
+    private static void xxx(List<ForumComment> data, ForumComment e, ForumComment top, List<Chain> result,Chain chain) {
+
+            // 回复ID 上一级的comment对象
+            Long replyCommentId = e.getReplyId();
+            if(!replyCommentId.equals(top.getCommentId())){
+                //System.out.println(e);
+                // 还要继续往上找
+                // 先找到上一级
+                ForumComment fc = new ForumComment();
+                // 创建此次评论的chain对象
+                Chain c = new Chain();
+                for (int i = 0; i < data.size(); i++) {
+                    ForumComment temp = data.get(i);
+                    if(temp.getCommentId().equals(replyCommentId)){
+                        fc = temp;
+                        // 找到对应的节点 设置到chain中
+                        chain.setData(fc);
+                        // 把找到的chain 追加到链中
+                        chain.setNext(c);
+                        System.out.println(fc);
+                        break;
+                    }
+                }
+                xxx(data,fc,top,result,c);
+            }else{
+                // 单个回复的情况
+//                Chain<ForumComment> chain = new Chain<>(e);
+                Chain<ForumComment> root = new Chain<>(top);
+//                chain.setNext(root);
+//                // 单个回复顶级节点的链
+//                result.add(chain);
+                System.out.println(e);
+                System.out.println(top);
+                chain.setNext(root);
+            }
+    }
+
 
     public static void printChain(Chain chain){
         System.out.println(chain.getData());

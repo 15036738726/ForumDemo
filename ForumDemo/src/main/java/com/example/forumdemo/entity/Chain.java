@@ -10,7 +10,12 @@ public class Chain<T> {
     public Chain(T data){
         this.data = data;
     }
+    public Chain(){
 
+    }
+    public void setData(T data){
+         this.data = data;
+    }
     public T getData(){
         return this.data;
     }
