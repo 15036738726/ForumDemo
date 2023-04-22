@@ -92,43 +92,50 @@ public class Test {
         dataAll.add(t4);
         dataAll.add(t5);
         List<ForumComment> targetUser = new ArrayList<>();
-        //targetUser.add(t1);
-        //targetUser.add(t5);
+        targetUser.add(t1);
+        targetUser.add(t2);
+        targetUser.add(t3);
         targetUser.add(t4);
+        targetUser.add(t5);
 
-        List<Chain> result = new ArrayList<>();
         ForumComment root = new ForumComment();
         root.setReplyId(0L);
         root.setParentCommentId(0L);
         root.setCommentId(1L);
 
-        getChain(dataAll,targetUser,root,result);
-
-        // 直接设置即可
-
+        List<Chain> result = getChain(dataAll,targetUser,root);
+        testPrint(result);
 
     }
-    public static void getChain(List<ForumComment> data,List<ForumComment> target,ForumComment top,List<Chain> result){
+    public static List<Chain> getChain(List<ForumComment> data,List<ForumComment> target,ForumComment top){
         // 按照时间倒叙排列 还是正序,这个后续确定一下
-
+        List<Chain> result = new ArrayList<>();
         // 先找每个target 对应的打包链
         target.stream().forEach(e -> {
-            System.out.println("第一条链START");
             Chain temp = new Chain(e);
-            xxx(data,e,top,result,temp);
+            // 从目标e 找到top 返回chain 是一条从child到top的回复链
+            findUp(data,e,top,temp);
             result.add(temp);
-            System.out.println("第一条链END");
         });
-        System.out.println(result);
-
+        return result;
     }
 
-    private static void xxx(List<ForumComment> data, ForumComment e, ForumComment top, List<Chain> result,Chain chain) {
+    private static void testPrint(List<Chain> result) {
+        result.stream().forEach(e -> {
+            System.out.println("---------$$$$$$$$$$$$$$$$$$$-------");
+            System.out.println(e.getData());
+            Chain next = e.getNext();
+            while (next!=null){
+                System.out.println(next.getData());
+                next = next.getNext();
+            }
+        });
+    }
 
+    private static void findUp(List<ForumComment> data, ForumComment e, ForumComment top,Chain chain) {
             // 回复ID 上一级的comment对象
             Long replyCommentId = e.getReplyId();
             if(!replyCommentId.equals(top.getCommentId())){
-                //System.out.println(e);
                 // 还要继续往上找
                 // 先找到上一级
                 ForumComment fc = new ForumComment();
@@ -139,23 +146,16 @@ public class Test {
                     if(temp.getCommentId().equals(replyCommentId)){
                         fc = temp;
                         // 找到对应的节点 设置到chain中
-                        chain.setData(fc);
+                        c.setData(fc);
                         // 把找到的chain 追加到链中
                         chain.setNext(c);
-                        System.out.println(fc);
                         break;
                     }
                 }
-                xxx(data,fc,top,result,c);
+                findUp(data,fc,top,c);
             }else{
                 // 单个回复的情况
-//                Chain<ForumComment> chain = new Chain<>(e);
                 Chain<ForumComment> root = new Chain<>(top);
-//                chain.setNext(root);
-//                // 单个回复顶级节点的链
-//                result.add(chain);
-                System.out.println(e);
-                System.out.println(top);
                 chain.setNext(root);
             }
     }
