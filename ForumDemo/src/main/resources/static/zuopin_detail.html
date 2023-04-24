@@ -5135,8 +5135,13 @@
             if(startIndex == 0){
                 commentListDom += '<audio></audio></div>';
                 // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
-                // rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
-                rootDom.find(".commentItem__details__main").after(commentListDom);
+                //rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                // 拼接到之后时,如果存在输入框,那么应拼接到输入框之后,如果没有,则正常拼接
+                if(rootDom.find(".commentWriter").length==1){
+                    rootDom.find(".commentWriter").after(commentListDom);
+                }else{
+                    rootDom.find(".commentItem__details__main").after(commentListDom);
+                }
             }else{
                 // 在commentList内部 audio元素前 追加dom
                 rootDom.find(".commentList audio").before(commentListDom);
