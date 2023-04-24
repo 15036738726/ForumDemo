@@ -1,7 +1,7 @@
 package com.example.forumdemo.entity;
 
 /**
- * 打包链模型
+ * 打包链模型  这个暂时没有用到 2023-04-24
  */
 public class Chain<T> {
     private T data;

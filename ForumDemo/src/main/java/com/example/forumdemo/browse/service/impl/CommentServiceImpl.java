@@ -10,13 +10,10 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumComment> implements CommentService {
@@ -68,8 +65,8 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         if(skipHandle){
             // 处理层级
             top = handleCommentDataForLevel(list);
-            // 打包链模型问题处理
-            top = handleCommentDataForPackage(top,queryComment);
+            // 排序问题处理
+            top = handleCommentDataSort(top,queryComment);
         }else{
             top.addAll(list);
         }
@@ -92,7 +89,7 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
     }
 
     /**
-     * 处理评论数据,层级问题封装
+     * 处理评论数据,层级问题封装 这一层不处理排序问题
      * @param list
      */
     private List<ForumComment> handleCommentDataForLevel(List<ForumComment> list){
@@ -104,7 +101,7 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
             List<ForumComment> top = e.stream()
                     .filter(temp -> temp.getParentCommentId().equals(val))
                     // top层按照点赞倒排
-                    .sorted(Comparator.comparing(ForumComment::getZanCount).reversed())
+                    //.sorted(Comparator.comparing(ForumComment::getZanCount).reversed())
                     .collect(Collectors.toList());
             // 遍历top 把所有的子类,封装到child属性中
             top.stream().forEach(temp -> {
@@ -112,7 +109,7 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
                 List<ForumComment> child = list.stream()
                         .filter(childTemp -> childTemp.getParentCommentId().equals(topCommentId))
                         // child层按照id正拍,最早的回复放上边,保证回复从上到下,是一套合理的对话
-                        .sorted(Comparator.comparing(ForumComment::getCommentId))
+                        //.sorted(Comparator.comparing(ForumComment::getCommentId))
                         .collect(Collectors.toList());
                 temp.setChild(child);
             });
@@ -122,45 +119,109 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         return rtn;
     }
 
-    // 打包链问题处理
-    private List<ForumComment> handleCommentDataForPackage(List<ForumComment> list,ForumComment comment) {
-        // 传入的有userId,才排序,否则直接返回
-        if(ObjectUtils.isEmpty(comment.getUserId())) return list;
+    /**
+     * 处理排序
+     * @param list
+     * @param comment
+     * @return
+     */
+    private List<ForumComment> handleCommentDataSort(List<ForumComment> list,ForumComment comment) {
+        Long userId = comment.getUserId();
+        boolean loginStatus = !ObjectUtils.isEmpty(userId);
         List<ForumComment> rtn = new ArrayList<>();
 
+        /**
+         * 		top层(不存在语序问题,都是针对作品进行的评论发布,是独立的):5个排序指标
+         * 			自己的评论放在前面
+         * 			自己在top下有评论的,把该top放在前面
+         * 			剩下按照点赞量 倒排
+         * 			最后按照评论数 倒排
+         * 			最后按照时间   倒排 早的在下 晚的在上 可用主键替代
+         *
+         * 		child层:完全按照入库时间正排 即早的放到上边  正排
+         * 		如果是登录,保持入库时间正排的情况下 则单独把登录用户非@的情况(登录用户直接回复top,且该评论没有被回复) 放在上边
+         */
         Optional.ofNullable(list).ifPresent(e -> {
-            // 排child
-            e.stream().forEach(temp -> {
-                List<ForumComment> child = temp.getChild();
-                if(child.size()>0){
-                    List<ForumComment> first = child.stream()
-                            .filter(tempChild -> tempChild.getUserId().equals(comment.getUserId()))
-                            .sorted(Comparator.comparing(ForumComment::getCommentId))
-                            .collect(Collectors.toList());
+            // e:list
+            // 先排序top
+            // 定义排序规则
+            Comparator<ForumComment> comparator = Comparator
+                    .comparing(ForumComment::getZanCount, Comparator.reverseOrder())
+                    .thenComparing(temp -> temp.getChild().size(),Comparator.reverseOrder())
+                    .thenComparing(ForumComment::getCommentId, Comparator.reverseOrder());
+            if(loginStatus){
+                List<ForumComment> firstList = e.stream().filter(temp -> temp.getUserId().equals(userId))
+                        .sorted(comparator)
+                        .collect(Collectors.toList());
+                rtn.addAll(firstList);
+                List<ForumComment> sencondList = e.stream().filter(temp -> !temp.getUserId().equals(userId))
+                        .sorted(comparator)
+                        .collect(Collectors.toList());
+                // sencondList需要继续排序 登录用户在child子评论中有过评论的情况 需要排在前边
+                if(!ObjectUtils.isEmpty(sencondList)){
+                    List<ForumComment> secondListNew = new ArrayList<>();
+                    // sencondList 剩余的top层 目前已经是有序的了,需要把符合情况的top提前,其他top顺序不变
+                    sencondList.stream().forEach(x -> {
+                        List<ForumComment> xChild = x.getChild();
+                        Set<Long> xChildUsers = xChild.stream().map(ForumComment::getUserId).collect(Collectors.toSet());
+                        if(xChildUsers.contains(userId)){
+                            secondListNew.add(x);
+                        }
+                    });
+                    // 此时 secondListNew中存放的都是 子评论中存在当前登录用户评论的Comment对象
+                    // 把原来secondList中剩余的内容 按照顺序 追加到secondListNew中即可 如果已经存在 则跳过
+                    Set<Long> set = secondListNew.stream().map(ForumComment::getCommentId).collect(Collectors.toSet());
+                    sencondList.stream().forEach(x2 ->{
+                        if(!set.contains(x2.getCommentId())){
+                            secondListNew.add(x2);
+                        }
+                    });
+                    rtn.addAll(secondListNew);
+                }
+            }else{
+                List<ForumComment> all = e.stream().sorted(comparator).collect(Collectors.toList());
+                rtn.addAll(all);
+            }
 
-                    List<ForumComment> second = child.stream()
-                            .filter(tempChild -> !tempChild.getUserId().equals(comment.getUserId()))
-                            .sorted(Comparator.comparing(ForumComment::getCommentId))
-                            .collect(Collectors.toList());
-                    child.clear();
-                    child.addAll(first);
-                    child.addAll(second);
+            // 在遍历rtn 对每个top中的child进行排序
+            rtn.stream().forEach(temp -> {
+                List<ForumComment> childList = temp.getChild();
+                if(!ObjectUtils.isEmpty(childList)){
+                        Comparator<ForumComment> childComparing = Comparator.comparing(ForumComment::getCommentId);
+                        if(loginStatus){
+                            // 回复id,topID相等, 且userId匹配的
+                            List<ForumComment> first = childList.stream()
+                                    .filter(x1 -> x1.getUserId().equals(userId))
+                                    .filter(x2 -> x2.getParentCommentId().equals(x2.getReplyId()))
+                                    .sorted(childComparing)
+                                    .collect(Collectors.toList());
+                            // 且first 不能被@
+                            // 收集子类中,所有的replyId
+                            Set<Long> replySet = childList.stream().map(ForumComment::getReplyId).collect(Collectors.toSet());
+                            List<ForumComment> newList = new ArrayList<>();
+                            first.stream().forEach(x3 -> {
+                                if(!replySet.contains(x3.getCommentId())){
+                                    newList.add(x3);
+                                }
+                            });
+                            // 此时newList中 就是所有单条 且没有被@的情况
+                            // 下面添加的时候,跳过newList中已经存在的元素即可
+                            Set<Long> commentSet = newList.stream().map(ForumComment::getCommentId).collect(Collectors.toSet());
+                            // 对所有child排序
+                            List<ForumComment> allChild = childList.stream().sorted(childComparing).collect(Collectors.toList());
+                            allChild.stream().forEach(x4 -> {
+                                if(!commentSet.contains(x4.getCommentId())){
+                                    newList.add(x4);
+                                }
+                            });
+                            temp.setChild(newList);
+                        }else{
+                            List<ForumComment> childAll = childList.stream().sorted(childComparing).collect(Collectors.toList());
+                            temp.setChild(childAll);
+                        }
                 }
             });
 
-            // 顶层排序
-            // 找所有所有是当前用户的评论,按照时间倒排,commentId是有序的,并且效率比workTime字符串效率高
-            List<ForumComment> first = e.stream()
-                    .filter(temp -> temp.getUserId().equals(comment.getUserId()))
-                    .sorted(Comparator.comparing(ForumComment::getCommentId))
-                    .collect(Collectors.toList());
-
-            List<ForumComment> sencond = e.stream()
-                    .filter(temp -> !temp.getUserId().equals(comment.getUserId()))
-                    .sorted(Comparator.comparing(ForumComment::getCommentId))
-                    .collect(Collectors.toList());
-            rtn.addAll(first);
-            rtn.addAll(sencond);
         });
         return rtn;
     }

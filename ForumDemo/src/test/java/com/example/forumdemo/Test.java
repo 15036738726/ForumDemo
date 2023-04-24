@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Test {
 
@@ -57,7 +59,7 @@ public class Test {
 
         printChain(root);*/
 
-        ForumComment t1 = new ForumComment();
+        /*ForumComment t1 = new ForumComment();
         t1.setReplyId(5L);
         t1.setCommentId(6L);
         t1.setParentCommentId(1L);
@@ -74,7 +76,7 @@ public class Test {
         t4.setCommentId(3L);
         t4.setParentCommentId(1L);
         ForumComment t5 = new ForumComment();
-        //
+
         t5.setReplyId(1L);
         t5.setCommentId(2L);
         t5.setParentCommentId(1L);
@@ -104,9 +106,40 @@ public class Test {
         root.setCommentId(1L);
 
         List<Chain> result = getChain(dataAll,targetUser,root);
-        testPrint(result);
+        testPrint(result);*/
+
+        ForumComment a1 = new ForumComment();
+        a1.setCommentId(1L);
+        a1.setComment("AAA");
+        a1.setZanCount(30);
+        ForumComment b1 = new ForumComment();
+        b1.setCommentId(1L);
+        b1.setComment("BBB");
+        b1.setZanCount(20);
+        ForumComment c1 = new ForumComment();
+        c1.setCommentId(3L);
+        c1.setComment("CCCC");
+        c1.setZanCount(10);
+        List<ForumComment> allList = new ArrayList<>();
+        allList.add(a1);
+        allList.add(b1);
+        allList.add(c1);
+
+        Comparator<ForumComment> comparator = Comparator
+                .comparing(ForumComment::getCommentId, Comparator.reverseOrder())
+                .thenComparing(ForumComment::getZanCount, Comparator.reverseOrder());
+
+        List<ForumComment> collect = allList.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
+        System.out.println(collect);
+
+
+
 
     }
+
+
     public static List<Chain> getChain(List<ForumComment> data,List<ForumComment> target,ForumComment top){
         // 按照时间倒叙排列 还是正序,这个后续确定一下
         List<Chain> result = new ArrayList<>();
