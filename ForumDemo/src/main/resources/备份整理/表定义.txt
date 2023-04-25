@@ -80,3 +80,15 @@ CREATE TABLE `forum_comment` (
   PRIMARY KEY (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
+#评论点赞表
+CREATE TABLE forum.forum_join_zan (
+	id BIGINT NOT NULL COMMENT '主键',
+	user_id BIGINT NOT NULL COMMENT '用户ID',
+	abstract_id BIGINT NOT NULL COMMENT '作品或者评论的id',
+	abstract_type INT DEFAULT 1 NOT NULL COMMENT '类型, 1:评论2:作品',
+	CONSTRAINT forum_join_comment_zan_pk PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci
+COMMENT='点赞表,评论点赞和作品点赞目前公用这个表';

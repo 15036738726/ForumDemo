@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.example.forumdemo.browse.service.ZanService;
+import com.example.forumdemo.entity.ForumJoinZan;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.user.mapper.UserOpeMapper;
 import org.junit.jupiter.api.Test;
@@ -27,9 +29,12 @@ class ForumDemoApplicationTests {
     @Autowired
     private UserOpeMapper userOpeMapper;
 
+    @Autowired
+    private ZanService zanService;
+
     @Test
     void test() {
-        ForumUser user = new ForumUser();
+/*        ForumUser user = new ForumUser();
         Long id = Long.valueOf("1641333480715235330");
         user.setUserId(id);
 
@@ -41,7 +46,23 @@ class ForumDemoApplicationTests {
         LambdaUpdateWrapper<ForumUser> lambdaupdate1 = updateWrapper.lambda();
 
         LambdaQueryWrapper<ForumUser> lambda4 = Wrappers.lambdaQuery();
-        LambdaUpdateWrapper<ForumUser> lambdaupdate2 = Wrappers.lambdaUpdate();
+        LambdaUpdateWrapper<ForumUser> lambdaupdate2 = Wrappers.lambdaUpdate();*/
+
+/*        ForumJoinZan zan = new ForumJoinZan();
+        zan.setUserId(1L);
+        zan.setAbstractId(1L);
+        zan.setAbstractType(1);
+        Integer knocking = zanService.knocking(zan);
+        System.out.println(knocking);*/
+
+        ForumJoinZan zan = new ForumJoinZan();
+
+        zan.setUserId(1647766811354968067L);
+        zan.setAbstractId(1650040433884909570L);
+        zan.setAbstractType(1);
+        Integer knocking = zanService.knockingComment(zan);
+        System.out.println(knocking);
+
 
     }
 
