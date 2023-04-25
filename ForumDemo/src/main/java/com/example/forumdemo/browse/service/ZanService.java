@@ -3,6 +3,8 @@ package com.example.forumdemo.browse.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forumdemo.entity.ForumJoinZan;
 
+import java.util.Map;
+
 public interface ZanService extends IService<ForumJoinZan> {
     /**
      * 敲击事件
@@ -16,5 +18,5 @@ public interface ZanService extends IService<ForumJoinZan> {
      * @param entity
      * @return
      */
-    Integer knockingComment(ForumJoinZan entity);
+    Map<String,Object> knockingComment(ForumJoinZan entity);
 }

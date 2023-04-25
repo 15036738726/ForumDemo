@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/zanController")
 public class ZanController {
@@ -21,8 +23,8 @@ public class ZanController {
      * @return
      */
     @PutMapping("/knockingComment")
-    public Result<Integer> knockingComment(@RequestBody ForumJoinZan entity){
-        Integer knocking = zanService.knockingComment(entity);
+    public Result<Map<String,Object>> knockingComment(@RequestBody ForumJoinZan entity){
+        Map<String,Object> knocking = zanService.knockingComment(entity);
         return Result.success(knocking);
     }
 

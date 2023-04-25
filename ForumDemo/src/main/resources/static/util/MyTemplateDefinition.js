@@ -188,16 +188,10 @@ var MyTemplateDefinition = function(option){
             '                <pre>'+temp.comment+'</pre>\n' +
             '            </div>\n' +
             '            <div class="commentItem__interaction_contaniner">\n' +
-            '                <div class="commentItem__interaction">\n' +
-            '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-            '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-            '                             role="img">\n' +
-            '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-            '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-            '                                  fill="#0C0D0F"></path>\n' +
-            '                        </svg>\n' +
-            '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span></button>\n' +
-            '                    <button class="commentItem__interaction__reply">回复</button>\n' +
+            '                <div class="commentItem__interaction">\n';
+            // 获取不同样式的"赞"样式
+            str += __Template__.getZanTemplate(temp);
+            str += '             <button class="commentItem__interaction__reply">回复</button>\n' +
             '                </div>\n' +
             '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
             '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
@@ -219,13 +213,6 @@ var MyTemplateDefinition = function(option){
             '</div>';
         return str;
     };
-
-    /**
-     * 处理赞显示文本 赞=0 显示赞,>0 显示实际的数量
-     */
-    __Template__.getZanCountText = function(num){
-        return num>=1?num:"赞";
-    }
 
     /**
      * [作品详情页使用]
@@ -257,16 +244,10 @@ var MyTemplateDefinition = function(option){
             '                <pre>'+temp.comment+'</pre>\n' +
             '            </div>\n' +
             '            <div class="commentItem__interaction_contaniner">\n' +
-            '                <div class="commentItem__interaction">\n' +
-            '                    <button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-            '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
-            '                             role="img">\n' +
-            '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-            '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-            '                                  fill="#0C0D0F"></path>\n' +
-            '                        </svg>\n' +
-            '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span></button>\n' +
-            '                    <button class="commentItem__interaction__reply">回复</button>\n' +
+            '                <div class="commentItem__interaction">\n';
+            // 获取不同样式的"赞"样式
+            str += __Template__.getZanTemplate(temp);
+            str += '             <button class="commentItem__interaction__reply">回复</button>\n' +
             '                </div>\n' +
             '                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
             '                     role="img" class="dotMoreAction_trigger commentItem__moreOptions">\n' +
@@ -316,16 +297,10 @@ var MyTemplateDefinition = function(option){
         str += '              <pre>'+childTemp.comment+'</pre>\n' +
             '                </div>\n' +
             '                <div class="commentItem__interaction_contaniner">\n' +
-            '                    <div class="commentItem__interaction">\n' +
-            '                        <button aria-label="'+childTemp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
-            '                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
-            '                                 xmlns="http://www.w3.org/2000/svg" role="img">\n' +
-            '                                <path fill-rule="evenodd" clip-rule="evenodd"\n' +
-            '                                      d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
-            '                                      fill="#0C0D0F"></path>\n' +
-            '                            </svg>\n' +
-            '                            <span>'+__Template__.getZanCountText(childTemp.zanCount)+'</span></button>\n' +
-            '                        <button class="commentItem__interaction__reply">回复</button>\n' +
+            '                    <div class="commentItem__interaction">\n' ;
+            // 获取不同样式的"赞"样式
+            str += __Template__.getZanTemplate(childTemp);
+            str += '             <button class="commentItem__interaction__reply">回复</button>\n' +
             '                    </div>\n' +
             '                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
             '                         xmlns="http://www.w3.org/2000/svg" role="img"\n' +
@@ -487,6 +462,58 @@ var MyTemplateDefinition = function(option){
             '        </div>\n' +
             '    </div>\n' +
             '</div>';
+    };
+
+    /**
+     * 处理赞显示文本 赞=0 显示赞,>0 显示实际的数量
+     */
+    __Template__.getZanCountText = function(num){
+        return num>=1?num:"赞";
+    };
+
+    /**
+     * 根据temp内容不同,然后不同的 赞 模板
+     * @param temp
+     */
+    __Template__.getZanTemplate = function(temp){
+        if(temp.zanId){
+            return __Template__.getZanTemplateByStauts(true,temp);
+
+        }else{
+            return __Template__.getZanTemplateByStauts(false,temp);
+        }
+    };
+
+    /**
+     * 根据状态返回赞 模板
+     * @param status
+     * @param temp
+     * @returns {string}
+     */
+    __Template__.getZanTemplateByStauts = function(status,temp){
+        if(status){
+            // 激活状态
+            return         '<button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree actived">\n' +
+                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                             role="img">\n' +
+                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M3.75 7.6a1.5 1.5 0 0 0-1.499 1.5v10.4a1.5 1.5 0 0 0 1.5 1.5h12.595a3 3 0 0 0 2.928-2.345l1.93-8.618A2 2 0 0 0 19.252 7.6h-6.908l.343-.59c1.164-2-.279-4.51-2.593-4.51a1.25 1.25 0 0 0-1.08.621L6.407 7.6H3.75Zm2.328 10.093V11.22a.72.72 0 0 1 1.44 0v6.473a.72.72 0 0 1-1.44 0Z"\n' +
+                '                                  fill="#FE3355"></path>\n' +
+                '                        </svg>\n' +
+                '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span>\n'+
+                '</button>\n';
+        }else{
+            // 未激活状态
+            return         '<button aria-label="'+temp.zanCount+'个点赞" class="commentItem__interaction__agree">\n' +
+                '                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"\n' +
+                '                             role="img">\n' +
+                '                            <path fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M10.096 2.5c1.973 0 3.313 1.823 2.944 3.6a3.027 3.027 0 0 1-.35.91l-.344.59h6.909a2 2 0 0 1 1.95 2.437l-1.929 8.618A3 3 0 0 1 16.35 21H3.753a1.5 1.5 0 0 1-1.5-1.5V9.1a1.5 1.5 0 0 1 1.5-1.5H6.41l2.607-4.479a1.25 1.25 0 0 1 1.08-.621ZM6.03 9.1H3.753v10.4H6.03V9.1Zm1.5 10.4h8.82a1.5 1.5 0 0 0 1.464-1.172l1.93-8.619a.5.5 0 0 0-.488-.609h-6.909a1.5 1.5 0 0 1-1.296-2.255l.343-.59a1.5 1.5 0 0 0-1.157-2.249L7.53 8.658V19.5Z"\n' +
+                '                                  fill="#0C0D0F"></path>\n' +
+                '                        </svg>\n' +
+                '                        <span>'+__Template__.getZanCountText(temp.zanCount)+'</span>\n'+
+                '</button>\n';
+        }
     };
 
 

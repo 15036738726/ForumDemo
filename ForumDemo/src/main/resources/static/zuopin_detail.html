@@ -5341,6 +5341,42 @@
                     utils.send(callback,"/commentController/saveComment",sendData,utils.PUT_REQUEST);
                 }
             });
+
+
+            /**
+             * 绑定点赞功能
+             */
+            $(".Page_Projection__comment .commentItem__interaction__agree").unbind("click").bind("click",function(e){
+                let loginUser = utils.getCache("LOGIN_USER");
+                if(loginUser==null){
+                    let temp = {};
+                    temp.title = "登录后可点赞";
+                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
+                    return;
+                };
+
+                let itemDom = $(e.target).parents(".commentItem__details__main").parent(".commentItem__details").parent(".commentItem ");
+                // 对应点赞的button父类commentItem__interaction 用于点赞之后的样式置换
+                let interactionDom = $(e.target).parents(".commentItem__details__main").find(".commentItem__interaction");
+                let commentId = itemDom.attr("data-id");
+                let userId = loginUser.userId;
+                let sendData = {};
+                sendData.abstractId = commentId;
+                sendData.userId = userId;
+                sendData.abstractType = 1;
+                let callback = function(temp){
+                    // 点赞数更新
+                    // 获取模板
+                    let zanTemplate = templateUtils.getZanTemplate(temp.data);
+                    // dom拼接
+                    interactionDom.find(".commentItem__interaction__agree").remove();
+                    interactionDom.prepend(zanTemplate);
+                    // 元素有替换动作,重新加载绑定
+                    __THIS__.commentItemEvent();
+                    //alert("点赞成功!!!!");
+                }
+                utils.send(callback,"/zanController/knockingComment",sendData,utils.PUT_REQUEST);
+            });
         };
 
         /**

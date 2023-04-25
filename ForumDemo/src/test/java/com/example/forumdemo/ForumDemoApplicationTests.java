@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Map;
+
 @RunWith(SpringRunner.class)
 //@SpringBootTest
 //测试类启动时就只会初始化 Spring 上下文，不再启动 Tomcat 容器了 加载某个类时,classes={}中增加class
@@ -57,10 +59,10 @@ class ForumDemoApplicationTests {
 
         ForumJoinZan zan = new ForumJoinZan();
 
-        zan.setUserId(1647766811354968067L);
-        zan.setAbstractId(1650040433884909570L);
+        zan.setUserId(1643564375287652353L);
+        zan.setAbstractId(1650396198646697985L);
         zan.setAbstractType(1);
-        Integer knocking = zanService.knockingComment(zan);
+        Map<String, Object> knocking = zanService.knockingComment(zan);
         System.out.println(knocking);
 
 

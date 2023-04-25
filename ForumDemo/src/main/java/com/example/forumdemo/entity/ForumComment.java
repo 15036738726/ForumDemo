@@ -41,6 +41,9 @@ public class ForumComment implements Serializable {
     private Integer del = 1;
     // 点赞数
     private Integer zanCount = 0;
+    // 点赞状态,该字段存储的是登录用于在该评论上的点赞ID,有值就说明登录用户对这个评论进行过点赞
+    @TableField(exist = false)
+    private Long zanId;
     // 回复的是哪条评论ID
     private Long replyId;
     // 评论已读0 未读1

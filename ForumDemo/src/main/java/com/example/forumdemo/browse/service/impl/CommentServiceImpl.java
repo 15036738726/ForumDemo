@@ -3,6 +3,7 @@ package com.example.forumdemo.browse.service.impl;
 import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.service.CommentService;
 import com.example.forumdemo.entity.ForumComment;
+import com.example.forumdemo.entity.ForumJoinZan;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
@@ -41,6 +42,19 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
                 .selectAssociation("t2",ForumUser.class,ForumComment::getReplyUserInfo)
                 .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getUserId)
                 .leftJoin(ForumUser.class,ForumUser::getUserId,ForumComment::getReplyUserId);
+        // 登录用户点赞情况关联查询
+        boolean loginStatus = !ObjectUtils.isEmpty(queryComment.getUserId());
+        if(loginStatus){
+            // 追击查询表以及关联条件
+            wrapper
+                    .selectAll(ForumJoinZan.class)
+                    .selectAs(ForumJoinZan::getId,"zanId")
+                    .leftJoin(ForumJoinZan.class, on -> on
+                            .eq(ForumJoinZan::getAbstractId,ForumComment::getCommentId)
+                            .eq(ForumJoinZan::getUserId,queryComment.getUserId())
+                            .eq(ForumJoinZan::getAbstractType,1)
+                    );
+        }
         // 设置作品id参数
         wrapper.eq(ForumComment::getZuopinId,queryComment.getZuopinId());
         // 如果存在commentId,则加上该条件

@@ -13,6 +13,9 @@ import com.example.forumdemo.entity.ForumJoinZan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class ZanServiceImpl extends ServiceImpl<ZanMapper, ForumJoinZan> implements ZanService {
 
@@ -51,8 +54,9 @@ public class ZanServiceImpl extends ServiceImpl<ZanMapper, ForumJoinZan> impleme
      * @return 返回真实点赞数
      */
     @Override
-    public Integer knockingComment(ForumJoinZan entity) {
+    public Map<String,Object> knockingComment(ForumJoinZan entity) {
         Integer knocking = this.knocking(entity);
+        String zanIdFlag = knocking>0?"-":"";
         // 对评论表数据做更新,update xx set zan+knocking where id= entity.getabstartId
         /*
         LambdaUpdateWrapper<ForumComment> updateWrapper = Wrappers.lambdaUpdate();
@@ -68,7 +72,11 @@ public class ZanServiceImpl extends ServiceImpl<ZanMapper, ForumJoinZan> impleme
         updateWrapper.eq(ForumComment::getCommentId,entity.getAbstractId())
                         .set(ForumComment::getZanCount,val);
         commentMapper.update(null, updateWrapper);
-        return val;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("zanId",zanIdFlag);
+        map.put("zanCount",val);
+        return map;
     }
 
 
