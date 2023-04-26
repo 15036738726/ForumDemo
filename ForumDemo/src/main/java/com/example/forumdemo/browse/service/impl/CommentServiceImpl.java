@@ -153,6 +153,9 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
          *
          * 		child层:完全按照入库时间正排 即早的放到上边  正排
          * 		如果是登录,保持入库时间正排的情况下 则单独把登录用户非@的情况(登录用户直接回复top,且该评论没有被回复) 放在上边
+         *
+         * 	    默认排序(最热排序)就按照上边的规则
+         * 	    最新排序,则只把top层的最晚发布的数据放在上边,commentId 倒排
          */
         Optional.ofNullable(list).ifPresent(e -> {
             // e:list
@@ -162,37 +165,45 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
                     .comparing(ForumComment::getZanCount, Comparator.reverseOrder())
                     .thenComparing(temp -> temp.getChild().size(),Comparator.reverseOrder())
                     .thenComparing(ForumComment::getCommentId, Comparator.reverseOrder());
-            if(loginStatus){
-                List<ForumComment> firstList = e.stream().filter(temp -> temp.getUserId().equals(userId))
-                        .sorted(comparator)
-                        .collect(Collectors.toList());
-                rtn.addAll(firstList);
-                List<ForumComment> sencondList = e.stream().filter(temp -> !temp.getUserId().equals(userId))
-                        .sorted(comparator)
-                        .collect(Collectors.toList());
-                // sencondList需要继续排序 登录用户在child子评论中有过评论的情况 需要排在前边
-                if(!ObjectUtils.isEmpty(sencondList)){
-                    List<ForumComment> secondListNew = new ArrayList<>();
-                    // sencondList 剩余的top层 目前已经是有序的了,需要把符合情况的top提前,其他top顺序不变
-                    sencondList.stream().forEach(x -> {
-                        List<ForumComment> xChild = x.getChild();
-                        Set<Long> xChildUsers = xChild.stream().map(ForumComment::getUserId).collect(Collectors.toSet());
-                        if(xChildUsers.contains(userId)){
-                            secondListNew.add(x);
-                        }
-                    });
-                    // 此时 secondListNew中存放的都是 子评论中存在当前登录用户评论的Comment对象
-                    // 把原来secondList中剩余的内容 按照顺序 追加到secondListNew中即可 如果已经存在 则跳过
-                    Set<Long> set = secondListNew.stream().map(ForumComment::getCommentId).collect(Collectors.toSet());
-                    sencondList.stream().forEach(x2 ->{
-                        if(!set.contains(x2.getCommentId())){
-                            secondListNew.add(x2);
-                        }
-                    });
-                    rtn.addAll(secondListNew);
+
+            // rtn 就是所有的top 如果是最热排序,则默认 否则按照commentId倒排
+            if(comment.getSortType()==0){
+                if(loginStatus){
+                    List<ForumComment> firstList = e.stream().filter(temp -> temp.getUserId().equals(userId))
+                            .sorted(comparator)
+                            .collect(Collectors.toList());
+                    rtn.addAll(firstList);
+                    List<ForumComment> sencondList = e.stream().filter(temp -> !temp.getUserId().equals(userId))
+                            .sorted(comparator)
+                            .collect(Collectors.toList());
+                    // sencondList需要继续排序 登录用户在child子评论中有过评论的情况 需要排在前边
+                    if(!ObjectUtils.isEmpty(sencondList)){
+                        List<ForumComment> secondListNew = new ArrayList<>();
+                        // sencondList 剩余的top层 目前已经是有序的了,需要把符合情况的top提前,其他top顺序不变
+                        sencondList.stream().forEach(x -> {
+                            List<ForumComment> xChild = x.getChild();
+                            Set<Long> xChildUsers = xChild.stream().map(ForumComment::getUserId).collect(Collectors.toSet());
+                            if(xChildUsers.contains(userId)){
+                                secondListNew.add(x);
+                            }
+                        });
+                        // 此时 secondListNew中存放的都是 子评论中存在当前登录用户评论的Comment对象
+                        // 把原来secondList中剩余的内容 按照顺序 追加到secondListNew中即可 如果已经存在 则跳过
+                        Set<Long> set = secondListNew.stream().map(ForumComment::getCommentId).collect(Collectors.toSet());
+                        sencondList.stream().forEach(x2 ->{
+                            if(!set.contains(x2.getCommentId())){
+                                secondListNew.add(x2);
+                            }
+                        });
+                        rtn.addAll(secondListNew);
+                    }
+                }else{
+                    List<ForumComment> all = e.stream().sorted(comparator).collect(Collectors.toList());
+                    rtn.addAll(all);
                 }
+
             }else{
-                List<ForumComment> all = e.stream().sorted(comparator).collect(Collectors.toList());
+                List<ForumComment> all = e.stream().sorted(Comparator.comparing(ForumComment::getCommentId, Comparator.reverseOrder())).collect(Collectors.toList());
                 rtn.addAll(all);
             }
 

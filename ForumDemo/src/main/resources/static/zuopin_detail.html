@@ -5015,13 +5015,8 @@
             __THIS__.otherLoad();
             // 页面评论框登录用户头像初始化
             __THIS__.loginSucessCallback();
-            // 根据作品id,查询当前作品下的所有评论 传入登录的用户id,是为了处理评论展示顺序,打包链问题
-            let loginUser = utils.getCache("LOGIN_USER");
-            let loginUserId = null;
-            if(loginUser!=null){
-                loginUserId = loginUser.userId;
-            }
-            __THIS__.loadCommentData({"zuopinId":__THIS__.zuoPinInfo.zuopinId,"userId":loginUserId});
+            // 初始化页面评论信息
+            __THIS__.loadCommentData({"sortType":"0"});
 
         };
 
@@ -5052,9 +5047,17 @@
          * 加载评论信息
          */
         __THIS__.loadCommentData = function(temp){
+            // 根据作品id,查询当前作品下的所有评论 传入登录的用户id,是为了处理评论展示顺序,打包链问题
+            let loginUser = utils.getCache("LOGIN_USER");
+            let loginUserId = null;
+            if(loginUser!=null){
+                loginUserId = loginUser.userId;
+            }
             let sendData = {};
-            sendData.zuopinId = temp.zuopinId;
-            sendData.userId = temp.userId;
+            sendData.zuopinId = __THIS__.zuoPinInfo.zuopinId;
+            sendData.userId = loginUserId;
+            // 排序规则,0最热排序即默认排序  1最新排序
+            sendData.sortType = temp.sortType;
             utils.send(
                 function(temp){
                     // 渲染dom
@@ -5377,6 +5380,27 @@
                 }
                 utils.send(callback,"/zanController/knockingComment",sendData,utils.PUT_REQUEST);
             });
+
+            /**
+             * 最热排序(默认) 最新发布 功能按钮切换
+             */
+            $(".Page_Projection__comment .comment-new-style .comment-tab").unbind("click").bind("click",function(e){
+                //debugger;
+                console.log($(e.target));
+                let span = $(e.target).parents(".comment-new-style").find(".comment-tab span");
+                let spanText = span.text();
+                let temp = {};
+                if("最热排序"==spanText){
+                    // 如果是最热,则替换成最新排序
+                    span.text("最新排序");
+                    temp.sortType = "1";
+                }else{
+                    temp.sortType = "0";
+                    span.text("最热排序");
+                }
+                __THIS__.loadCommentData(temp);
+            })
+
         };
 
         /**
