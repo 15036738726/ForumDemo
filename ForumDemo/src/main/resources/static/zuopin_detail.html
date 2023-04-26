@@ -5540,8 +5540,74 @@
          * 作品详情页作品详情信息加载
          */
         __THIS__.loadCurrentZuoPinInfo = function(){
-            utils.send(null,"/queryZuoPinDetail",{"zuopinId":__THIS__.zuoPinInfo.zuopinId},utils.PUT_REQUEST);
+            let loginUser = utils.getCache("LOGIN_USER");
+            let loginUserId = null;
+            if(loginUser!=null){
+                loginUserId = loginUser.userId;
+            }
+
+            let callback = function(result){
+                // 页面评论个数 可公用
+                __THIS__.setPageZuopinCommentCount(result.data.commentCount);
+                // 视频赞个数 可公用
+                __THIS__.setPageZuopinZanInfo(result.data.zan,result.data.dianzanStatus);
+                // 收藏状态  可公用
+                __THIS__.setPageZuopinLoveStatus(result.data.shoucangStatus);
+
+
+
+                // 其他不存在公用问题的静态值 都在一个方法中完成
+                __THIS__.initPageStaticParam(result.data);
+            }
+            // 设置参数,当前作品Id;登录用户ID如果有的话;作品所属用户ID
+            let sendData = {"zuopinId":__THIS__.zuoPinInfo.zuopinId,"loginUserId":loginUserId,"userId":__THIS__.userInfo.userId};
+            utils.send(callback,"/queryZuoPinDetail",sendData,utils.PUT_REQUEST);
         };
+
+        /**
+         * 传入当前作品的评论计数 设置页面
+         * @param val
+         */
+        __THIS__.setPageZuopinCommentCount = function(val){
+            $(".Page_Projection__comment .comment-new-style .new-comment-count").text(val+"条评论");
+        };
+
+        /**
+         * 设置当前作品点赞数 和点赞状态
+         * @param count
+         * @param status
+         */
+        __THIS__.setPageZuopinZanInfo = function(count,status){
+
+        }
+
+        /**
+         * 设置作品收藏状态
+         * @param status
+         */
+        __THIS__.setPageZuopinLoveStatus = function(status){
+
+        }
+
+        /**
+         * 页面静态数值初始化
+         * @param data
+         */
+        __THIS__.initPageStaticParam = function(data){
+            let leftDom = $(".Page_Projection__secondary_des_and_action .videoDesc__videoStatics");
+            let itemSpan = leftDom.find("span");
+            // 原创
+            itemSpan.eq(0).text(data.yuanchuang=="1"?"原创":"转发");
+            // 观看次数
+            debugger;
+            itemSpan.eq(2).text(data.lookCountText+"观看");
+            // 弹幕数
+            itemSpan.eq(4).text(data.danMu+"条弹幕");
+            // 发布时间
+            itemSpan.eq(6).text(data.workTime+"发布");
+        };
+
+
     };
     new currentPageObj().init();
 </script>

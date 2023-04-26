@@ -456,7 +456,7 @@ var MyTemplateDefinition = function(option){
             '                    data-disable_default="true">'+temp.userInfo.userName+'</a>\n' +
             '                </div>\n' +
             '                <div class="HorizontalFeedCard__bottomInfo color-content-secondary" style="margin-top:2px"><span\n' +
-            '                        class="HorizontalFeedCard-accessories-bottomInfo__statistics">'+temp.lookCountText+'<span>&nbsp;·&nbsp;</span>'+temp.workTimeText+'</span>\n' +
+            '                        class="HorizontalFeedCard-accessories-bottomInfo__statistics">'+temp.lookCountText+'播放<span>&nbsp;·&nbsp;</span>'+temp.workTimeText+'</span>\n' +
             '                </div>\n' +
             '            </div>\n' +
             '        </div>\n' +

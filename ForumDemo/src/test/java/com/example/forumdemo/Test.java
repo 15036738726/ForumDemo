@@ -4,10 +4,7 @@ import com.example.forumdemo.entity.Chain;
 import com.example.forumdemo.entity.ForumComment;
 
 import javax.xml.stream.events.Comment;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -108,7 +105,7 @@ public class Test {
         List<Chain> result = getChain(dataAll,targetUser,root);
         testPrint(result);*/
 
-        ForumComment a1 = new ForumComment();
+/*        ForumComment a1 = new ForumComment();
         a1.setCommentId(1L);
         a1.setComment("AAA");
         a1.setZanCount(30);
@@ -132,10 +129,20 @@ public class Test {
         List<ForumComment> collect = allList.stream()
                 .sorted(comparator)
                 .collect(Collectors.toList());
-        System.out.println(collect);
+        System.out.println(collect);*/
 
+/*        // 指定日期格式化为localDataTime  获取到localDateTime对象
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime parse = LocalDateTime.parse("2023-02-05 01:25:46",formatter);
 
+        // 格式化规则
+        DateTimeFormatter formatterDuan = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatterChang = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+        String duan = parse.format(formatterDuan);
+        String chang = parse.format(formatterChang);
+        System.out.println(duan);
+        System.out.println(chang);*/
 
     }
 

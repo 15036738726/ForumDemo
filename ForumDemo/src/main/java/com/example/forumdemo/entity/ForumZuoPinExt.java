@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 @Data
 public class ForumZuoPinExt extends ForumZuoPin implements Serializable {
+    // 登录用户ID
+    private Long loginUserId;
     /**
      * 			实体需要返回{
      * 				guanzhu_status登录用户在该视频下的 已关注/关注 信息  0:关注 1:已关注

@@ -87,7 +87,7 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         zuopinWrapper.eq(queryParam.getZuopinId()!=null,ForumZuoPin::getZuopinId,queryParam.getZuopinId());
         ForumZuoPin zuopinInfo =  playMapper.selectOne(zuopinWrapper);
         zuopinInfo.setLookCountText(Utils.lookCountText(zuopinInfo.getLookCount()));
-        zuopinInfo.setWorkTimeText(Utils.workTimeText(zuopinInfo.getWorkTime()));
+        zuopinInfo.setWorkTimeText(Utils.timeFormatter(zuopinInfo.getWorkTime()));
 
         // 查询用户基本信息
         LambdaQueryWrapper<ForumUser> userWrapper = Wrappers.lambdaQuery();
