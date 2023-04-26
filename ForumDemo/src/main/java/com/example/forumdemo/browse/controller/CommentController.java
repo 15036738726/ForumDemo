@@ -2,6 +2,7 @@ package com.example.forumdemo.browse.controller;
 
 import com.example.forumdemo.browse.service.CommentService;
 import com.example.forumdemo.entity.ForumComment;
+import com.example.forumdemo.entity.ForumCommentExt;
 import com.example.forumdemo.util.ForumParamEnum;
 import com.example.forumdemo.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class CommentController {
      * @return
      */
     @PutMapping("/queryCommentData")
-    public Result<List<ForumComment>> queryCommentData(@RequestBody ForumComment queryComment){
+    public Result<List<ForumComment>> queryCommentData(@RequestBody ForumCommentExt queryComment){
         List<ForumComment> list = commentService.queryCommentData(queryComment,true);
         return Result.success("查询成功",list);
     }

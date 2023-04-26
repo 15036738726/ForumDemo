@@ -75,7 +75,4 @@ public class ForumComment implements Serializable {
     @TableField(exist = false)
     private boolean aiteState;
 
-    // 最热排序0 最新排序1 查询的时候传参用到
-    @TableField(exist = false)
-    private Integer sortType;
 }

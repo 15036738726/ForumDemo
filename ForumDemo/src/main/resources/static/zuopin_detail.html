@@ -5013,6 +5013,8 @@
         __THIS__.init = function () {
             // 其他初始化数据加载
             __THIS__.otherLoad();
+            // 作品详情信息加载
+            __THIS__.loadCurrentZuoPinInfo();
             // 页面评论框登录用户头像初始化
             __THIS__.loginSucessCallback();
             // 初始化页面评论信息
@@ -5532,6 +5534,13 @@
                 }
             }
             __THIS__.commentItemEvent();
+        };
+
+        /**
+         * 作品详情页作品详情信息加载
+         */
+        __THIS__.loadCurrentZuoPinInfo = function(){
+            utils.send(null,"/queryZuoPinDetail",{"zuopinId":__THIS__.zuoPinInfo.zuopinId},utils.PUT_REQUEST);
         };
     };
     new currentPageObj().init();

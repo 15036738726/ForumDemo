@@ -1,12 +1,19 @@
 package com.example.forumdemo.browse.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.mapper.PlayMapper;
 import com.example.forumdemo.browse.service.PlayService;
+import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.entity.ForumZuoPin;
+import com.example.forumdemo.entity.ForumZuoPinExt;
+import com.example.forumdemo.user.mapper.UserOpeMapper;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +24,12 @@ import java.util.Optional;
 public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin> implements PlayService {
     @Autowired
     private PlayMapper playMapper;
+
+    @Autowired
+    private UserOpeMapper userOpeMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     /**
      * 根据条件查询产品表
@@ -38,7 +51,7 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         lambdaWrapper.eq(!contentTypeCondition,ForumZuoPin::getContentType,queryParam.getContentType());
 
         // 删除状态
-        lambdaWrapper.eq(ForumZuoPin::getDel,queryParam.getDel());
+        lambdaWrapper.eq(queryParam.getDel()!=null,ForumZuoPin::getDel,queryParam.getDel());
         // 执行查询
         List<ForumZuoPin> list = playMapper.selectJoinList(ForumZuoPin.class, lambdaWrapper);
 
@@ -54,12 +67,46 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
             e1.setWorkTimeText(Utils.workTimeText(e1.getWorkTime()));
         }));
 
-        // 数据太少,这里暂时先增加点数据 追加5个
-//        Optional<ForumZuoPin> any = list.stream().findAny();
-//        for(int i = 0;i<5;i++){
-//            list.add(any.get());
-//        }
         return list;
+    }
+
+    /**
+     * 查询作品详情信息
+     * @param queryParam
+     * @return
+     */
+    @Override
+    public ForumZuoPinExt queryZuoPinDetail(ForumZuoPinExt queryParam) {
+        ForumZuoPinExt zuopinInfoExt = new ForumZuoPinExt();
+        /**
+         * 查询内容有:
+         * 标题/原创/观看次数/弹幕数/发布时间/简介(暂时没有)/点赞数/当前登录用户点赞信息/当前登录用户收藏信息/评论数
+         */
+
+        LambdaQueryWrapper<ForumZuoPin> zuopinWrapper = Wrappers.lambdaQuery();
+        zuopinWrapper.eq(queryParam.getZuopinId()!=null,ForumZuoPin::getZuopinId,queryParam.getZuopinId());
+        ForumZuoPin zuopinInfo =  playMapper.selectOne(zuopinWrapper);
+        zuopinInfo.setLookCountText(Utils.lookCountText(zuopinInfo.getLookCount()));
+        zuopinInfo.setWorkTimeText(Utils.workTimeText(zuopinInfo.getWorkTime()));
+
+        // 查询用户基本信息
+        LambdaQueryWrapper<ForumUser> userWrapper = Wrappers.lambdaQuery();
+        userWrapper.eq(zuopinInfo.getUserId()!=null,ForumUser::getUserId,zuopinInfo.getUserId());
+        ForumUser forumUser = userOpeMapper.selectOne(userWrapper);
+        zuopinInfo.setUserInfo(forumUser);
+
+        // 父类对象属性值赋值给子类对象
+        BeanUtils.copyProperties(zuopinInfo,zuopinInfoExt);
+
+        // 查询评论数
+        LambdaQueryWrapper<ForumComment> commentWrapper = Wrappers.lambdaQuery();
+        commentWrapper.eq(queryParam.getZuopinId()!=null,ForumComment::getZuopinId,queryParam.getZuopinId());
+        Integer commentNum = commentMapper.selectCount(commentWrapper);
+        zuopinInfoExt.setCommentCount(commentNum);
+
+        // 点赞 收藏 关注 参数后续设置
+
+        return zuopinInfoExt;
     }
 
 }

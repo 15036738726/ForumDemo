@@ -3,6 +3,7 @@ package com.example.forumdemo.browse.service.impl;
 import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.service.CommentService;
 import com.example.forumdemo.entity.ForumComment;
+import com.example.forumdemo.entity.ForumCommentExt;
 import com.example.forumdemo.entity.ForumJoinZan;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.util.Utils;
@@ -29,13 +30,15 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         comment.setWorkTime(Utils.getCurrentData());
         commentMapper.insert(comment);
         // 该条数据入库之后,调用一次查询方法查询对应的所有信息,用户页面渲染 跳过某些方法处理
-        List<ForumComment> list = queryCommentData(comment,false);
+        ForumCommentExt temp = new ForumCommentExt();
+        temp.setCommentId(comment.getCommentId());
+        List<ForumComment> list = queryCommentData(temp,false);
         Optional<ForumComment> first = list.stream().findFirst();
         return first.get();
     }
 
     @Override
-    public List<ForumComment> queryCommentData(ForumComment queryComment,boolean skipHandle) {
+    public List<ForumComment> queryCommentData(ForumCommentExt queryComment, boolean skipHandle) {
         MPJLambdaWrapper<ForumComment> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(ForumComment.class)
                 .selectAssociation("t1",ForumUser.class,ForumComment::getUserInfo)
@@ -56,11 +59,11 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
                     );
         }
         // 设置作品id参数
-        wrapper.eq(ForumComment::getZuopinId,queryComment.getZuopinId());
+        wrapper.eq(queryComment.getZuopinId()!=null,ForumComment::getZuopinId,queryComment.getZuopinId());
         // 如果存在commentId,则加上该条件
         wrapper.eq(queryComment.getCommentId()!=null,ForumComment::getCommentId,String.valueOf(queryComment.getCommentId()));
         // 查询正常数据
-        wrapper.eq(ForumComment::getDel,queryComment.getDel());
+        wrapper.eq(queryComment.getDel()!=null,ForumComment::getDel,queryComment.getDel());
         List<ForumComment> list = commentMapper.selectJoinList(ForumComment.class, wrapper);
 
         /**
@@ -138,7 +141,7 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
      * @param comment
      * @return
      */
-    private List<ForumComment> handleCommentDataSort(List<ForumComment> list,ForumComment comment) {
+    private List<ForumComment> handleCommentDataSort(List<ForumComment> list,ForumCommentExt comment) {
         Long userId = comment.getUserId();
         boolean loginStatus = !ObjectUtils.isEmpty(userId);
         List<ForumComment> rtn = new ArrayList<>();
