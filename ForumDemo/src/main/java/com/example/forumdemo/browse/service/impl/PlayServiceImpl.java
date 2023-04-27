@@ -1,14 +1,13 @@
 package com.example.forumdemo.browse.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.forumdemo.browse.mapper.CommentMapper;
+import com.example.forumdemo.browse.mapper.KnockingMapper;
 import com.example.forumdemo.browse.mapper.PlayMapper;
 import com.example.forumdemo.browse.service.PlayService;
-import com.example.forumdemo.entity.ForumComment;
-import com.example.forumdemo.entity.ForumUser;
-import com.example.forumdemo.entity.ForumZuoPin;
-import com.example.forumdemo.entity.ForumZuoPinExt;
+import com.example.forumdemo.entity.*;
 import com.example.forumdemo.user.mapper.UserOpeMapper;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
@@ -30,6 +29,9 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
 
     @Autowired
     private CommentMapper commentMapper;
+
+    @Autowired
+    private KnockingMapper knockingMapper;
 
     /**
      * 根据条件查询产品表
@@ -105,7 +107,26 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         zuopinInfoExt.setCommentCount(commentNum);
 
         // 点赞 收藏 关注 参数后续设置
+        // 获取登录用户ID
+        Long loginUserId = queryParam.getLoginUserId();
+        // 如果登录,则设置当前登录用户的点赞 收藏 关注等状态 为 1 否则跳过,默认值0
+        if(loginUserId!=null){
+            // 作品点赞状态
+            LambdaQueryWrapper<ForumJoinKnocking> lambdaQueryZan = Wrappers.lambdaQuery();
+            lambdaQueryZan.eq(queryParam.getLoginUserId()!=null, ForumJoinKnocking::getUserId,queryParam.getLoginUserId());
+            lambdaQueryZan.eq(queryParam.getZuopinId()!=null,ForumJoinKnocking::getAbstractId,queryParam.getZuopinId());
+            lambdaQueryZan.eq(ForumJoinKnocking::getAbstractType,2);
+            ForumJoinKnocking zanInfo = knockingMapper.selectOne(lambdaQueryZan);
+            if(!ObjectUtils.isEmpty(zanInfo))zuopinInfoExt.setDianzanStatus(1);
 
+            // 收藏状态
+            LambdaQueryWrapper<ForumJoinKnocking> lambdaQuerylove = Wrappers.lambdaQuery();
+            lambdaQuerylove.eq(queryParam.getLoginUserId()!=null, ForumJoinKnocking::getUserId,queryParam.getLoginUserId());
+            lambdaQuerylove.eq(queryParam.getZuopinId()!=null,ForumJoinKnocking::getAbstractId,queryParam.getZuopinId());
+            lambdaQuerylove.eq(ForumJoinKnocking::getAbstractType,3);
+            ForumJoinKnocking loveInfo = knockingMapper.selectOne(lambdaQuerylove);
+            if(!ObjectUtils.isEmpty(loveInfo))zuopinInfoExt.setShoucangStatus(1);
+        }
         return zuopinInfoExt;
     }
 

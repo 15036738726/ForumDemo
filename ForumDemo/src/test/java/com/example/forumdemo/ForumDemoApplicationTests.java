@@ -1,14 +1,9 @@
 package com.example.forumdemo;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.forumdemo.browse.service.ZanService;
-import com.example.forumdemo.entity.ForumJoinZan;
-import com.example.forumdemo.entity.ForumUser;
+import com.example.forumdemo.browse.service.KnockingService;
+import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.user.mapper.UserOpeMapper;
+import com.example.forumdemo.util.Utils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +27,7 @@ class ForumDemoApplicationTests {
     private UserOpeMapper userOpeMapper;
 
     @Autowired
-    private ZanService zanService;
+    private KnockingService zanService;
 
     @Test
     void test() {
@@ -50,19 +45,20 @@ class ForumDemoApplicationTests {
         LambdaQueryWrapper<ForumUser> lambda4 = Wrappers.lambdaQuery();
         LambdaUpdateWrapper<ForumUser> lambdaupdate2 = Wrappers.lambdaUpdate();*/
 
-/*        ForumJoinZan zan = new ForumJoinZan();
+/*        ForumJoinKnocking zan = new ForumJoinKnocking();
         zan.setUserId(1L);
         zan.setAbstractId(1L);
         zan.setAbstractType(1);
         Integer knocking = zanService.knocking(zan);
         System.out.println(knocking);*/
 
-        ForumJoinZan zan = new ForumJoinZan();
+        ForumJoinKnocking zan = new ForumJoinKnocking();
 
         zan.setUserId(1643564375287652353L);
         zan.setAbstractId(1650396198646697985L);
         zan.setAbstractType(1);
-        Map<String, Object> knocking = zanService.knockingComment(zan);
+        zan.setWorkTime(Utils.getCurrentData());
+        Map<String, Object> knocking = zanService.zanComment(zan);
         System.out.println(knocking);
 
 

@@ -5380,7 +5380,7 @@
                     __THIS__.commentItemEvent();
                     //alert("点赞成功!!!!");
                 }
-                utils.send(callback,"/zanController/knockingComment",sendData,utils.PUT_REQUEST);
+                utils.send(callback,"/knockingController/zanComment",sendData,utils.PUT_REQUEST);
             });
 
             /**
@@ -5594,17 +5594,18 @@
          * @param data
          */
         __THIS__.initPageStaticParam = function(data){
+            // 作品标题
+            $(".Page_Projection__title_and_action .player__titleLine .hasSource").text(data.title);
             let leftDom = $(".Page_Projection__secondary_des_and_action .videoDesc__videoStatics");
             let itemSpan = leftDom.find("span");
             // 原创
             itemSpan.eq(0).text(data.yuanchuang=="1"?"原创":"转发");
             // 观看次数
-            debugger;
             itemSpan.eq(2).text(data.lookCountText+"观看");
             // 弹幕数
             itemSpan.eq(4).text(data.danMu+"条弹幕");
             // 发布时间
-            itemSpan.eq(6).text(data.workTime+"发布");
+            itemSpan.eq(6).text(data.workTimeText+"发布");
         };
 
 

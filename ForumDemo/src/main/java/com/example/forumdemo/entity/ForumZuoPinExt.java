@@ -19,9 +19,9 @@ public class ForumZuoPinExt extends ForumZuoPin implements Serializable {
      * 				shoucang_status收藏状态 0未收藏  1已收藏
      *          }
      */
-    private Integer guanzhuStatus;
-    private Integer dianzanStatus;
-    private Integer shoucangStatus;
+    private Integer guanzhuStatus = 0;
+    private Integer dianzanStatus = 0;
+    private Integer shoucangStatus = 0;
     // 该作品下的评论计数
     private Integer commentCount;
 }

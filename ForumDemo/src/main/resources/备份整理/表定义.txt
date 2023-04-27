@@ -80,15 +80,12 @@ CREATE TABLE `forum_comment` (
   PRIMARY KEY (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-#评论点赞表
-CREATE TABLE forum.forum_join_zan (
-	id BIGINT NOT NULL COMMENT '主键',
-	user_id BIGINT NOT NULL COMMENT '用户ID',
-	abstract_id BIGINT NOT NULL COMMENT '作品或者评论的id',
-	abstract_type INT DEFAULT 1 NOT NULL COMMENT '类型, 1:评论2:作品',
-	CONSTRAINT forum_join_comment_zan_pk PRIMARY KEY (id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_0900_ai_ci
-COMMENT='点赞表,评论点赞和作品点赞目前公用这个表';
+#评论点赞表 作品点赞 作品收藏 对应的敲击表
+CREATE TABLE `forum_join_knocking` (
+  `id` bigint NOT NULL COMMENT '主键',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `abstract_id` bigint NOT NULL COMMENT '抽象ID,作品或者评论的id',
+  `abstract_type` int NOT NULL DEFAULT '1' COMMENT '类型, 1:评论点赞2:作品点赞3:作品收藏',
+  `work_time` varchar(40) NOT NULL COMMENT '入库时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='敲击表,作品点赞,评论点赞和作品收藏,都使用这个表'

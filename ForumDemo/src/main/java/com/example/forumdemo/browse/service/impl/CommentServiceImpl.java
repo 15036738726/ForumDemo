@@ -4,7 +4,7 @@ import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.service.CommentService;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumCommentExt;
-import com.example.forumdemo.entity.ForumJoinZan;
+import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
@@ -50,12 +50,12 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
         if(loginStatus){
             // 追击查询表以及关联条件
             wrapper
-                    .selectAll(ForumJoinZan.class)
-                    .selectAs(ForumJoinZan::getId,"zanId")
-                    .leftJoin(ForumJoinZan.class, on -> on
-                            .eq(ForumJoinZan::getAbstractId,ForumComment::getCommentId)
-                            .eq(ForumJoinZan::getUserId,queryComment.getUserId())
-                            .eq(ForumJoinZan::getAbstractType,1)
+                    .selectAll(ForumJoinKnocking.class)
+                    .selectAs(ForumJoinKnocking::getId,"zanId")
+                    .leftJoin(ForumJoinKnocking.class, on -> on
+                            .eq(ForumJoinKnocking::getAbstractId,ForumComment::getCommentId)
+                            .eq(ForumJoinKnocking::getUserId,queryComment.getUserId())
+                            .eq(ForumJoinKnocking::getAbstractType,1)
                     );
         }
         // 设置作品id参数

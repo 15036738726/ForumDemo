@@ -108,7 +108,7 @@ class Init {
         titleList.add("曹操：你吕布什么档次和我一个爱好？");
         titleList.add("开心锤锤：你羡慕别人的时候，说不定别人也在羡慕着你");
         titleList.add("吴用到底是真的智多星还是狗头军师？大哥身后的他有几张面孔？");
-        titleList.add("【吸奇侠】《教父》终局之战，无数经典致敬的血色教堂解析 18");
+        titleList.add("看谁不爽就是怼，记住我叫李宏伟！");
         titleList.add("嘎子卖手机 潘叔把握不住了！");
         titleList.add("我的热爱《水浒传》：被嫌弃的时迁一生，轻功第一为何排名垫底？");
         titleList.add("宋江哥哥收服小弟的超强领导艺术，给钱？诛心？还是断其后路？");
@@ -165,6 +165,8 @@ class Init {
             zuopinTemp.setDel(1);
             // 点赞数
             zuopinTemp.setZan(getRandomNumberInRange(1,100000));
+            // 收藏数
+            zuopinTemp.setLove(getRandomNumberInRange(1,100000));
 
             userOpeMapper.insert(userTemp);
             // 外键

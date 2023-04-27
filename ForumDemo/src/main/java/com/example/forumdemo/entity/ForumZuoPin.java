@@ -54,5 +54,7 @@ public class ForumZuoPin implements Serializable {
     private Integer del = 1;
     // zan:视频点赞数
     private Integer zan;
+    // love:视频收藏数
+    private Integer love;
 
 }
