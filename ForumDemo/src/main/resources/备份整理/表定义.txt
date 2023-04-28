@@ -86,6 +86,8 @@ CREATE TABLE `forum_join_knocking` (
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `abstract_id` bigint NOT NULL COMMENT '抽象ID,作品或者评论的id',
   `abstract_type` int NOT NULL DEFAULT '1' COMMENT '类型, 1:评论点赞2:作品点赞3:作品收藏',
+  `action_type` int DEFAULT '0' COMMENT '动作类型,区分长按,还是短暂按下',
   `work_time` varchar(40) NOT NULL COMMENT '入库时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='敲击表,作品点赞,评论点赞和作品收藏,都使用这个表'
+

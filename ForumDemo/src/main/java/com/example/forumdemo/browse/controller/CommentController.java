@@ -27,7 +27,7 @@ public class CommentController {
     @PutMapping("/saveComment")
     public Result<ForumComment> saveComment(@RequestBody ForumComment comment){
         ForumComment temp = commentService.saveComment(comment);
-        return Result.success("发布成功",temp);
+        return Result.success("评论成功",temp);
     };
 
 
