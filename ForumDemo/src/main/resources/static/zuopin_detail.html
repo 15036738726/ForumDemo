@@ -5243,21 +5243,24 @@
             });
 
             /**
-             * 绑定回复文本框点击事件,如果没有登录,这弹出登录框,提示用户登录
+             * 绑定回复文本框点击事件(主回复框,以及评论下临时回复框),如果没有登录,这弹出登录框,提示用户登录
              */
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
-                // 从本地存储中获取当前登录用户信息
-                let loginUser = utils.getCache("LOGIN_USER");
-                if(loginUser==null){
-                    // 登录信息为空,则弹框
-                    let temp = {};
-                    temp.title = "登录后可发表评论";
-                    /**
-                     * 然后整个登录的过程控制,则交给用户登录服务组件控制,我们只需要传入登录成功之后,需要做出那些页面变化的回调
-                     * 每个页面都有登录入口,处理的内容是不一样的,比如这里只需要处理,评论文本区域中的用户头像
-                     */
-                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
-                };
+                // // 从本地存储中获取当前登录用户信息
+                // let loginUser = utils.getCache("LOGIN_USER");
+                // if(loginUser==null){
+                //     // 登录信息为空,则弹框
+                //     let temp = {};
+                //     temp.title = "登录后可发表评论";
+                //     /**
+                //      * 然后整个登录的过程控制,则交给用户登录服务组件控制,我们只需要传入登录成功之后,需要做出那些页面变化的回调
+                //      * 每个页面都有登录入口,处理的内容是不一样的,比如这里只需要处理,评论文本区域中的用户头像
+                //      */
+                //     utils.userLoginService(temp,__THIS__.loginSucessCallback);
+                // };
+
+                // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
+                utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback);
             });
 
             /**
@@ -5276,21 +5279,18 @@
             });
 
             /**
-             * 绑定发送按钮事件
+             * 绑定发送按钮事件 (主输入框中的发送按钮 以及以及评论下临时回复框中的发送按钮)
              */
             $(".Page_Projection__comment .input-opt .input-opt-right button").unbind("click").bind("click",function(e){
-                // 点击发送之前,把userId取出,如果没有则调用登录服务
-                let loginUser = utils.getCache("LOGIN_USER");
-                if(loginUser==null){
-                    let temp = {};
-                    temp.title = "登录后可发表评论";
-                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
+                // 如果按钮是灰色(禁用状态) 则什么也不做
+                if($(e.target).hasClass("xg-button-disabled"))return;
+                // 登录拦截控制器
+                let loginUser = utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback);
+                if(!loginUser){
                     return;
                 }
-                // 这个地方一会测试一下 null调用callback 应该会报错
                 let _target = $(e.target).parents(".commentWriter");
                 let inputVal = _target.find(".input-wrapper textarea").val();
-
                 if(inputVal.trim() == ''){
                     alert("内容不符合规定");
                     utils.msgDialog("内容不符合规定");
@@ -5353,6 +5353,7 @@
              * 绑定评论点赞功能
              */
             $(".Page_Projection__comment .commentItem__interaction__agree").unbind("click").bind("click",function(e){
+                /*
                 let loginUser = utils.getCache("LOGIN_USER");
                 if(loginUser==null){
                     let temp = {};
@@ -5360,6 +5361,12 @@
                     utils.userLoginService(temp,__THIS__.loginSucessCallback);
                     return;
                 };
+                */
+                // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
+                let loginUser = utils.loginInterceptController("登录后可点赞",__THIS__.loginSucessCallback);
+                if(!loginUser){
+                    return;
+                }
 
                 let itemDom = $(e.target).parents(".commentItem__details__main").parent(".commentItem__details").parent(".commentItem ");
                 // 对应点赞的button父类commentItem__interaction 用于点赞之后的样式置换
@@ -5388,7 +5395,6 @@
              * 最热排序(默认) 最新发布 功能按钮切换
              */
             $(".Page_Projection__comment .comment-new-style .comment-tab").unbind("click").bind("click",function(e){
-                //debugger;
                 console.log($(e.target));
                 let span = $(e.target).parents(".comment-new-style").find(".comment-tab span");
                 let spanText = span.text();
@@ -5416,7 +5422,20 @@
                     // alert("触发单机")
                     if(lock){
                         console.log("单机");
+
+                        // 调用登录拦截控制组件
+                        let loginUser = utils.loginInterceptController("登录后可点赞",__THIS__.loginSucessCallback);
+                        if(!loginUser){
+                            return;
+                        }
+
                         // 组织参数发起单机请求
+                        // let sendData = {};
+                        // sendData
+
+
+
+                        //__THIS__.setPageZuopinZanInfo(result.data.zan,result.data.dianzanStatus);
 
                     }else{
                         console.log("单机不触发");

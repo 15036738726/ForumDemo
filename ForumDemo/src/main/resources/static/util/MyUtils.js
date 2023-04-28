@@ -344,6 +344,24 @@ var MyUtils = function(option){
         service.start();
     };
 
+    /**
+     * 登录弹框拦截控制中心  把用户未登录时弹框控制写到这里  好多地方都有调用
+     * @param title 弹框标题
+     * @param callback  登录成功之后的回调
+     * @returns {null}  返回的登录信息
+     */
+    __ROOT__.loginInterceptController = function(title,callback){
+        let loginUser = __ROOT__.getCache("LOGIN_USER");
+        if(loginUser==null){
+            let temp = {};
+            temp.title = title;
+            __ROOT__.userLoginService(temp,callback);
+            return null;
+        };
+        // 如果登录了就返回登录信息
+        return loginUser;
+    };
+
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部
