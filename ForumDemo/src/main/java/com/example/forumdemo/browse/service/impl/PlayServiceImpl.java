@@ -117,7 +117,10 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
             lambdaQueryZan.eq(queryParam.getZuopinId()!=null,ForumJoinKnocking::getAbstractId,queryParam.getZuopinId());
             lambdaQueryZan.eq(ForumJoinKnocking::getAbstractType,2);
             ForumJoinKnocking zanInfo = knockingMapper.selectOne(lambdaQueryZan);
-            if(!ObjectUtils.isEmpty(zanInfo))zuopinInfoExt.setDianzanStatus(1);
+            if(!ObjectUtils.isEmpty(zanInfo)){
+                zuopinInfoExt.setDianzanId(zanInfo.getId());
+                zuopinInfoExt.setDianzanType(zanInfo.getActionType());
+            }
 
             // 收藏状态
             LambdaQueryWrapper<ForumJoinKnocking> lambdaQuerylove = Wrappers.lambdaQuery();
@@ -125,7 +128,7 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
             lambdaQuerylove.eq(queryParam.getZuopinId()!=null,ForumJoinKnocking::getAbstractId,queryParam.getZuopinId());
             lambdaQuerylove.eq(ForumJoinKnocking::getAbstractType,3);
             ForumJoinKnocking loveInfo = knockingMapper.selectOne(lambdaQuerylove);
-            if(!ObjectUtils.isEmpty(loveInfo))zuopinInfoExt.setShoucangStatus(1);
+            if(!ObjectUtils.isEmpty(loveInfo))zuopinInfoExt.setShoucangId(loveInfo.getId());
         }
         return zuopinInfoExt;
     }

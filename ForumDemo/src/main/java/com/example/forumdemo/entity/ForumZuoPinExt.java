@@ -14,14 +14,16 @@ public class ForumZuoPinExt extends ForumZuoPin implements Serializable {
     private Long loginUserId;
     /**
      * 			实体需要返回{
-     * 				guanzhu_status登录用户在该视频下的 已关注/关注 信息  0:关注 1:已关注
-     * 				dianzan_status点赞状态 0未赞   1已赞
-     * 				shoucang_status收藏状态 0未收藏  1已收藏
+     * 				guanzhu_status登录用户在该视频下的 已关注/关注 信息  null:关注 有值:已关注
+     * 				dianzan_status点赞状态 null未赞   有值:已赞
+     * 				shoucang_status收藏状态 0未收藏  有值已收藏
      *          }
      */
-    private Integer guanzhuStatus = 0;
-    private Integer dianzanStatus = 0;
-    private Integer shoucangStatus = 0;
+    private Long guanzhuId;
+    private Long dianzanId;
+    // 长按还是单机
+    private Integer dianzanType;
+    private Long shoucangId;
     // 该作品下的评论计数
     private Integer commentCount;
 }

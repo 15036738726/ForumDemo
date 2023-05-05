@@ -77,7 +77,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
         Integer val = comment.getZanCount()+knocking;
         // 更新
         LambdaUpdateWrapper<ForumComment> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(ForumComment::getCommentId,entity.getAbstractId())
+        updateWrapper.eq(entity.getAbstractId()!=null,ForumComment::getCommentId,entity.getAbstractId())
                         .set(ForumComment::getZanCount,val);
         commentMapper.update(null, updateWrapper);
 
@@ -101,13 +101,14 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
         Integer val = zuoPin.getZan()+knocking;
         // 更新作品表zan数据
         LambdaUpdateWrapper<ForumZuoPin> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(ForumZuoPin::getZuopinId,entity.getAbstractId())
+        updateWrapper.eq(entity.getAbstractId()!=null,ForumZuoPin::getZuopinId,entity.getAbstractId())
                 .set(ForumZuoPin::getZan,val);
         playMapper.update(null, updateWrapper);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("zanId",zanIdFlag);
-        map.put("zanCount",val);
+        map.put("zan",val);
+        map.put("dianzanId",zanIdFlag);
+        map.put("dianzanType",entity.getActionType());
         return map;
     }
 
@@ -125,7 +126,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
         Integer val = zuoPin.getZan()+knocking;
         // 更新作品表love数据
         LambdaUpdateWrapper<ForumZuoPin> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(ForumZuoPin::getZuopinId,entity.getAbstractId())
+        updateWrapper.eq(entity.getAbstractId()!=null,ForumZuoPin::getZuopinId,entity.getAbstractId())
                 .set(ForumZuoPin::getLove,val);
         playMapper.update(null, updateWrapper);
 
