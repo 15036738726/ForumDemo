@@ -136,5 +136,20 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
         return map;
     }
 
+    /**
+     * 关注某个用户
+     * @param entity
+     * @return
+     */
+    @Override
+    public Map<String, Object> loveUser(ForumJoinKnocking entity) {
+        Integer knocking = this.knocking(entity);
+        String flag = knocking>0?"-":"";
+        // 关注数量暂时不存在更新问题
+        Map<String, Object> map = new HashMap<>();
+        map.put("guanzhuId",flag);
+        return map;
+    }
+
 
 }

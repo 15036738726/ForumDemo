@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface KnockingService extends IService<ForumJoinKnocking> {
     /**
-     * 敲击事件
+     * 敲击事件 核心方法,有就删除,没有就新增
      * @param entity
      * @return
      */
@@ -33,5 +33,12 @@ public interface KnockingService extends IService<ForumJoinKnocking> {
      * @return
      */
     Map<String, Object> loveZuopin(ForumJoinKnocking entity);
+
+    /**
+     * 关注某个用户
+     * @param entity
+     * @return
+     */
+    Map<String,Object> loveUser(ForumJoinKnocking entity);
 
 }

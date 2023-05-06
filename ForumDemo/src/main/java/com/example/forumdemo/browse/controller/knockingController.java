@@ -39,7 +39,6 @@ public class knockingController {
         return Result.success(knocking);
     }
 
-
     /**
      * 作品收藏 敲击
      * @param entity
@@ -48,6 +47,17 @@ public class knockingController {
     @PutMapping("/loveZuopin")
     public Result<Map<String,Object>> loveZuopin(@RequestBody ForumJoinKnocking entity){
         Map<String,Object> knocking = knockingService.loveZuopin(entity);
+        return Result.success(knocking);
+    }
+
+    /**
+     * 关注用户 敲击
+     * @param entity
+     * @return
+     */
+    @PutMapping("/loveUser")
+    public Result<Map<String,Object>> loveUser(@RequestBody ForumJoinKnocking entity){
+        Map<String,Object> knocking = knockingService.loveUser(entity);
         return Result.success(knocking);
     }
 }

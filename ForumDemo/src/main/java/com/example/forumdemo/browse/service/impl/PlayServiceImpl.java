@@ -129,6 +129,15 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
             lambdaQuerylove.eq(ForumJoinKnocking::getAbstractType,3);
             ForumJoinKnocking loveInfo = knockingMapper.selectOne(lambdaQuerylove);
             if(!ObjectUtils.isEmpty(loveInfo))zuopinInfoExt.setShoucangId(loveInfo.getId());
+
+            // 关注状态
+            LambdaQueryWrapper<ForumJoinKnocking> userLoveLambda = Wrappers.lambdaQuery();
+            userLoveLambda.eq(queryParam.getLoginUserId()!=null,ForumJoinKnocking::getUserId,queryParam.getLoginUserId());
+            userLoveLambda.eq(queryParam.getUserId()!=null,ForumJoinKnocking::getAbstractId,queryParam.getUserId());
+            userLoveLambda.eq(ForumJoinKnocking::getAbstractType,4);
+            ForumJoinKnocking loveUser = knockingMapper.selectOne(userLoveLambda);
+            if(!ObjectUtils.isEmpty(loveUser))zuopinInfoExt.setGuanzhuId(loveUser.getId());
+
         }
         return zuopinInfoExt;
     }

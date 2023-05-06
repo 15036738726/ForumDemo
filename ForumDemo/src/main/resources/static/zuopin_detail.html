@@ -5477,10 +5477,32 @@
                 }
                 __THIS__.zuopinKnockingRequestControl(callback,param);
             });
+
+            /**
+             * 关注用户事件
+             */
+            $(".Page_Projection__secondary_author_and_danmu .author__userinfo button").unbind("click").bind("click",function(e){
+                // 调用登录拦截控制组件
+                let loginUser = utils.loginInterceptController("登录后可关注",__THIS__.loginSucessCallback);
+                if(!loginUser){
+                    return;
+                }
+                let sendData = {};
+                sendData.userId = loginUser.userId;
+                sendData.abstractId = __THIS__.userInfo.userId;
+                sendData.abstractType = 4;
+                let callback = function(result){
+                    // 设置关注情况
+                    __THIS__.setPageUserLoveInfo(result.data);
+                    // 绑定事件
+                    __THIS__.commentItemEvent();
+                }
+                utils.send(callback,"/knockingController/loveUser",sendData,utils.PUT_REQUEST);
+            });
         };
 
         /**
-         * 作品点击相关请求控制,只有参数不同
+         * 作品点击相关请求控制,只有参数不同  目前再用的方法:评论点赞,作品点赞,作品收藏
          * @param callback
          * @param param
          */
@@ -5646,6 +5668,8 @@
                 __THIS__.setPageZuopinZanInfo(result.data);
                 // 收藏状态  可公用
                 __THIS__.setPageZuopinLoveInfo(result.data);
+                // 关注状态  可共用
+                __THIS__.setPageUserLoveInfo(result.data);
 
 
                 // 其他不存在公用问题的静态值 都在一个方法中完成
@@ -5692,6 +5716,19 @@
             rightDom.find(".video_action_item--collect").remove();
             rightDom.find(".super-digg-lottie").after(tempDom);
         };
+
+        /**
+         * 设置关注状态
+         * @param temp
+         */
+        __THIS__.setPageUserLoveInfo = function(temp){
+            let flag = temp.guanzhuId?true:false;
+            let loveDom = templateUtils.getLoveUserTemplate(flag);
+            // 移除
+            let dom = $(".Page_Projection__secondary_author_and_danmu .author__userinfo");
+            dom.find("button").remove();
+            dom.append(loveDom);
+        }
 
         /**
          * 页面静态数值初始化

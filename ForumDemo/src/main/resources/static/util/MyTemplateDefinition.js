@@ -891,6 +891,18 @@ var MyTemplateDefinition = function(option){
         }
     };
 
+    /**
+     * 关注某个用户
+     * @param flag true返回已关注 false返回关注(未关注)
+     */
+    __Template__.getLoveUserTemplate = function(flag){
+        if(flag){
+            return '<button class="xg-button xg-button-ghost-weak xg-button-middle component-follow"><span>已关注</span></button>';
+        }else{
+            return '<button class="xg-button xg-button-primary xg-button-middle component-follow"><span>关注</span></button>';
+        }
+    }
+
 
 };
 
