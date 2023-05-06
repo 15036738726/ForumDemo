@@ -5245,19 +5245,6 @@
              * 绑定回复文本框点击事件(主回复框,以及评论下临时回复框),如果没有登录,这弹出登录框,提示用户登录
              */
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
-                // // 从本地存储中获取当前登录用户信息
-                // let loginUser = utils.getCache("LOGIN_USER");
-                // if(loginUser==null){
-                //     // 登录信息为空,则弹框
-                //     let temp = {};
-                //     temp.title = "登录后可发表评论";
-                //     /**
-                //      * 然后整个登录的过程控制,则交给用户登录服务组件控制,我们只需要传入登录成功之后,需要做出那些页面变化的回调
-                //      * 每个页面都有登录入口,处理的内容是不一样的,比如这里只需要处理,评论文本区域中的用户头像
-                //      */
-                //     utils.userLoginService(temp,__THIS__.loginSucessCallback);
-                // };
-
                 // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
                 utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback);
             });
@@ -5352,15 +5339,6 @@
              * 绑定评论点赞功能
              */
             $(".Page_Projection__comment .commentItem__interaction__agree").unbind("click").bind("click",function(e){
-                /*
-                let loginUser = utils.getCache("LOGIN_USER");
-                if(loginUser==null){
-                    let temp = {};
-                    temp.title = "登录后可点赞";
-                    utils.userLoginService(temp,__THIS__.loginSucessCallback);
-                    return;
-                };
-                */
                 // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
                 let loginUser = utils.loginInterceptController("登录后可点赞",__THIS__.loginSucessCallback);
                 if(!loginUser){
@@ -5421,7 +5399,20 @@
                     // alert("触发单机")
                     if(lock){
                         console.log("单机");
-                        __THIS__.zuopinZanRequestControl(0);
+                        // 组织参数发起单机请求
+                        let param = {};
+                        param.abstractType = 2;
+                        // 单机行为0 长按就是1
+                        param.actionType = 0;
+                        param.title = "登录后可点赞";
+                        param.url = "/knockingController/zanZuopin";
+                        let callback = function(result){
+                            // 设置页面赞的样式和数量
+                            __THIS__.setPageZuopinZanInfo(result.data);
+                            // 绑定事件
+                            __THIS__.commentItemEvent();
+                        }
+                        __THIS__.zuopinKnockingRequestControl(callback,param);
                     }else{
                         console.log("单机不触发");
                     }
@@ -5438,7 +5429,20 @@
                             console.log("触发长按,发起请求");
                             // 触发一次之后,就清除,不然会再次重复发起请求
                             clearInterval(time);
-                            __THIS__.zuopinZanRequestControl(1);
+                            // 组织参数发起长按请求
+                            let param = {};
+                            param.abstractType = 2;
+                            // 单机行为0 长按就是1
+                            param.actionType = 1;
+                            param.title = "登录后可推荐视频";
+                            param.url = "/knockingController/zanZuopin";
+                            let callback = function(result){
+                                // 设置页面赞的样式和数量
+                                __THIS__.setPageZuopinZanInfo(result.data);
+                                // 绑定事件
+                                __THIS__.commentItemEvent();
+                            }
+                            __THIS__.zuopinKnockingRequestControl(callback,param);
                         }
                     },500);
                 });
@@ -5458,35 +5462,40 @@
              * 作品收藏点击事件
              */
             $(".Page_Projection__secondary_des_and_action .Page_Projection__secondary_action").find("button").eq(1).unbind("click").bind("click",function(e){
-                alert("收藏")
+                // alert("收藏")
+                // 组织参数发起长按请求
+                let param = {};
+                param.abstractType = 3;
+                // action_type默认是0 可不用传
+                param.title = "登录后可收藏视频";
+                param.url = "/knockingController/loveZuopin";
+                let callback = function(result){
+                    // 设置页面赞的样式和数量
+                    __THIS__.setPageZuopinLoveInfo(result.data);
+                    // 绑定事件
+                    __THIS__.commentItemEvent();
+                }
+                __THIS__.zuopinKnockingRequestControl(callback,param);
             });
-
         };
 
         /**
-         * 作品赞请求控制,长按和单机只有参数不同
+         * 作品点击相关请求控制,只有参数不同
+         * @param callback
+         * @param param
          */
-        __THIS__.zuopinZanRequestControl = function(actionType){
+        __THIS__.zuopinKnockingRequestControl = function(callback,param){
             // 调用登录拦截控制组件
-            let loginUser = utils.loginInterceptController("登录后可点赞",__THIS__.loginSucessCallback);
+            let loginUser = utils.loginInterceptController(param.title,__THIS__.loginSucessCallback);
             if(!loginUser){
                 return;
             }
-            // 组织参数发起单机请求
             let sendData = {};
             sendData.userId = loginUser.userId;
             sendData.abstractId = __THIS__.zuoPinInfo.zuopinId;
-            sendData.abstractType = 2;
-            // 单机行为0 长按就是1
-            sendData.actionType = actionType;
-            let callback = function(result){
-                // 设置页面赞的样式和数量
-                __THIS__.setPageZuopinZanInfo(result.data);
-                // 无点赞成功反馈
-                // 绑定事件
-                __THIS__.commentItemEvent();
-            }
-            utils.send(callback,"/knockingController/zanZuopin",sendData,utils.PUT_REQUEST);
+            sendData.abstractType = param.abstractType;
+            sendData.actionType = param.actionType;
+            utils.send(callback,param.url,sendData,utils.PUT_REQUEST);
         };
 
         /**
@@ -5636,7 +5645,7 @@
                 // 视频点赞渲染 可公用
                 __THIS__.setPageZuopinZanInfo(result.data);
                 // 收藏状态  可公用
-                __THIS__.setPageZuopinLoveStatus(result.data.shoucangStatus);
+                __THIS__.setPageZuopinLoveInfo(result.data);
 
 
                 // 其他不存在公用问题的静态值 都在一个方法中完成
@@ -5675,10 +5684,13 @@
 
         /**
          * 设置作品收藏状态
-         * @param status
+         * @param temp
          */
-        __THIS__.setPageZuopinLoveStatus = function(status){
-
+        __THIS__.setPageZuopinLoveInfo = function(temp){
+            let tempDom = templateUtils.getZuopinLoveTemplate(temp);
+            let rightDom = $(".Page_Projection__secondary_des_and_action .video_action");
+            rightDom.find(".video_action_item--collect").remove();
+            rightDom.find(".super-digg-lottie").after(tempDom);
         };
 
         /**

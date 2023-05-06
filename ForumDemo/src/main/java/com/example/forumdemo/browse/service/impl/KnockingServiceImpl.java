@@ -95,7 +95,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
     @Override
     public Map<String, Object> zanZuopin(ForumJoinKnocking entity) {
         Integer knocking = this.knocking(entity);
-        String zanIdFlag = knocking>0?"-":"";
+        String flag = knocking>0?"-":"";
         // 找原来数据
         ForumZuoPin zuoPin = playMapper.selectById(entity.getAbstractId());
         Integer val = zuoPin.getZan()+knocking;
@@ -107,7 +107,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
 
         Map<String, Object> map = new HashMap<>();
         map.put("zan",val);
-        map.put("dianzanId",zanIdFlag);
+        map.put("dianzanId",flag);
         map.put("dianzanType",entity.getActionType());
         return map;
     }
@@ -120,10 +120,10 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
     @Override
     public Map<String, Object> loveZuopin(ForumJoinKnocking entity) {
         Integer knocking = this.knocking(entity);
-        String zanIdFlag = knocking>0?"-":"";
+        String flag = knocking>0?"-":"";
         // 找原来数据
         ForumZuoPin zuoPin = playMapper.selectById(entity.getAbstractId());
-        Integer val = zuoPin.getZan()+knocking;
+        Integer val = zuoPin.getLove()+knocking;
         // 更新作品表love数据
         LambdaUpdateWrapper<ForumZuoPin> updateWrapper = Wrappers.lambdaUpdate();
         updateWrapper.eq(entity.getAbstractId()!=null,ForumZuoPin::getZuopinId,entity.getAbstractId())
@@ -131,8 +131,8 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
         playMapper.update(null, updateWrapper);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("loveId",zanIdFlag);
-        map.put("loveCount",val);
+        map.put("love",val);
+        map.put("shoucangId",flag);
         return map;
     }
 
