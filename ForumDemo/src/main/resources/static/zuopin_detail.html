@@ -1004,16 +1004,29 @@
                                 <a class="component-avatar__inner" aria-hidden="true"
                                    href="/home/6453951752/?list_entrance=anyVideo" target="user_6453951752"
                                    data-disable_default="true">
-                                    <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"
+<!--                                    <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"
                                                                      src="//sf1-cdn-tos.bdxiguastatic.com/img/user-avatar/2x_b32aa9a45adca4403fca7dad9707d050~80x80.image"
                                                                      data-src="//sf1-cdn-tos.bdxiguastatic.com/img/user-avatar/2x_b32aa9a45adca4403fca7dad9707d050~300x300.image"
                                                                      backup-src="//sf1-cdn-tos.bdxiguastatic.com/img/user-avatar/2x_b32aa9a45adca4403fca7dad9707d050~300x300.image"
                                                                      alt="undefined头像"
                                                                      style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">
+                                    </div>-->
+                                    <div class="tt-img-wrapper"><img class="tt-img BU-MagicImage"
+                                                                     src="img/no_login.png"
+                                                                     data-src=""
+                                                                     backup-src=""
+                                                                     alt="头像"
+                                                                     style="width: 100%; height: 100%; transition: transform 0.3s ease 0s; object-fit: cover;">
                                     </div>
                                     <div class="BU-MagicImage__shadow"></div>
                                 </a></div>
-                            <div><a class="author__userName" href="/home/6453951752/?list_entrance=anyVideo"
+<!--                            <div><a class="author__userName" href="/home/6453951752/?list_entrance=anyVideo"
+                                    title="刘老师说电影"><span class="user__name isVip">刘老师说电影</span><span
+                                    class="user__vip-logo sprite-vip"></span></a><a class="author_statics"
+                                                                                    href="/home/6453951752/?list_entrance=anyVideo"
+                                                                                    target="_blank"><span>292万粉丝</span><span> · </span><span>502视频</span></a>
+                            </div>-->
+                            <div><a class="author__userName" href="#"
                                     title="刘老师说电影"><span class="user__name isVip">刘老师说电影</span><span
                                     class="user__vip-logo sprite-vip"></span></a><a class="author_statics"
                                                                                     href="/home/6453951752/?list_entrance=anyVideo"
@@ -5499,6 +5512,8 @@
                 }
                 utils.send(callback,"/knockingController/loveUser",sendData,utils.PUT_REQUEST);
             });
+
+
         };
 
         /**
@@ -5662,6 +5677,8 @@
             }
 
             let callback = function(result){
+                // 设置当前页面用户基本信息,用户名称,粉丝数,视频数
+                __THIS__.setPageCurrentUserInfo(result.data);
                 // 页面评论个数 可公用
                 __THIS__.setPageZuopinCommentCount(result.data.commentCount);
                 // 视频点赞渲染 可公用
@@ -5670,8 +5687,6 @@
                 __THIS__.setPageZuopinLoveInfo(result.data);
                 // 关注状态  可共用
                 __THIS__.setPageUserLoveInfo(result.data);
-
-
                 // 其他不存在公用问题的静态值 都在一个方法中完成
                 __THIS__.initPageStaticParam(result.data);
                 // 存在dom移除问题,重新绑定事件
@@ -5749,6 +5764,33 @@
             itemSpan.eq(6).text(data.workTimeText+"发布");
         };
 
+        /**
+         * 设置当前作品对应用户基本信息
+         * @param temp
+         */
+        __THIS__.setPageCurrentUserInfo = function(temp){
+            // 暂时先只设置用户名称和头像
+            let userInfo = temp.userInfo;
+            if(userInfo){
+                let userInfoDom = $(".Page_Projection__secondary_author_and_danmu .author__userinfo");
+                userInfoDom.find(".component-avatar__inner img").attr("src",userInfo.userHead);
+                userInfoDom.find(".author__userName .user__name").text(userInfo.userName);
+            }
+            // 加载页面静态元素绑定事件
+            __THIS__.pageStaticEvent();
+        }
+
+        /**
+         * 页面静态元素事件绑定方法集合(dom在页面打开后,任何时候都不会发生移除或者添加)
+         */
+        __THIS__.pageStaticEvent = function(){
+            /**
+             * 用户头像点击事件 以及名称点击事件 跳入到用户详情页面 打开新的标签页
+             */
+            $(".Page_Projection__secondary_author_and_danmu .author__userinfo").find(".component-avatar__inner,.author__userName").unbind("click").bind("click",function(e){
+                window.open("/user_info.html","_blank");
+            });
+        };
 
     };
     new currentPageObj().init();
