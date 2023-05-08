@@ -1027,10 +1027,10 @@
                                                                                     target="_blank"><span>292万粉丝</span><span> · </span><span>502视频</span></a>
                             </div>-->
                             <div><a class="author__userName" href="#"
-                                    title="刘老师说电影"><span class="user__name isVip">刘老师说电影</span><span
+                                    title=""><span class="user__name isVip">&nbsp;&nbsp;</span><span
                                     class="user__vip-logo sprite-vip"></span></a><a class="author_statics"
-                                                                                    href="/home/6453951752/?list_entrance=anyVideo"
-                                                                                    target="_blank"><span>292万粉丝</span><span> · </span><span>502视频</span></a>
+                                                                                    href="#"
+                                                                                    target="_blank"><span>&nbsp;&nbsp;粉丝</span><span> · </span><span>&nbsp;&nbsp;视频</span></a>
                             </div>
                             <button class="xg-button xg-button-primary xg-button-middle component-follow">
                                 <span>关注</span></button>
@@ -1097,10 +1097,10 @@
                                     <!--原创 观看次数 弹幕,发布时间 简介-->
                                     <div class="videoDesc">
                                         <div class="videoDesc_left"><p class="videoDesc__videoStatics">
-                                            <span>原创</span><span> · </span><span>18.6万次观看</span><span> · </span><span>10条弹幕</span><span> · </span><span
+                                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span> · </span><span>&nbsp;&nbsp;&nbsp;&nbsp;万次观看</span><span> · </span><span>&nbsp;&nbsp;&nbsp;&nbsp;条弹幕</span><span> · </span><span
                                                 class="videoDesc__publishTime xiguabuddy"
                                                 data-publish-time="1676518200">2023-02-16 11:30发布</span></p>
-                                            <div class="newFold"><span>简介 <svg width="24" height="24"
+                                            <div class="newFold"><span>简介<svg width="24" height="24"
                                                                                viewBox="0 0 24 24" fill="none"
                                                                                xmlns="http://www.w3.org/2000/svg"
                                                                                role="img"><path fill-rule="evenodd"
@@ -5769,16 +5769,19 @@
          * @param temp
          */
         __THIS__.setPageCurrentUserInfo = function(temp){
-            // 暂时先只设置用户名称和头像
+            // 设置用户名称和头像 粉丝数和发布视频数
             let userInfo = temp.userInfo;
             if(userInfo){
                 let userInfoDom = $(".Page_Projection__secondary_author_and_danmu .author__userinfo");
                 userInfoDom.find(".component-avatar__inner img").attr("src",userInfo.userHead);
+                userInfoDom.find(".author__userName").attr("title",userInfo.userName);
                 userInfoDom.find(".author__userName .user__name").text(userInfo.userName);
+                userInfoDom.find(".author_statics").find("span").eq(0).text(userInfo.guanzhuEdText+"粉丝");
+                userInfoDom.find(".author_statics").find("span").eq(2).text(userInfo.contentPushCount+"视频");
             }
             // 加载页面静态元素绑定事件
             __THIS__.pageStaticEvent();
-        }
+        };
 
         /**
          * 页面静态元素事件绑定方法集合(dom在页面打开后,任何时候都不会发生移除或者添加)
@@ -5787,7 +5790,7 @@
             /**
              * 用户头像点击事件 以及名称点击事件 跳入到用户详情页面 打开新的标签页
              */
-            $(".Page_Projection__secondary_author_and_danmu .author__userinfo").find(".component-avatar__inner,.author__userName").unbind("click").bind("click",function(e){
+            $(".Page_Projection__secondary_author_and_danmu .author__userinfo").find(".component-avatar__inner,.author__userName,.author_statics").unbind("click").bind("click",function(e){
                 window.open("/user_info.html","_blank");
             });
         };

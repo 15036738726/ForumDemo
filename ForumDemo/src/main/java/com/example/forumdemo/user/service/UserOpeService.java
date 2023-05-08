@@ -2,6 +2,7 @@ package com.example.forumdemo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forumdemo.entity.ForumUser;
+import com.example.forumdemo.entity.ForumUserExt;
 
 public interface UserOpeService extends IService<ForumUser>{
     /**
@@ -24,4 +25,11 @@ public interface UserOpeService extends IService<ForumUser>{
      * @return
      */
     ForumUser getUserByUserName(ForumUser forumUser);
+
+    /**
+     * 查询用户信息 根据用户ID
+     * @param id
+     * @return
+     */
+    ForumUserExt queryUserInfo(Long id);
 }

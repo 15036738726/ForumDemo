@@ -42,6 +42,28 @@ public class Utils {
     }
 
     /**
+     * 粉丝数处理
+     * @param count
+     * @return
+     */
+    public static String loveCountText(Integer count){
+        Integer temp = 10000;
+        if(count>=temp){
+            if(count%temp==0){
+                return count/temp+"万";
+            }
+            /**
+             * 123456  1.2万
+             * 1234567 12.3万
+             */
+            DecimalFormat df = new DecimalFormat("0.0");
+            String format = df.format((float) count / temp);
+            return format+"万";
+        }
+        return count+"";
+    }
+
+    /**
      * 发布时间处理
      * @param workTime
      * @return

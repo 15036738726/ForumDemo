@@ -21,7 +21,7 @@ public class ForumZuoPinExt extends ForumZuoPin implements Serializable {
      */
     private Long guanzhuId;
     private Long dianzanId;
-    // 长按还是单机
+    // 长按还是单击
     private Integer dianzanType;
     private Long shoucangId;
     // 该作品下的评论计数

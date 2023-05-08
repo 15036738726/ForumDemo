@@ -32,7 +32,7 @@ public class ForumZuoPin implements Serializable {
     private Long userId;
 
     @TableField(exist = false)
-    private ForumUser userInfo;
+    private ForumUserExt userInfo;
 
     // yuanchuang:原创 boolean值
     private boolean yuanchuang;

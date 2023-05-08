@@ -9,6 +9,7 @@ import com.example.forumdemo.browse.mapper.PlayMapper;
 import com.example.forumdemo.browse.service.PlayService;
 import com.example.forumdemo.entity.*;
 import com.example.forumdemo.user.mapper.UserOpeMapper;
+import com.example.forumdemo.user.service.UserOpeService;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -26,6 +27,8 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
 
     @Autowired
     private UserOpeMapper userOpeMapper;
+    @Autowired
+    private UserOpeService userOpeService;
 
     @Autowired
     private CommentMapper commentMapper;
@@ -91,11 +94,15 @@ public class PlayServiceImpl extends MPJBaseServiceImpl<PlayMapper, ForumZuoPin>
         zuopinInfo.setLookCountText(Utils.lookCountText(zuopinInfo.getLookCount()));
         zuopinInfo.setWorkTimeText(Utils.timeFormatter(zuopinInfo.getWorkTime()));
 
-        // 查询用户基本信息
+        /*
         LambdaQueryWrapper<ForumUser> userWrapper = Wrappers.lambdaQuery();
         userWrapper.eq(zuopinInfo.getUserId()!=null,ForumUser::getUserId,zuopinInfo.getUserId());
         ForumUser forumUser = userOpeMapper.selectOne(userWrapper);
         zuopinInfo.setUserInfo(forumUser);
+         */
+        // 查询用户基本信息
+        ForumUserExt forumUserExt = userOpeService.queryUserInfo(zuopinInfo.getUserId());
+        zuopinInfo.setUserInfo(forumUserExt);
 
         // 父类对象属性值赋值给子类对象
         BeanUtils.copyProperties(zuopinInfo,zuopinInfoExt);
