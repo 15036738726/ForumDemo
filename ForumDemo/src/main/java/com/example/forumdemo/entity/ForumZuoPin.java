@@ -22,6 +22,8 @@ public class ForumZuoPin implements Serializable {
     private Integer contentType = 0;
     // title: 内容标题
     private String title;
+    // brief_desp : 内容简介
+    private String briefDesp;
     // url:封面图片地址
     private String imgPath;
     // video_path:视频地址

@@ -138,6 +138,8 @@ class Init {
             zuopinTemp.setContentType(17-i);
             // 标题
             zuopinTemp.setTitle(titleList.get(i));
+            // 简介
+            zuopinTemp.setBriefDesp(titleList.get(i));
             // 设置图片路径
             zuopinTemp.setImgPath("img/main_index/vedio_img/main_tupian"+i+".avif");
             // 作品视频链接地址

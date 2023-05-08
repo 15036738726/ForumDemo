@@ -284,3 +284,7 @@ console.log(init.getTime());// 0
 var init = new Date('1970-01-01 09:00:00');
 console.log(init.getTime());// 3600000
 一天的毫秒数:3600*24*1000 = 86400000
+
+DIV高度获取  javaScript中的方法
+$(".videoDesc")[0].scrollHeight
+
