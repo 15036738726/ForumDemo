@@ -1334,7 +1334,7 @@
                                     </div>
                                     <div class="input-opt">
                                         <div class="input-opt-left">
-                                            <div class="input-opt-item" tabindex="0" role="button" title="表情">
+                                            <div class="input-opt-item my-emoji" tabindex="0" role="button" title="表情">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                      xmlns="http://www.w3.org/2000/svg" role="img">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -5002,8 +5002,9 @@
 "></textarea>
 <div id="xgpc-players"></div>
 <div style="position: absolute; top: 0px; left: 0px; width: 100%;">
-    <div></div>
+    <div class="myPositionDiv"></div>
 </div>
+
 </body>
 
 <link href="util/MyUtils.css" rel="stylesheet">
@@ -5514,6 +5515,29 @@
                 utils.send(callback,"/knockingController/loveUser",sendData,utils.PUT_REQUEST);
             });
 
+            /**
+             * 表情按钮单击,控制表情弹层位置
+             */
+            $(".my-emoji").unbind("click").bind("click",function(e){
+                // 找到点击的div元素
+                let myEmojiDom = $(e.target).parents(".input-opt-left").find(".my-emoji");
+
+                /**
+                 * 元素距离文档顶端和左边的偏移值
+                 *      jq对象.offset().top
+                 *      jq对象.offset().left
+                 * @type {number}
+                 * @private
+                 */
+                var _top = myEmojiDom.offset().top;
+                var _left = myEmojiDom.offset().left;
+                // 表情框位置放到点击位置下方合适的位置
+                _top = _top + 50;
+                // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组价的形式
+                let emojiDom = templateUtils.getEmojiTemplate(600,_left,_top);
+                $(".myPositionDiv").empty().append(emojiDom);
+
+            });
 
         };
 
