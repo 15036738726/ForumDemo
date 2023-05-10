@@ -77,6 +77,75 @@ var userLoginService = function(callback){
     };
 };
 
+/**
+ * 插入内容到textarea中的光标位置 组件 光标拼接
+ */
+var cursorAppendService = function(callback,dom,val){
+    let __SERVICE__ = this;
+    // 回调函数
+    __SERVICE__.callback = callback;
+    // 目标DOM
+    __SERVICE__.target = dom;
+    // 拼接的内容
+    __SERVICE__.val = val;
+
+    /**
+     * 拼接函数
+     */
+    __SERVICE__.start = function(){
+        // 执行绑定
+        __SERVICE__.bindEvent();
+        // 执行内容追加
+        __SERVICE__.appendExe();
+    };
+
+    /**
+     * 目标事件绑定
+     */
+    __SERVICE__.bindEvent = function(){
+        __SERVICE__.target.on('select',function () {
+            __SERVICE__.setCaret(this);
+        }).on('click',function () {
+            __SERVICE__.setCaret(this);
+        }).on('keyup',function () {
+            __SERVICE__.setCaret(this);
+        });
+    };
+
+    /**
+     * 执行追加
+     */
+    __SERVICE__.appendExe = function(){
+        __SERVICE__.insertAtCaret(__SERVICE__.target[0],__SERVICE__.val);
+    };
+
+    __SERVICE__.setCaret =  function (textObj) {
+        if (textObj.createTextRange) {
+            textObj.caretPos = document.selection.createRange().duplicate();
+        }
+    };
+
+    __SERVICE__.insertAtCaret =  function (textObj, textFeildValue) {
+        if (document.all) {
+            if (textObj.createTextRange && textObj.caretPos) {
+                var caretPos = textObj.caretPos;
+                caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? textFeildValue + ' ' : textFeildValue;
+            } else {
+                textObj.value = textFeildValue;
+            }
+        } else {
+            if (textObj.setSelectionRange) {
+                var rangeStart = textObj.selectionStart;
+                var rangeEnd = textObj.selectionEnd;
+                var tempStr1 = textObj.value.substring(0, rangeStart);
+                var tempStr2 = textObj.value.substring(rangeEnd);
+                textObj.value = tempStr1 + textFeildValue + tempStr2;
+            } else {
+                alert("此版本的Mozilla浏览器不支持setSelectionRange");
+            }
+        }
+    };
+};
 
 /**
  * 其他模块

@@ -5,8 +5,13 @@
 var MyTemplateDefinition = function(option){
 
     let __Template__ = this;
-    __Template__.init = function () {
+    // 表情Map
+    __Template__.emojiMap = null;
 
+    __Template__.init = function () {
+        if(!__Template__.emojiMap){
+            __Template__.initEmojiMap();
+        }
     };
 
     /**
@@ -185,7 +190,7 @@ var MyTemplateDefinition = function(option){
             '    <div class="commentItem__details">\n' +
             '        <div class="commentItem__details__main">\n' +
             '            <div class="commentItem__text">\n' +
-            '                <pre>'+temp.comment+'</pre>\n' +
+            '                <pre>'+__Template__.contentConvertToEmoji(temp.comment)+'</pre>\n' +
             '            </div>\n' +
             '            <div class="commentItem__interaction_contaniner">\n' +
             '                <div class="commentItem__interaction">\n';
@@ -241,7 +246,7 @@ var MyTemplateDefinition = function(option){
             '    <div class="commentItem__details">\n' +
             '        <div class="commentItem__details__main">\n' +
             '            <div class="commentItem__text">\n' +
-            '                <pre>'+temp.comment+'</pre>\n' +
+            '                <pre>'+__Template__.contentConvertToEmoji(temp.comment)+'</pre>\n' +
             '            </div>\n' +
             '            <div class="commentItem__interaction_contaniner">\n' +
             '                <div class="commentItem__interaction">\n';
@@ -294,7 +299,7 @@ var MyTemplateDefinition = function(option){
         if(childTemp.aiteState){
             str += '<a target="user_'+childTemp.replyUserInfo.userId+'" class="replyTo" href="#" title="'+childTemp.replyUserInfo.userName+'">@'+childTemp.replyUserInfo.userName+'</a>\n';
         }
-        str += '              <pre>'+childTemp.comment+'</pre>\n' +
+        str += '              <pre>'+__Template__.contentConvertToEmoji(childTemp.comment)+'</pre>\n' +
             '                </div>\n' +
             '                <div class="commentItem__interaction_contaniner">\n' +
             '                    <div class="commentItem__interaction">\n' ;
@@ -1376,6 +1381,50 @@ var MyTemplateDefinition = function(option){
             '        </div>';
     };
 
+    /**
+     * [微笑]表情   内容转换成含有img标签的  用于表情展示
+     * @param content
+     */
+    __Template__.contentConvertToEmoji = function(content){
+        if(content.trim() == ''){
+           return content;
+        }
+        // 对[xx] 内容进行替换处理
+        // 1.找到内容可维护成数组,然后依次遍历替换 汉字,字母,数字  2.把内容替换
+        var arr = content.match(/\[[\u4e00-\u9fa5]+\]|\[\w+\]|\[\d+\]/g);
+        if(!arr)return content;
+        // 对表情做去重处理,因为img表签中也存在[表情] 内容被替换就显示不正常了
+        arr = new Set(arr);
+        for(let key of arr){
+            content = content.replaceAll(key,__Template__.getEmojiByKeyContent(key));
+        }
+        return content;
+    };
+
+    /**
+     * 根据key 找img模板
+     * @param key  [微笑]
+     */
+    __Template__.getEmojiByKeyContent = function(key){
+        let rtn = __Template__.emojiMap[key]
+        if(rtn!=undefined){
+            return rtn;
+        }else{
+            return key;
+        }
+    };
+
+    /**
+     * 初始化表情map
+     * @private
+     */
+    __Template__.initEmojiMap = function(){
+        // Map 需要补充F
+        __Template__.emojiMap = {
+            '[呲牙]':'<img class="emoji_icon" src="https://lf3-static.bytednsdoc.com/obj/eden-cn/hbnpe_lm_wpn/ljhwZthlaukjlkulzlp/xigua_pc/emoji/emoji_8.png" alt="[呲牙]">',
+            '[大笑]':'<img class="emoji_icon" src="https://lf3-static.bytednsdoc.com/obj/eden-cn/hbnpe_lm_wpn/ljhwZthlaukjlkulzlp/xigua_pc/emoji/emoji_21.png" alt="[大笑]">'
+        };
+    };
 
 };
 

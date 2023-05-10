@@ -5533,11 +5533,37 @@
                 var _left = myEmojiDom.offset().left;
                 // 表情框位置放到点击位置下方合适的位置
                 _top = _top + 50;
-                // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组价的形式
+                // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组件的形式  需要补充D
                 let emojiDom = templateUtils.getEmojiTemplate(600,_left,_top);
-                $(".myPositionDiv").empty().append(emojiDom);
-
+                // 没有则添加,有,则移除
+                if($(".myPositionDiv").find(".comment-emoji-popup").length==1){
+                    $(".myPositionDiv").empty();
+                }else{
+                    // dom拼接
+                    $(".myPositionDiv").empty().append(emojiDom);
+                    // 绑定输入框相关事件 参考inserTesxtarea.html案例 需要把表情内容插入到文本框中的光标位置,而不是替换
+                    let areaObj = myEmojiDom.parents(".writer-wrapper").find("textarea");
+                    // 绑定表情 单击事件
+                    $(".myPositionDiv .emoji-panel").find("div[role='button']").unbind("click").bind("click",function(e){
+                        console.log($(e.target));
+                        // 将要插入的内容
+                        let val = $(e.target).attr("alt");
+                        // 传入相关参数,调用光标拼接组件,
+                        utils.cursorAppendService(null,areaObj,val);
+                        //console.log(val);
+                        // 关闭表情弹框
+                        $(".myPositionDiv").empty();
+                    });
+                }
             });
+
+            /**
+             * 表情失焦控制  需要补充E
+             */
+            // $(".my-emoji").unbind("focus").bind("focus",function(e){
+            //     debugger;
+            //     $(".myPositionDiv").empty();
+            // });
 
         };
 

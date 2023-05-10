@@ -362,6 +362,22 @@ var MyUtils = function(option){
         return loginUser;
     };
 
+    /**
+     * 焦点位置拼接
+     * @param callback 回调
+     * @param dom 拼接的目标
+     * @param val 要拼接的值
+     */
+    __ROOT__.cursorAppendService = function(callback,dom,val){
+        // 多次拼接组件问题 需要补充F
+        $('body').append('<script src="../util/ModuleApi.js"><\/script>');
+        // 初始化
+        let service = new cursorAppendService(callback,dom,val);
+        // 执行拼接
+        service.start();
+    };
+
+
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部

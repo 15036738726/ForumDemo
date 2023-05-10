@@ -306,4 +306,10 @@ https://www.cnblogs.com/fnz0/p/5510758.html
 }
 
 
+jquery在光标位置插入内容指定内容（input、textarea）通用
+https://blog.csdn.net/gjwgjw1111/article/details/
+
+
+
+
 
