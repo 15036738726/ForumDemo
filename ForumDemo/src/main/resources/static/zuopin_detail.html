@@ -5519,9 +5519,10 @@
              * 表情按钮单击,控制表情弹层位置
              */
             $(".my-emoji").unbind("click").bind("click",function(e){
+
+
                 // 找到点击的div元素
                 let myEmojiDom = $(e.target).parents(".input-opt-left").find(".my-emoji");
-
                 /**
                  * 元素距离文档顶端和左边的偏移值
                  *      jq对象.offset().top
@@ -5536,14 +5537,25 @@
                 // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组件的形式  需要补充D
                 let emojiDom = templateUtils.getEmojiTemplate(600,_left,_top);
                 // 没有则添加,有,则移除
-                if($(".myPositionDiv").find(".comment-emoji-popup").length==1){
+                let falg = myEmojiDom.parents(".input-opt").siblings(".input-wrapper").find("textarea").hasClass("myActive");
+                // 把点击位置的
+                if($(".myPositionDiv").find(".comment-emoji-popup").length==1&&falg){
                     $(".myPositionDiv").empty();
                 }else{
                     // dom拼接
                     $(".myPositionDiv").empty().append(emojiDom);
+
                     // 绑定输入框相关事件 参考inserTesxtarea.html案例 需要把表情内容插入到文本框中的光标位置,而不是替换
                     let areaObj = myEmojiDom.parents(".writer-wrapper").find("textarea");
-                    // 绑定表情 单击事件
+
+                    // 移除所有myActive 添加最新的
+                    $(".myActive").removeClass("myActive");
+                    // 给点击的位置的文本域加一个标识
+                    areaObj.addClass("myActive");
+
+                    /**
+                     * 绑定表情 单击事件
+                     */
                     $(".myPositionDiv .emoji-panel").find("div[role='button']").unbind("click").bind("click",function(e){
                         console.log($(e.target));
                         // 将要插入的内容
@@ -5551,19 +5563,17 @@
                         // 传入相关参数,调用光标拼接组件,
                         utils.cursorAppendService(null,areaObj,val);
                         //console.log(val);
+                        // 激活文本框发送按钮
+                        myEmojiDom.parents(".input-opt-left").siblings().find("button").removeClass("xg-button-disabled");
                         // 关闭表情弹框
                         $(".myPositionDiv").empty();
                     });
+
+                    // 表情这一块,失焦问题没完美解决,影响不大,需要补充,低优先级
                 }
+
             });
 
-            /**
-             * 表情失焦控制  需要补充E
-             */
-            // $(".my-emoji").unbind("focus").bind("focus",function(e){
-            //     debugger;
-            //     $(".myPositionDiv").empty();
-            // });
 
         };
 
