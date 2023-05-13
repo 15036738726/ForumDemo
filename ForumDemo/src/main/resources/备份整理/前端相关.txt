@@ -310,6 +310,8 @@ jquery在光标位置插入内容指定内容（input、textarea）通用
 https://blog.csdn.net/gjwgjw1111/article/details/
 
 
+判断页面中是否引入某个js、添加、移除js
+https://blog.csdn.net/m0_37885651/article/details/82864721
 
 
 

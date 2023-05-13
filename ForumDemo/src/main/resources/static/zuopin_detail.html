@@ -5519,8 +5519,6 @@
              * 表情按钮单击,控制表情弹层位置
              */
             $(".my-emoji").unbind("click").bind("click",function(e){
-
-
                 // 找到点击的div元素
                 let myEmojiDom = $(e.target).parents(".input-opt-left").find(".my-emoji");
                 /**
@@ -5536,10 +5534,9 @@
                 _top = _top + 50;
                 // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组件的形式  需要补充D
                 let emojiDom = templateUtils.getEmojiTemplate(600,_left,_top);
-                // 没有则添加,有,则移除
-                let falg = myEmojiDom.parents(".input-opt").siblings(".input-wrapper").find("textarea").hasClass("myActive");
-                // 把点击位置的
-                if($(".myPositionDiv").find(".comment-emoji-popup").length==1&&falg){
+                // 没有则添加,有,则移除 点击的表情最近的文本域是否有指定标识
+                let myActive = myEmojiDom.parents(".input-opt").siblings(".input-wrapper").find("textarea").hasClass("myActive");
+                if($(".myPositionDiv").find(".comment-emoji-popup").length==1&&myActive){
                     $(".myPositionDiv").empty();
                 }else{
                     // dom拼接

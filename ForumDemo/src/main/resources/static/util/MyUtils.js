@@ -336,7 +336,7 @@ var MyUtils = function(option){
      * @param callback
      */
     __ROOT__.userLoginService = function(temp,callback){
-        $('body').append('<script src="../util/ModuleApi.js"><\/script>');
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
         let service = new userLoginService(callback);
         // 打开登录弹框
         service.open(temp);
@@ -369,12 +369,22 @@ var MyUtils = function(option){
      * @param val 要拼接的值
      */
     __ROOT__.cursorAppendService = function(callback,dom,val){
-        // 多次拼接组件问题 需要补充F
-        $('body').append('<script src="../util/ModuleApi.js"><\/script>');
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
         // 初始化
         let service = new cursorAppendService(callback,dom,val);
         // 执行拼接
         service.start();
+    };
+
+    /**
+     * 拼接指定js到当前页面
+     * @param path
+     */
+    __ROOT__.appendJsToHtml =function (path){
+        // 判断是否存在,如果有,则不重复添加
+        if($("script[src='"+path+"']").length == 0){
+            $('body').append('<script src="'+path+'"><\/script>');
+        }
     };
 
 
