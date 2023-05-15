@@ -5001,9 +5001,6 @@
   right:0 !important
 "></textarea>
 <div id="xgpc-players"></div>
-<div style="position: absolute; top: 0px; left: 0px; width: 100%;">
-    <div class="myPositionDiv"></div>
-</div>
 
 </body>
 
@@ -5293,8 +5290,7 @@
                 let _target = $(e.target).parents(".commentWriter");
                 let inputVal = _target.find(".input-wrapper textarea").val();
                 if(inputVal.trim() == ''){
-                    alert("内容不符合规定");
-                    utils.msgDialog("内容不符合规定");
+                    utils.waringTip("内容不符合规定");
                     return;
                 }else{
                     /**
@@ -5342,8 +5338,7 @@
                             _target.find("textarea").val("");
                             _target.find(".input-opt .input-opt-right").find("button").addClass("xg-button-disabled");
                         }
-                        alert("发布成功!!!!");
-                        utils.feedback(temp);
+                        utils.sucessTip("评论成功");
                     };
                     utils.send(callback,"/commentController/saveComment",sendData,utils.PUT_REQUEST);
                 }
@@ -5519,6 +5514,12 @@
              * 表情按钮单击,控制表情弹层位置
              */
             $(".my-emoji").unbind("click").bind("click",function(e){
+                if($(".myPositionDiv").length==0){
+                    $("body").append('<div style="position: absolute; top: 0px; left: 0px; width: 100%;">\n' +
+                        '    <div class="myPositionDiv"></div>\n' +
+                        '</div>');
+                };
+
                 // 找到点击的div元素
                 let myEmojiDom = $(e.target).parents(".input-opt-left").find(".my-emoji");
                 /**
@@ -5532,7 +5533,7 @@
                 var _left = myEmojiDom.offset().left;
                 // 表情框位置放到点击位置下方合适的位置
                 _top = _top + 50;
-                // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组件的形式  需要补充D
+                // 传入3个参数,弹框宽度,高度已经固定,top  left 位置  后续调整,看能不能写成组件的形式  需要补充,其他页面也会使用表情,优先级低
                 let emojiDom = templateUtils.getEmojiTemplate(600,_left,_top);
                 // 没有则添加,有,则移除 点击的表情最近的文本域是否有指定标识
                 let myActive = myEmojiDom.parents(".input-opt").siblings(".input-wrapper").find("textarea").hasClass("myActive");
@@ -5541,7 +5542,6 @@
                 }else{
                     // dom拼接
                     $(".myPositionDiv").empty().append(emojiDom);
-
                     // 绑定输入框相关事件 参考inserTesxtarea.html案例 需要把表情内容插入到文本框中的光标位置,而不是替换
                     let areaObj = myEmojiDom.parents(".writer-wrapper").find("textarea");
 

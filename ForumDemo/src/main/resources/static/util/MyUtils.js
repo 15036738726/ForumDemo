@@ -33,7 +33,7 @@ var MyUtils = function(option){
      * @type {number}
      */
     // 系统默认弹框关闭时间,毫秒值
-    __ROOT__.closeMilliSecond = 500;// 默认500
+    __ROOT__.closeMilliSecond = 700;// 默认700
     // 弹框颜色
     __ROOT__.dialogColorMap = {"DEFAULT":"#000","WARNING":"#f0ad4e","ERR":"#d9534f"};
     // 对外提供颜色枚举
@@ -182,7 +182,86 @@ var MyUtils = function(option){
     };
 
     /**
-     * 弹框反馈 请求之后的反馈消息弹框提醒
+     * 成功提示
+     * @param text
+     */
+    __ROOT__.sucessTip = function(text,time){
+        let tipDom = __ROOT__.sucessTipTemplate(text);
+        // 拼接
+        $("body").append(tipDom);
+        // 移除 1秒之后 关闭弹框
+        setTimeout(autoCloseTip,time?time:__ROOT__.closeMilliSecond);
+        function autoCloseTip(){
+            let divTip = $('.ant-message').parent("div");
+            // 加上淡出效果
+            divTip.fadeOut(700,'linear',function(){
+                divTip.remove();
+            });
+        }
+    };
+
+    /**
+     * 警告或者失败提示
+     * @param text
+     * @param time
+     */
+    __ROOT__.waringTip = function (text,time){
+        let tipDom = __ROOT__.waringTipTemplate(text);
+        // 拼接
+        $("body").append(tipDom);
+        // 移除 1秒之后 关闭弹框
+        setTimeout(autoCloseTip,time?time:__ROOT__.closeMilliSecond);
+        function autoCloseTip(){
+            let divTip = $('.ant-message').parent("div");
+            // 加上淡出效果
+            divTip.fadeOut(700,'linear',function(){
+                divTip.remove();
+            });
+        }
+    };
+
+    /**
+     * 获取成功类型弹框模板
+     * @param text
+     */
+    __ROOT__.sucessTipTemplate = function(text){
+        return '<div>\n' +
+            '    <div class="ant-message"><span><div class="ant-message-notice"><div class="ant-message-notice-content"><div\n' +
+            '            class="ant-message-custom-content ant-message-success"><svg xmlns="http://www.w3.org/2000/svg"\n' +
+            '                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"\n' +
+            '                                                                        width="16" height="16" viewBox="0 0 16 16"><defs><path\n' +
+            '            id="success_svg__a"\n' +
+            '            d="M8 0a8 8 0 018 8 8 8 0 01-8 8 8 8 0 01-8-8 8 8 0 018-8zm2.948 5.448L7 9.397 5.552 7.948a.782.782 0 00-1.104 0 .782.782 0 000 1.104l2 2a.782.782 0 001.104 0l4.5-4.5a.782.782 0 000-1.104.782.782 0 00-1.104 0z"></path></defs><g\n' +
+            '            fill="none" fill-rule="evenodd"><mask id="success_svg__b" fill="#fff"><use\n' +
+            '            xlink:href="#success_svg__a"></use></mask><use fill="#D8D8D8" xlink:href="#success_svg__a"></use><g\n' +
+            '            fill="#00AA54" mask="url(#success_svg__b)"><circle cx="60" cy="60" r="60"\n' +
+            '                                                               transform="translate(-52 -52)"></circle></g></g></svg><span>'+text+'</span></div></div></div></span>\n' +
+            '    </div>\n' +
+            '</div>';
+    };
+
+    /**
+     * 获取警告类型弹框模板
+     * @param text
+     */
+    __ROOT__.waringTipTemplate = function(text){
+        return '<div>\n' +
+            '    <div class="ant-message"><span><div class="ant-message-notice"><div class="ant-message-notice-content"><div\n' +
+            '            class="ant-message-custom-content ant-message-error"><svg xmlns="http://www.w3.org/2000/svg"\n' +
+            '                                                                      xmlns:xlink="http://www.w3.org/1999/xlink"\n' +
+            '                                                                      width="16" height="16" viewBox="0 0 16 16"><defs><path\n' +
+            '            id="error_svg__a"\n' +
+            '            d="M8 0a8 8 0 018 8 8 8 0 01-8 8 8 8 0 01-8-8 8 8 0 018-8zM6.411 5.35a.749.749 0 10-1.06 1.061l1.59 1.59-1.59 1.592a.75.75 0 00-.073.977l.072.084a.75.75 0 001.061 0l1.59-1.592 1.592 1.592a.75.75 0 00.977.072l.084-.072a.75.75 0 000-1.061L9.062 8.001l1.592-1.59a.75.75 0 00.072-.977l-.072-.084a.75.75 0 00-1.061 0L8.001 6.941z"></path></defs><g\n' +
+            '            fill="none" fill-rule="evenodd"><mask id="error_svg__b" fill="#fff"><use\n' +
+            '            xlink:href="#error_svg__a"></use></mask><g fill="#F04142" mask="url(#error_svg__b)"><circle cx="60" cy="60"\n' +
+            '                                                                                                        r="60"\n' +
+            '                                                                                                        transform="translate(-52 -52)"></circle></g></g></svg><span>'+text+'</span></div></div></div></span>\n' +
+            '    </div>\n' +
+            '</div>';
+    };
+
+    /**
+     * 弹框反馈 请求之后的反馈消息弹框提醒  这个不推荐使用了 样式太丑
      * @param data
      */
     __ROOT__.feedback = function(data,millisecond,fontSize){
@@ -204,13 +283,14 @@ var MyUtils = function(option){
         $("body").append(subhtml);
         // 对默认的样式进行覆盖,设置颜色和字体大小
         $(".myTip").css("background-color",dialogColor).css("font-size",fontSize);
-        var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
+        //var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
+        setTimeout(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
         //关闭弹框
         function autoCloseAlert(){
             // 加上淡出效果
             $('.myTip').fadeOut(700,'linear',function(){
                 $('.myTip').remove();
-                clearInterval(msgDialogStop);
+                //clearInterval(msgDialogStop);
             });
         }
     };
