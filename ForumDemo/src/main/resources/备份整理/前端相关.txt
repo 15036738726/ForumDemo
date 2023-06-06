@@ -315,3 +315,14 @@ https://blog.csdn.net/m0_37885651/article/details/82864721
 
 
 
+###############js执行刷新当前页面的方法################
+loaction.reload()
+loaction.reload(true/false)
+参数true表示强制刷新并不读取缓存,false更可能是缓存数据
+
+location.replace(URL),可以理解成跳转。域名和端口不变
+详情页:http://localhost:9090/zuopin_detail.html?zuopinId=1643564381092569089&userId=1643564380765413377
+控制台执行:location.replace("user_register.html")
+跳转到:http://localhost:9090/user_register.html
+
+

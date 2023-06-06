@@ -62,11 +62,13 @@ var userLoginService = function(callback){
             // 设置登录操作回调
             let tempCallback = function (temp){
                 if(temp.code == 200){
-                    utils.setCache("LOGIN_USER",temp.data,1/24/60*30);// 1/24/60/60*10
+                    utils.setCache("LOGIN_USER",temp.data,1/24/60*30);// 1/24/60/60*10 10秒钟  目前是30分钟
                     // 登录成功,则调用创建对象时传入的回调,由具体页面定义
                     if(__SERVICE__.callback)__SERVICE__.callback();
                     // 关闭弹框
                     __SERVICE__.close();
+                    // 登录成功之后,则调用刷新页面方法  强制刷新
+                    utils.refreshCurrentPage(true);
                 }else{
                     $(".web-login-account-password .web-login-error").text('账号或密码不正确,请检查');
                 }

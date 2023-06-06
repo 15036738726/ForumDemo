@@ -5028,8 +5028,8 @@
             __THIS__.otherLoad();
             // 作品详情信息加载
             __THIS__.loadCurrentZuoPinInfo();
-            // 页面评论框登录用户头像初始化
-            __THIS__.loginSucessCallback();
+            // 登录渲染,如果是游客状态,则跳过
+            __THIS__.loginRender();
             // 初始化页面评论信息 加载成功之后在渲染最后调用了绑定事件的方法
             __THIS__.loadCommentData({"sortType":"0"});
         };
@@ -5152,7 +5152,7 @@
             if(startIndex == 0){
                 commentListDom += '<audio></audio></div>';
                 // 把数据拼接到对应的位置 ,在commentItem__details__main commentItem__interaction__moreReply 之间
-                //rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
+                // rootDom.find(".commentItem__interaction__moreReply").before(commentListDom);
                 // 拼接到之后时,如果存在输入框,那么应拼接到输入框之后,如果没有,则正常拼接
                 if(rootDom.find(".commentWriter").length==1){
                     rootDom.find(".commentWriter").after(commentListDom);
@@ -5258,7 +5258,9 @@
              */
             $(".Page_Projection__comment .ant-input").unbind("click").bind("click",function(){
                 // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
-                utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback);
+                // utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback); 现在对应loginRender
+                // loginInterceptController方法无需传入登录成功之后的回调了,调整为,登录成功之后,重新加载当前页面
+                utils.loginInterceptController("登录后可发表评论");
             });
 
             /**
@@ -5283,7 +5285,7 @@
                 // 如果按钮是灰色(禁用状态) 则什么也不做
                 if($(e.target).hasClass("xg-button-disabled"))return;
                 // 登录拦截控制器
-                let loginUser = utils.loginInterceptController("登录后可发表评论",__THIS__.loginSucessCallback);
+                let loginUser = utils.loginInterceptController("登录后可发表评论");
                 if(!loginUser){
                     return;
                 }
@@ -5350,7 +5352,7 @@
              */
             $(".Page_Projection__comment .commentItem__interaction__agree").unbind("click").bind("click",function(e){
                 // 调用登录拦截控制组件 上述代码好多地方都在用,抽离到utils中
-                let loginUser = utils.loginInterceptController("登录后可点赞",__THIS__.loginSucessCallback);
+                let loginUser = utils.loginInterceptController("登录后可点赞");
                 if(!loginUser){
                     return;
                 }
@@ -5493,7 +5495,7 @@
              */
             $(".Page_Projection__secondary_author_and_danmu .author__userinfo button").unbind("click").bind("click",function(e){
                 // 调用登录拦截控制组件
-                let loginUser = utils.loginInterceptController("登录后可关注",__THIS__.loginSucessCallback);
+                let loginUser = utils.loginInterceptController("登录后可关注");
                 if(!loginUser){
                     return;
                 }
@@ -5581,7 +5583,7 @@
          */
         __THIS__.zuopinKnockingRequestControl = function(callback,param){
             // 调用登录拦截控制组件
-            let loginUser = utils.loginInterceptController(param.title,__THIS__.loginSucessCallback);
+            let loginUser = utils.loginInterceptController(param.title);
             if(!loginUser){
                 return;
             }
@@ -5594,15 +5596,16 @@
         };
 
         /**
-         * 用户登录成功之后的回调,重设页面回复框的头像,主要是用户登录之后调用
+         * 用户登录状态信息初始化,目前只重设页面回复框的头像已经又上角的登录按钮控制
          */
-        __THIS__.loginSucessCallback = function(){
+        __THIS__.loginRender = function(){
             let userInfo = utils.getCache("LOGIN_USER");
             let userHead = 'img/no_login.png';
             if(userInfo!=null){
                 userHead = userInfo.userHead;
             }
             $(".Page_Projection__comment").find(".commentWriter .BU-MagicImage").attr("src",userHead);
+            // 需要补充,右上角登录渲染功能
         };
 
         /**

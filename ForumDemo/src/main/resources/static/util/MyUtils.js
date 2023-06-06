@@ -467,6 +467,17 @@ var MyUtils = function(option){
         }
     };
 
+    /**
+     * 刷新当前页面
+     * @param flag 参数true表示强制刷新并不读取缓存,false更可能是缓存数据
+     */
+    __ROOT__.refreshCurrentPage = function(flag){
+        if(flag){
+            location.reload(true);
+        }else{
+            location.reload(false)
+        }
+    };
 
 };
 
