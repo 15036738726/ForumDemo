@@ -42,17 +42,27 @@ var MyUtils = function(option){
     __ROOT__.DIALOG_ERR = "ERR"; // 红色,系统级错误
     __ROOT__.dialogFontSize = "14"; // 弹框字体大小
 
+    // 公共key名称枚举
+    __ROOT__.PUBLIC_KEY_ENUM = {};
+    // 用户信息KEY
+    __ROOT__.PUBLIC_KEY_ENUM.LOGIN_USER= "LOGIN_USER";
+    // 主题信息KEY
+    __ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME = "PAGE_THEME";
 
     /**
      * 初始化方法,组价的所有前置控制,可定义在这个方法中
      */
     __ROOT__.init = function () {
+        // 插入公共js到页面,用户只需要引用myutils.js即可
+        __ROOT__.appendJsToHtml("../util/MyTemplateDefinition.js");
         // 主题设置
         __ROOT__.applyPageTheme();
         // dialog弹框所依赖的样式表 初始化
         __ROOT__.insertPageStyleSheet();
         // 页面通用事件处理
-        __ROOT__.pageEventHandel();
+        __ROOT__.pagePublicEvent();
+        // 登录渲染
+        __ROOT__.loginRenderService();
     };
 
     /**
@@ -322,7 +332,7 @@ var MyUtils = function(option){
      * 页面通用事件绑定
      * 1.目前只处理了主题切换
      */
-    __ROOT__.pageEventHandel = function(){
+    __ROOT__.pagePublicEvent = function(){
         /**
          * 1.主题切换事件
          */
@@ -342,11 +352,11 @@ var MyUtils = function(option){
          * 页面主题 true 即为默认 false 则为暗黑模式
          */
         let val = true;
-        let cacheVal = __ROOT__.getCache("PAGE_THEME");
+        let cacheVal = __ROOT__.getCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME);
         if(cacheVal){
             val= !cacheVal;
         }
-        __ROOT__.setCache("PAGE_THEME",val,-1);
+        __ROOT__.setCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME,val,-1);
     };
 
     /**
@@ -355,12 +365,12 @@ var MyUtils = function(option){
      */
     __ROOT__.applyPageTheme = function () {
         let val = true;
-        let cacheVal = __ROOT__.getCache("PAGE_THEME");
+        let cacheVal = __ROOT__.getCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME);
         if(cacheVal!=null){
             val = cacheVal;
         }else{
             // 如果没有,则主题初始化设置
-            __ROOT__.setCache("PAGE_THEME",val,-1);
+            __ROOT__.setCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME,val,-1);
         }
         if (val) {
             // 浅色外观
@@ -417,9 +427,7 @@ var MyUtils = function(option){
      */
     __ROOT__.userLoginService = function(temp,callback){
         __ROOT__.appendJsToHtml("../util/ModuleApi.js");
-        let service = new userLoginService(callback);
-        // 打开登录弹框
-        service.open(temp);
+        let service = new userLoginService(callback,temp);
         // 启动组件处理
         service.start();
     };
@@ -477,6 +485,30 @@ var MyUtils = function(option){
         }else{
             location.reload(false)
         }
+    };
+
+    /**
+     * 移除localStorage本地存储
+     * @param key
+     */
+    __ROOT__.localStorageClear = function(key){
+        if(key){
+            localStorage.removeItem(key);
+        }else{
+            localStorage.clear();
+        }
+    }
+
+    /**
+     * 登录渲染服务,处理右上角的登录按钮,两种情况,登录和未登录  调用时机在页面初始化时直接调用
+     */
+    __ROOT__.loginRenderService = function(){
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
+        let loginUser = __ROOT__.getCache("LOGIN_USER");
+        let renderRoot = $(".btn-wrap .BU-Component-Header-Avatar .BU-Component-Header-Avatar__container");
+        let service = new loginRenderService(null,renderRoot,loginUser);
+        // 交给组件处理
+        service.start();
     };
 
 };

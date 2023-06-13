@@ -1,25 +1,28 @@
 /**
  * 系统登录模块
  */
-var userLoginService = function(callback){
+var userLoginService = function(callback,param){
     let __SERVICE__ = this;
     // 回调函数
     __SERVICE__.callback = callback;
+    // 参数
+    __SERVICE__.param = param;
 
     /**
      * 启动模块
      */
     __SERVICE__.start = function(){
+        // 打开登录弹框
+        __SERVICE__.open();
         // 绑定登录模块交互事件,如果登录成功,最后执行回调,然后关闭弹框即可
         __SERVICE__.event();
     };
 
     /**
      * 登录弹框打开
-     * @param temp
      */
-    __SERVICE__.open = function(temp){
-        $("body").append(templateUtils.getLoginDialogDom(temp));
+    __SERVICE__.open = function(){
+        $("body").append(templateUtils.getLoginDialogDom(__SERVICE__.param));
         $("body").attr("class","Dialog-lockscroll").attr("style","border-right: 17px solid transparent;");
     };
 
@@ -62,7 +65,9 @@ var userLoginService = function(callback){
             // 设置登录操作回调
             let tempCallback = function (temp){
                 if(temp.code == 200){
+
                     utils.setCache("LOGIN_USER",temp.data,1/24/60*30);// 1/24/60/60*10 10秒钟  目前是30分钟
+                    utils.setCache(utils.PUBLIC_KEY_ENUM.LOGIN_USER,temp.data,1/24/60*30);// 1/24/60/60*10 10秒钟  目前是30分钟
                     // 登录成功,则调用创建对象时传入的回调,由具体页面定义
                     if(__SERVICE__.callback)__SERVICE__.callback();
                     // 关闭弹框
@@ -146,6 +151,75 @@ var cursorAppendService = function(callback,dom,val){
                 alert("此版本的Mozilla浏览器不支持setSelectionRange");
             }
         }
+    };
+};
+
+/**
+ * 登录渲染服务
+ * @param callback
+ * @param dom   渲染的dom节点
+ * @param userInfo 登录用户信息
+ */
+var loginRenderService = function(callback,dom,userInfo){
+    let __SERVICE__ = this;
+    // 回调函数
+    __SERVICE__.callback = callback;
+    // 目标DOM
+    __SERVICE__.target = dom;
+    // 用户信息
+    __SERVICE__.userInfo = userInfo;
+
+    __SERVICE__.start = function(){
+        if(__SERVICE__.userInfo==null){
+            __SERVICE__.target.empty().append(templateUtils.getNotLoginDom());
+        }else{
+            __SERVICE__.target.empty().append(templateUtils.getLoginedDom(__SERVICE__.userInfo));
+        }
+        // 绑定相关事件
+        __SERVICE__.event();
+    };
+
+    /**
+     * 事件绑定
+     */
+    __SERVICE__.event = function(){
+
+        /**
+         * 登录事件
+         */
+        __SERVICE__.target.find(".loginButton").unbind("click").bind("click",function(e){
+            let temp = {};
+            temp.title = "登录";
+            new userLoginService(null,temp).start();
+        });
+
+        /**
+         * 鼠标移入事件  BU-Component-Header-Avatar
+         * 登录状态才生效 所以子元素loginedAvatar 如果通过子元素找到父元素,则说明登录,这两个事件才能有效绑定
+         */
+        __SERVICE__.target.find(".loginedAvatar").parents(".BU-Component-Header-Avatar").unbind("mouseenter").bind("mouseenter",function(e){
+            __SERVICE__.target.find(".avatar-overlay").removeClass("fadeOut").addClass("fadeIn");
+        });
+        __SERVICE__.target.find(".loginedAvatar").parents(".BU-Component-Header-Avatar").unbind("mouseleave").bind("mouseleave",function(e){
+            __SERVICE__.target.find(".avatar-overlay").removeClass("fadeIn").addClass("fadeOut");
+        });
+
+        /**
+         * 退出登录注销事件
+         */
+        __SERVICE__.target.find(".BU-Component-Header-Avatar__AvatarLoginedOverlay__logout-btn").unbind("click").bind("click",function(e){
+            // 清除用户信息
+            utils.localStorageClear(utils.PUBLIC_KEY_ENUM.LOGIN_USER);
+            // 刷新当前页面
+            utils.refreshCurrentPage(true);
+        });
+
+        /**
+         * 头像事件点击事件,用户信息点击事件
+         */
+        __SERVICE__.target.find(".BU-Component-Header-Avatar__image,.user-center").unbind("click").bind("click",function(e){
+            window.open("/user_info.html","_blank");
+        });
     };
 };
 
