@@ -4,6 +4,7 @@ import com.example.forumdemo.system.MyJwtInterceptor;
 import com.example.forumdemo.system.JacksonObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -56,9 +57,15 @@ public class InterceptorConfig implements WebMvcConfigurer {
         converters.add(0, messageConverter);
     }
 
+    /**
+     * 当项目中涉及大量的页面跳转，我们可以使用addViewControllers方法实现无业务逻辑跳转，从而减少控制器代码的编写
+     * @param registry
+     */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        //发送/main.html请求来到bmodule/B01
-        // registry.addViewController("/main.html").setViewName("B01");
+        // 设置访问路径为 “/” 跳转到指定页面
+        //registry.addViewController("/").setViewName("index.html");
+        //设置为最高优先级
+        //registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 }

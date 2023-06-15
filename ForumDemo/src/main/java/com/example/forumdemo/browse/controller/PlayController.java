@@ -29,7 +29,8 @@ public class PlayController {
     @PassToken
     public ModelAndView index(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("index.html");
+        // 如果不写重定向,则默认跳转到template目录下
+        mv.setViewName("redirect:index.html");
         return mv;
     }
 
