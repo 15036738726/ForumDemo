@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../jquery/jquery.min.js"></script>
+</head>
+<body>
+    <textarea id="content" class="layui-textarea"></textarea>
+    <li onclick="insertHtml('插入内容')" >插入</li>
+
+</body>
+<script>
+    $('#content').on('select',function () {
+        message.setCaret(this);
+    }).on('click',function () {
+        message.setCaret(this);
+    }).on('keyup',function () {
+        message.setCaret(this);
+    });
+    function insertHtml(val) {
+        var textareaStr = $('#content').val();
+        let rtn = message.insertAtCaret($('#content')[0],'{'+val+'}');
+        console.log(rtn);
+    }
+
+    var message = {
+        setCaret: function (textObj) {
+            if (textObj.createTextRange) {
+                textObj.caretPos = document.selection.createRange().duplicate();
+            }
+        },
+
+        insertAtCaret: function (textObj, textFeildValue) {
+            if (document.all) {
+                if (textObj.createTextRange && textObj.caretPos) {
+                    var caretPos = textObj.caretPos;
+                    caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? textFeildValue + ' ' : textFeildValue;
+                } else {
+                    //textObj.value = textFeildValue;
+                    return textFeildValue;
+                }
+            } else {
+                if (textObj.setSelectionRange) {
+                    var rangeStart = textObj.selectionStart;
+                    var rangeEnd = textObj.selectionEnd;
+                    var tempStr1 = textObj.value.substring(0, rangeStart);
+                    var tempStr2 = textObj.value.substring(rangeEnd);
+                    //textObj.value = tempStr1 + textFeildValue + tempStr2;
+                    return tempStr1 + textFeildValue + tempStr2;
+
+                } else {
+                    alert("此版本的Mozilla浏览器不支持setSelectionRange");
+                }
+            }
+        }
+    }
+
+</script>
+</html>

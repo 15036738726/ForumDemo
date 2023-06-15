@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<!--https://blog.csdn.net/qq_44849271/article/details/124222716-->
+<div >长按事件1</div>
+<!--<div onmousedown="down()" onmouseup="up()" onclick="cli()">长按事件</div>-->
+<progress value="0" max="100"></progress>
+<!-- <button ontouchstart="down()" ontouchend="up()" onclick="cli()">点击</button> -->
+<script src="../jquery/jquery.min.js"></script>
+<script>
+    let progress=document.getElementsByTagName('progress')[0];
+    let time="";
+    let lock=true;
+
+    function down(){
+        time=setInterval(()=>{
+            lock=false;
+            progress.value+=5
+        },1000)
+    }
+    function up(){
+        clearInterval(time);
+        // 延时一会重置标识位  否则一旦松开 就会触发单机事件
+        /**
+         * setTimeout(f,0)应用
+         * 调整事件的发生顺序
+         *
+         * setTimeout(f,0)有几个非常重要的用途。它的一大应用是，可以调整事件的发生顺序。
+         * 比如，网页开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。
+         * 如果，我们先让父元素的事件回调函数先发生，就要用到setTimeout(f, 0)。
+         * @type {number}
+         */
+        //鼠标释放时让lock异步执行，setTimeout因为异步任务，所以会放到任务队列最后执行，让click事件先执行了 先触发单机,然后判断失效,在重置标识位
+        var t1 = Date.now();
+        console.log(t1);
+        setTimeout(()=>{
+            var t2 = Date.now();
+            console.log(t2-t1+",,,,"+t2);
+            lock=true;
+        })
+    }
+
+    function cli(){
+        if(lock){
+            alert(progress.value);
+        }
+    }
+
+    test();
+    function test(){
+        $("div").unbind("mousedown").bind("mousedown",function(e){
+            time=setInterval(()=>{
+                lock=false;
+                progress.value+=5
+            },1000)
+        });
+
+        $("div").unbind("mouseup").bind("mouseup",function(e){
+            clearInterval(time);
+            setTimeout(()=>{
+                lock=true;
+            })
+        });
+
+        $("div").unbind("click").bind("click",function(e){
+            if(lock){
+                alert(progress.value);
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

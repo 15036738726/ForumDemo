@@ -1,4 +1,4 @@
-package com.example.forumdemo.jwt;
+package com.example.forumdemo.system;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import com.auth0.jwt.JWT;
@@ -7,6 +7,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.forumdemo.entity.ForumUser;
+import com.example.forumdemo.jwt.JwtTokenUtils;
+import com.example.forumdemo.jwt.PassToken;
 import com.example.forumdemo.user.service.UserOpeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

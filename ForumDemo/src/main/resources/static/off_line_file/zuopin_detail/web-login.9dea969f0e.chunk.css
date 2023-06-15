@@ -1,0 +1,576 @@
+.Dialog-container.login-dialog-container .Dialog__wrap {
+    display: flex;
+    justify-content: center
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__container {
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin: auto !important;
+    background-color: var(--view-background-primary)
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__container:focus {
+    outline: none
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__container.isDYLoginLoading {
+    display: none
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__header {
+    height: 66px;
+    box-shadow: inset 0 -0.5px 2px 0 #eaeaea
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__header > .title {
+    color: var(--content-primary);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: normal;
+    position: absolute;
+    left: 24px;
+    top: 20px
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__header > .close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(https://lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/close.9028e84a.svg);
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    z-index: 10
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__footer {
+    text-align: center;
+    color: #666;
+    padding-bottom: 20px
+}
+
+.Dialog-container.login-dialog-container .LoginDialog__footer a {
+    color: var(--assist-1)
+}
+
+.Dialog-container.login-dialog-container .web-login-container {
+    width: initial;
+    -webkit-font-smoothing: antialiased
+}
+
+.Dialog-container.login-dialog-container .web-login {
+    overflow: hidden;
+    background-color: var(--view-background-primary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-common-wrapper {
+    min-height: 387px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login {
+    padding: 40px 0 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input, .Dialog-container.login-dialog-container .web-login .web-login-button-input {
+    height: 48px;
+    line-height: 24px;
+    padding: 8px 10px;
+    border-radius: 2px;
+    border: none;
+    background: rgba(0, 0, 0, .05)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__input, .Dialog-container.login-dialog-container .web-login .web-login-button-input__input {
+    background-color: transparent
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__input::-webkit-input-placeholder, .Dialog-container.login-dialog-container .web-login .web-login-button-input__input::-webkit-input-placeholder {
+    color: #cdcdcd;
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__input:-moz-placeholder, .Dialog-container.login-dialog-container .web-login .web-login-button-input__input:-moz-placeholder {
+    color: #cdcdcd;
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__input::-moz-placeholder, .Dialog-container.login-dialog-container .web-login .web-login-button-input__input::-moz-placeholder {
+    color: #cdcdcd;
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__input:-ms-input-placeholder, .Dialog-container.login-dialog-container .web-login .web-login-button-input__input:-ms-input-placeholder {
+    color: #cdcdcd;
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__button-text, .Dialog-container.login-dialog-container .web-login .web-login-button-input__button-text {
+    color: var(--brand);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 32px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-normal-input__button-text__disable, .Dialog-container.login-dialog-container .web-login .web-login-button-input__button-text__disable {
+    color: #999
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-area-code__select-list-wrapper {
+    left: -10px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .08);
+    border: 1px solid var(--content-line);
+    padding: 0;
+    max-height: 188px;
+    background-color: var(--view-background-primary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-area-code__select-list-wrapper__list__item {
+    padding: 8px 10px;
+    line-height: 20px;
+    color: var(--content-primary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-area-code__select-list-wrapper__list__item__active {
+    font-weight: 500;
+    color: var(--brand)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-area-code__select-list-wrapper__list__item:hover {
+    background-color: rgba(var(--accent-black), var(--opacity-4))
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-error {
+    color: var(--brand);
+    height: 41px;
+    line-height: 41px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-button {
+    height: 48px;
+    line-height: 48px;
+    font-weight: 500;
+    border-radius: 2px;
+    background-color: var(--brand)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-link-list {
+    align-items: flex-end
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-link-list__item__text {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-tab-list__item {
+    cursor: default;
+    position: relative;
+    font-size: 20px;
+    line-height: 28px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-tab-list__item__active {
+    color: var(--content-primary);
+    font-weight: 500
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-tab-list__item__active::after {
+    height: 0px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-other-login-method__text {
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 0;
+    color: var(--content-secondary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-other-login-method__list__item {
+    height: 20px;
+    margin-right: 8px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-other-login-method__list__item__icon {
+    width: 20px;
+    height: 20px;
+    background-size: 20px 20px;
+    position: relative
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code {
+    width: 243px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content {
+    margin-top: 16px;
+    padding: 0 28px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper {
+    width: 152px;
+    height: 152px;
+    position: relative;
+    background-color: #f7f7f7;
+    border-radius: 2px;
+    border: 1px solid rgba(151, 151, 151, .13);
+    margin: 0
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper img {
+    -webkit-clip-path: polygon(9px 9px, 144px 9px, 144px 144px, 9px 144px);
+    clip-path: polygon(9px 9px, 144px 9px, 144px 144px, 9px 144px)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask {
+    background-color: rgba(247, 247, 247, .94)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__icon {
+    order: 2;
+    margin-top: 10px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__icon.refresh, .Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__icon.failed, .Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__icon.uncheck {
+    width: auto;
+    height: 34px;
+    padding: 0 10px 0 28px;
+    font-size: 14px;
+    line-height: 32px;
+    font-weight: 500;
+    color: #ff142b;
+    border-radius: 4px;
+    border: .5px solid rgba(0, 0, 0, .11);
+    background-image: url("data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMTYiCiAgaGVpZ2h0PSIxNiIKICB2aWV3Qm94PSIwIDAgMTYgMTYiCj4KICA8cGF0aAogICAgZmlsbD0iI0ZGMTQyQiIKICAgIHN0cm9rZT0iI0ZGMTQyQiIKICAgIHN0cm9rZS13aWR0aD0iLjUiCiAgICBkPSJNMTEuMTk1IDQuMjhjLS45MTMtLjg5NC0yLjExNS0xLjM4Ni0zLjQwNy0xLjM4Ni0yLjcxNiAwLTQuODk3IDIuMTkxLTQuODk3IDQuOTE4IDAgMi43MjggMi4xODEgNC45MTkgNC44OTcgNC45MTkgMS40MDMgMCAyLjcxNy0uNjA0IDMuNjUyLTEuNjMyLjE1Ni0uMTc5LjQ0NS0uMjAxLjYyMy0uMDQ1LjE3OC4xNTcuMi40NDcuMDQ1LjYyNi0xLjA5MSAxLjIzLTIuNjUgMS45NDUtNC4zMiAxLjk0NUM0LjU4MyAxMy42MjUgMiAxMS4wMzIgMiA3LjgxMiAyIDQuNTk0IDQuNTgzIDIgNy43ODggMmMxLjUzNyAwIDIuOTg0LjYwNCA0LjA1MiAxLjY1NGwuOTM2LS45MzljLjA0NC0uMDQ0LjExLS4wODkuMTc4LS4wODkuMTc4LS4wNDUuMzU2LjA5LjQuMjY4TDE0IDYuMTE0di4xMzRjLS4wNDUuMTc4LS4yMjMuMjktLjQuMjY4bC0zLjIwNy0uNjQ4Yy0uMDY2LS4wMjMtLjEzMy0uMDQ1LS4xNzgtLjA5LS4xMzMtLjEzNC0uMTMzLS4zMzUgMC0uNDdsLjk4LTEuMDI4aDB6IgogIC8+Cjwvc3ZnPgo=");
+    background-size: 16px 16px;
+    background-color: #fff;
+    background-position: 10px center
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__icon.success {
+    margin: 0 auto;
+    width: 90px;
+    height: 90px;
+    background-image: url(https://lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/xigua-code-success.583ea0ee.png);
+    background-size: 90px 90px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__text {
+    order: 1;
+    color: var(--content-secondary);
+    font-size: 14px;
+    margin-top: 0
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-code__content__qrcode-wrapper__mask__toast__text.success {
+    display: none
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-mobile-code__mobile-input-wrapper, .Dialog-container.login-dialog-container .web-login .web-login-account-password__mobile-input-wrapper {
+    margin-top: 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-mobile-code__code-input-wrapper, .Dialog-container.login-dialog-container .web-login .web-login-account-password__code-input-wrapper {
+    margin-top: 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-mobile-code__account-input-wrapper, .Dialog-container.login-dialog-container .web-login .web-login-account-password__account-input-wrapper {
+    margin-top: 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-mobile-code__password-input-wrapper, .Dialog-container.login-dialog-container .web-login .web-login-account-password__password-input-wrapper {
+    margin-top: 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-mobile-code__button-wrapper, .Dialog-container.login-dialog-container .web-login .web-login-account-password__button-wrapper {
+    margin-top: 3px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-account-password .web-login-button-input__button-text {
+    color: var(--content-secondary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset {
+    width: auto;
+    padding: 8px 0 43px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset .web-login-common-wrapper__tab {
+    padding: 0 48px;
+    justify-content: space-between
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset .web-login-common-wrapper__form {
+    width: 330px;
+    padding: 0 48px;
+    box-sizing: content-box
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset__new-password-input-wrapper {
+    margin-top: 12px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset__new-password-input-wrapper::before {
+    content: "密码必须包括数字、大小写的英文字母（8-20字符）";
+    margin-bottom: 8px;
+    display: inline-block;
+    color: #999;
+    font-size: 12px;
+    line-height: 17px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset__account-input-wrapper {
+    margin-top: 16px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-password-reset__button-wrapper {
+    margin-top: 3px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login {
+    padding-bottom: 0
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login__form {
+    padding: 0 28px 0 60px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login__form__title {
+    line-height: 22px;
+    color: var(--content-primary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login__form__content {
+    width: 330px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login__scan-code {
+    border-left: 1px solid var(--content-line);
+    position: relative
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login__scan-code__title {
+    padding-left: 28px;
+    text-align: left
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__login .web-login-scan-code {
+    text-align: left
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__footer {
+    width: 418px;
+    padding: 0 28px 0 60px;
+    height: 20px;
+    margin: 16px 0 36px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-union__footer .web-login-link-list__item__text {
+    font-weight: normal;
+    color: var(--content-secondary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item .item-avatar-wrapper .icon-app.current-app {
+    background-image: url(https://lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/icon-xigua.dbd5fb31.png)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-login-account {
+    padding: 7px 12px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-bind-account {
+    padding: 16px 12px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-login-account .item-nickname, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-bind-account .item-nickname {
+    line-height: 24px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-login-account .item-nickname, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-login-account .item-mobile, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-login-account .item-desc, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-bind-account .item-nickname, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-bind-account .item-mobile, .Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item.current-aweme-bind-account .item-desc {
+    width: 168px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__diagram__item:nth-of-type(2) img {
+    filter: blur(10px)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__main__login {
+    border-bottom: none;
+    box-shadow: inset 3px 0 #fff, inset -3px 0 #fff, inset 0 3px #fff, inset 0 -0.5px 2px 0 #eaeaea
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-conflict-create__footer__text {
+    line-height: 40px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--content-secondary)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc span {
+    color: var(--brand);
+    cursor: pointer
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc span.web-login-scan-desc-electron {
+    color: var(--content-secondary);
+    cursor: default
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc__phone {
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+    background-color: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc__phone img {
+    display: block;
+    margin: 0 auto;
+    width: 168px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc__question {
+    position: relative;
+    margin-left: 1px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url(https://lf3-cdn-tos.bdxiguastatic.com/obj/ixigua-static/xigua_fe/xigua_video_web_pc/static/media/icon-question.efee4f2f.png) no-repeat center;
+    background-size: 14px 14px;
+    vertical-align: text-bottom
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc__btn {
+    cursor: pointer;
+    padding: 0 6px;
+    word-break: keep-all;
+    color: #0e408c
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc__btn:hover {
+    color: #1a74ff
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc .web-login-footer {
+    text-align: center;
+    color: var(--content-secondary);
+    padding-bottom: 20px;
+    font-size: 14px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc .web-login-footer a {
+    color: var(--assist-1);
+    text-decoration: none
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc .web-login-footer__checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    border-radius: 2px;
+    border: 1px solid #a3a7ad;
+    vertical-align: middle;
+    cursor: pointer
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-scan-desc .web-login-footer__checkbox__checked {
+    border: none;
+    background: url("data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMTYiCiAgaGVpZ2h0PSIxNiIKICB2aWV3Qm94PSIwIDAgMTYgMTYiCj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgPHJlY3QKICAgICAgd2lkdGg9IjE2IgogICAgICBoZWlnaHQ9IjE2IgogICAgICBmaWxsPScjRkY1RTVFJwogICAgICByeD0iMiIKICAgIC8+CiAgICA8cGF0aAogICAgICBzdHJva2U9IiNGRkYiCiAgICAgIHN0cm9rZS1saW5lLWNhcD0icm91bmQiCiAgICAgIHN0cm9rZS1saW5lam9pbj0icm91bmQiCiAgICAgIHN0cm9rZS13aWR0aD0iMiIKICAgICAgZD0iTTQgOC41TDYuNSAxMSAxMiA1LjUiCiAgICAvPgogIDwvZz4KPC9zdmc+Cg==") no-repeat center;
+    background-size: 12px 12px
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-account-password__remember__checkbox {
+    border-color: var(--content-line)
+}
+
+.Dialog-container.login-dialog-container .web-login .web-login-account-password__remember__text {
+    color: var(--content-secondary)
+}
+
+.Dialog-container.login-dialog-container .douyinLoginLoading {
+    width: 92px;
+    height: 92px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, .4);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto
+}
+
+.Dialog-container.login-dialog-container .douyinLoginLoading > img {
+    height: 40px;
+    width: 40px;
+    animation: douyinloading .8s linear forwards infinite
+}
+
+.Dialog-container.login-dialog-container .douyinLoginLoading > span {
+    margin-top: 6px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, .7)
+}
+
+.Dialog-container.login-dialog-container .web-login-footer {
+    text-align: center;
+    color: var(--content-secondary);
+    padding-bottom: 20px;
+    font-size: 14px
+}
+
+.Dialog-container.login-dialog-container .web-login-footer a {
+    color: var(--assist-1);
+    text-decoration: none
+}
+
+.Dialog-container.login-dialog-container .web-login-footer__checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    border-radius: 2px;
+    border: 1px solid #a3a7ad;
+    vertical-align: middle;
+    cursor: pointer
+}
+
+.Dialog-container.login-dialog-container .web-login-footer__checkbox__checked {
+    border: none;
+    background: url("data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMTYiCiAgaGVpZ2h0PSIxNiIKICB2aWV3Qm94PSIwIDAgMTYgMTYiCj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgPHJlY3QKICAgICAgd2lkdGg9IjE2IgogICAgICBoZWlnaHQ9IjE2IgogICAgICBmaWxsPScjRkY1RTVFJwogICAgICByeD0iMiIKICAgIC8+CiAgICA8cGF0aAogICAgICBzdHJva2U9IiNGRkYiCiAgICAgIHN0cm9rZS1saW5lLWNhcD0icm91bmQiCiAgICAgIHN0cm9rZS1saW5lam9pbj0icm91bmQiCiAgICAgIHN0cm9rZS13aWR0aD0iMiIKICAgICAgZD0iTTQgOC41TDYuNSAxMSAxMiA1LjUiCiAgICAvPgogIDwvZz4KPC9zdmc+Cg==") no-repeat center;
+    background-size: 12px 12px
+}
+
+@keyframes douyinloading {
+    0% {
+        transform: rotate(0deg)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}

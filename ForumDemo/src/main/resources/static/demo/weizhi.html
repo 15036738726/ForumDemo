@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script src="../jquery/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+        });
+
+        function UseKeyTo(c) {
+            var inputControl = $(c);
+
+            if (!document.getElementById('province')) {
+                $('body').append('<div id="province" style="position:absolute;border:1px solid #808080;width:540px;height:197px;border-radius: 3px;background-color:#ccc;display:block;"><div class="c" v="京">(京)北京市00</div><div class="c" v="津">(津)天津市01</div><div class="c" v="沪">(沪)上海市02</div><div class="c" v="渝">(渝)重庆市03</div><div class="c" v="琼">(琼)海南省04</div><div class="c" v="黑">(黑)黑龙江05</div><div class="c" v="蒙">(蒙)内蒙古06</div><div class="c" v="冀">(冀)河北省07</div><div class="c" v="晋">(晋)山西省08</div><div class="c" v="鲁">(鲁)山东省09</div><div class="c" v="吉">(吉)吉林省10</div><div class="c" v="苏">(苏)江苏省11</div><div class="c" v="皖">(皖)安徽省12</div><div class="c" v="浙">(浙)浙江省13</div><div class="c" v="闽">(闽)福建省14</div><div class="c" v="赣">(赣)江西省15</div><div class="c" v="辽">(辽)辽宁省16</div><div class="c" v="豫">(豫)河南省17</div><div class="c" v="鄂">(鄂)湖北省18</div><div class="c" v="湘">(湘)湖南省19</div><div class="c" v="粤">(粤)广东省20</div><div class="c" v="桂">(桂)广西省21</div><div class="c" v="新">(新)新疆区22</div><div class="c" v="陕">(陕)陕西省23</div><div class="c" v="甘">(甘)甘肃省24</div><div class="c" v="宁">(宁)宁夏区25</div><div class="c" v="青">(青)青海省26</div><div class="c" v="川">(川)四川省27</div><div class="c" v="藏">(藏)西藏区28</div><div class="c" v="云">(云)云南省29</div><div class="c" v="贵">(贵)贵州省30</div><div style="float:left;">    选择的简称：<span id="simple" style="color:red;font-weight:bolder;"></span></div><div style="position:absolute;right:5px;bottom:5px;display:inline;"><input id="Kconfirm" type="button" name="name" value="确定" /><input id="Kcancel" type="button" name="name" value="取消" /></div></div>');
+                var province = $('#province');
+                $('#province .c').css({
+                    'font-size':'14px',
+                    'border-radius': '5px',
+                    'height': '20px',
+                    'width': '100px',
+                    'border': '1px solid rgb(30,113,177)',
+                    'background-color': 'rgb(219,234,249)',
+                    'text-align': 'center',
+                    'line-height': '18px',
+                    'margin-left': '5px',
+                    'margin-top': '5px',
+                    'float': 'left',
+                    'display': 'inline',
+                    'cursor': 'pointer'
+                });
+                $('#province .c').hover(function () { $(this).css("background-color", "rgb(30,113,177)") },
+                    function () { $(this).css("background-color", "rgb(219,234,249)") });
+                $("#province .c").click(function () {
+                    $('#simple').html($(this).attr('v'));
+                    inputControl.val($(this).attr('v'));
+                });
+                $("#province #Kconfirm").click(function () {
+                    province.css("display", "none");
+                });
+                $("#province #Kcancel").click(function () {
+                    inputControl.val('');
+                    province.css("display", "none");
+                });
+            }
+            var province = $('#province');
+            province.show();
+            var _top = inputControl.offset().top - $(window).scrollTop();//inputControl[0].offsetTop - $(window).scrollTop();
+            var _left = inputControl.offset().left - $(window).scrollLeft(); //inputControl[0].offsetLeft - $(window).scrollLeft();
+            province.css("left", inputControl.offset().left + 'px').css("top", inputControl.offset().top + 30 + 'px');
+            var viewWidth = document.documentElement.clientWidth//
+            var viewHeight = document.documentElement.clientHeight;//
+            if ((_left + province.width()) > viewWidth) {
+                //计算div的offset().left
+                var left = (inputControl.offset().left - (_left + province.width() - viewWidth+10)) + 'px';
+                province.css("left", left);
+            }
+            if ((_top + province.height() + 30) > viewHeight) {
+                //计算div的offset().top
+                var top = (inputControl.offset().top - province.height() - 10) + 'px';
+                province.css("top", top);
+            }
+        }
+    </script>
+</head>
+<body>
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<input id="kk" type="text" name="name" value="" placeholder="请选择省份简称" style="margin-left: 1300px;border:solid red 2px;height:16px;" onfocus="UseKeyTo(this);" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </pre>
+</body>
+</html>

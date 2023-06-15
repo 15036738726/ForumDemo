@@ -1,5 +1,8 @@
 package com.example.forumdemo.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 系统配置参数 项目启动时,从数据库读取,然后重新覆盖设置
  */
@@ -28,6 +31,20 @@ public enum ForumParamEnum {
     }
     public void setVal(String val) {
         this.val = val;
+    }
+
+    /**
+     * 返回map
+     */
+    public static Map<String,String> getConfigParamMap(){
+        Map<String, String> map = new HashMap<>();
+        map.put("cfg_text_fold_limit",cfg_text_fold_limit.getVal());
+        map.put("cfg_count_fold_limit",cfg_count_fold_limit.getVal());
+        map.put("cfg_text_formwork",cfg_text_formwork.getVal());
+        map.put("cfg_count_formwork",cfg_count_formwork.getVal());
+        map.put("cfg_hot_count",cfg_hot_count.getVal());
+        map.put("cfg_guanzhu_formwork",cfg_guanzhu_formwork.getVal());
+        return map;
     }
 
     /**

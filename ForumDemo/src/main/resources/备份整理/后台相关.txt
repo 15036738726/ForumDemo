@@ -38,6 +38,10 @@ https://blog.csdn.net/qq_31116181/article/details/113741489
 MPJ API
 https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectAs
 
+解决查询评论关联同一个表两次问题 Mybatis Plus Join
+https://ylctmh.com/pages/core/qt/many.html
+
+
 MPJ坐标:
 <dependency>
     <groupId>com.github.yulichang</groupId>
@@ -119,6 +123,26 @@ Java8 时间处理
 https://www.mianshigee.com/note/detail/21201dgt/
 
 
+更新所有远程分支信息: 如果你的remote branch不是在origin下，按你得把命令中的 origin 换成你的名字
+git remote update origin --prune
+但我很好奇是否可以仅使用 IDEA UI 来做到这一点
+VCS -> Git -> Fetch
+
+
+#处理Long类型过长,前端js损失精度注解
+https://blog.csdn.net/weixin_65549694/article/details/125055243
+
+重装 IDEA 再也不愁了，一招搞定同步个人配置
+https://blog.51cto.com/zhongmayisheng/5223333?b=totalstatistic
+
+重装IDEA时，如何备份IDEA之前的配置
+https://blog.csdn.net/qq_43783527/article/details/122947765
+
+JetBrains全家桶激活  Idea所有版本激活
+https://r86oxhhvu2.feishu.cn/docx/doxcnsqHeJ7dbM6hF4LEmU0jaxe
+
+使用addViewControllers方法实现无业务逻辑跳转
+https://www.5axxw.com/questions/simple/wdmc23
 
 
 

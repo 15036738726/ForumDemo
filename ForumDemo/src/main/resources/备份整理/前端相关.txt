@@ -139,6 +139,33 @@ $(".register").unbind("click").bind("click",function(){
         }
     };
 ------------------------------------------
+setInterval语法规范：
+
+window.setInterval(调用函数，延时时间);
+
+与setTimeout区别：
+
+setTimeout是延时时间到了就去调用这个回调函数，只调用了一次 就结束了这个定时器。
+
+setInterval是 每隔这个延迟时间 就去调用这个回调函数 会调用很多次 重复调用这个函数。
+
+setInterval定时器
+https://blog.csdn.net/m0_62962469/article/details/123799791
+
+
+
+setTimeout(func,0)含义
+setTimeout的作用是将代码推迟到指定时间执行，如果指定时间为0，即setTimeout(f,0)，那么会立刻执行吗？ 答案是不会
+2.1 setTimeout(f,0)应用 调整事件的发生顺序
+setTimeout(f,0)有几个非常重要的用途。它的一大应用是，可以调整事件的发生顺序。
+比如，网页开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。
+如果，我们先让父元素的事件回调函数先发生，就要用到setTimeout(f, 0)。
+原文链接：https://blog.csdn.net/weixin_41989250/article/details/129065758
+
+
+JS实现长按事件功能
+https://blog.csdn.net/qq_44849271/article/details/124222716
+--------------------------------------------
 js动态往head中添加或删除style节点
 https://blog.csdn.net/chijiangwo8270/article/details/100930831
 
@@ -160,86 +187,6 @@ setInterval定时方法:
 // setInterval每间隔closeMilliSecond毫秒 执行一次__THIS__.autoCloseAlert函数
 // setInterval里面的函数不能有括号 __THIS__.autoCloseAlert() 写法错误
 var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__THIS__.closeMilliSecond);
-
----------------------视频主体标签------------------
-<!--内容START-->
-<div class="content_item">
-    <!--内容图片-->
-    <div class="item_body_top">
-        <img class="top_img">
-    </div>
-    <!--人物头像以及内容描述-->
-    <div class="item_body_person">
-        <div class="item_head">
-            <img class="item_head_img" src="">
-        </div>
-        <div class="item_desp">
-            <span class="item_desp_span">世界上最伟大的工程之一,都江堰为什么能运转200多年?</span>
-        </div>
-    </div>
-    <!--底部内容浏览量和发布信息-->
-    <div class="item_body_down">
-        <div class="person_name">
-            <span class="person_name_span">三一博士</span>
-        </div>
-
-        <span class="broadcast_count">1.5万次播放</span>
-        ·
-        <span class="publish_time">3个月前</span>
-    </div>
-</div>
-<!--内容END-->
-
-增加样式样式
-
-/**视频主体大盒子,一行放入4个item**/
-.content_main{
-    width: 100%;
-    display: contents;
-}
-
-/**每个内容(视频主体)div**/
-.content_main .content_item{
-    margin-bottom: 40px;
-    display: inline-block;
-    width: 240px;
-    height: 226px;
-    margin-right: 9px;
-    border: 1px solid;
-    /*background: radial-gradient(black, transparent);*/
-}
-
-<!--内容START-->
-<div class="content_item">
-    <!--内容图片-->
-    <div class="item_body_top" style="width: 100%;height: 64%;">
-        <img class="top_img" style="width: 100%;height: 100%;" src="img/main_index/main_tupian.avif">
-    </div>
-    <!--人物头像以及内容描述-->
-    <div class="item_body_person" style="width: 100%;height: 16%;margin: 5px 0px 5px 0px;position: relative;">
-        <div class="item_head" style="width: 16%;height: 100%;display: inline-block;position: relative;top: -8px;">
-            <img class="item_head_img" style="width: 100%;height: 100%;border-radius: 100%;" src="img/main_index/head.image">
-        </div>
-        <div class="item_desp" style="width: 82%;height: 100%;display: inline-block" >
-            <span class="item_desp_span" style="white-space: pre-wrap;font-size: 12px;line-height: 1.5;">世界上最伟大的工程之一,都江堰为什么能运转200多年?</span>
-        </div>
-    </div>
-    <!--底部内容浏览量和发布信息-->
-    <div class="item_body_down" style="width: 100%;height: 15%;padding-left: 18%;">
-        <div class="person_name" style="width: 100%;height: 50%;">
-            <span class="person_name_span" style="font-size: 12px;">三一博士</span>
-        </div>
-        <div class="broadcast_publish" style="width: 100%;height: 50%;">
-            <span class="broadcast_count" style="font-size: 12px;">7.5万次播放</span>
-            ·
-            <span class="publish_time" style="font-size: 12px;">3个月前</span>
-        </div>
-    </div>
-
-</div>
-<!--内容END-->
-<div class="content_item">
-</div>
 
 ------------------------------
 外部函数获取ajax返回的数据
@@ -321,3 +268,61 @@ https://blog.csdn.net/sofeware333/article/details/99583076?utm_source=app&app_ve
 
 本地存储的sessionStoreage和localStorag的区别和使用
 https://blog.csdn.net/h18377528386/article/details/122692687
+
+
+设置localStorage有效期和过期时间的简单方法
+总所周知localStorage默认是不会过期的，也没有可设置过期的api，如果要实现过期清除就需要自己实现一个api
+https://www.jb51.net/article/239130.htm
+
+JavaScript时间戳的应用
+https://blog.csdn.net/m0_51573433/article/details/125754201
+
+时间戳说明:
+时间戳：是指从格林威治时间1970年01月01日00时00分00秒（UTC/GMT的午夜，即北京时间1970年01月01日08时00分00秒）起至现在的总秒数
+var init = new Date('1970-01-01 08:00:00');
+console.log(init.getTime());// 0
+var init = new Date('1970-01-01 09:00:00');
+console.log(init.getTime());// 3600000
+一天的毫秒数:3600*24*1000 = 86400000
+
+DIV高度获取  javaScript中的方法
+$(".videoDesc")[0].scrollHeight
+
+
+相对定位relative、绝对定位absolute、固定定位fixed
+https://blog.csdn.net/qq_57215961/article/details/124367616
+
+
+利用 页面元素距离浏览器工作区顶端/左端的距离 来实现一个提示框在页面不同位置时候保证提示信息显示的正确位置
+https://www.cnblogs.com/fnz0/p/5510758.html
+{
+    元素距离文档顶端和左边的偏移值
+         jq对象.offset().top
+         jq对象.offset().left
+    网页被卷起来的高度/宽度（即浏览器滚动条滚动后隐藏的页面内容高度）
+         $(window).scrollTop()
+         $(window).scrollLeft()
+    页面元素距离浏览器工作区顶端的距离  =  元素距离文档顶端偏移值  -   网页被卷起来的高度
+}
+
+
+jquery在光标位置插入内容指定内容（input、textarea）通用
+https://blog.csdn.net/gjwgjw1111/article/details/
+
+
+判断页面中是否引入某个js、添加、移除js
+https://blog.csdn.net/m0_37885651/article/details/82864721
+
+
+
+###############js执行刷新当前页面的方法################
+loaction.reload()
+loaction.reload(true/false)
+参数true表示强制刷新并不读取缓存,false更可能是缓存数据
+
+location.replace(URL),可以理解成跳转。域名和端口不变
+详情页:http://localhost:9090/zuopin_detail.html?zuopinId=1643564381092569089&userId=1643564380765413377
+控制台执行:location.replace("user_register.html")
+跳转到:http://localhost:9090/user_register.html
+
+

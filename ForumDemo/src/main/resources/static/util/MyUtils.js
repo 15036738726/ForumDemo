@@ -4,7 +4,7 @@
  * @constructor
  */
 var MyUtils = function(option){
-    __ROOT__ = this;
+    let __ROOT__ = this;
 
     /**
      * restful请求风格 请求方式枚举
@@ -19,10 +19,6 @@ var MyUtils = function(option){
     // 删除资源
     __ROOT__.DELETE_REQUEST = "DELETE";
 
-    // 往localStore中设置值时的公共Key
-    __ROOT__.PUBLIC_PARAM_KEY = "PUBLIC_PARAM_KEY";
-
-
     /**
      * 必填相关
      * @type {string}
@@ -32,13 +28,12 @@ var MyUtils = function(option){
     // 必填属性
     __ROOT__.myRequired = "myRequired";
 
-
     /**
      * 弹框相关
      * @type {number}
      */
     // 系统默认弹框关闭时间,毫秒值
-    __ROOT__.closeMilliSecond = 500;// 默认500
+    __ROOT__.closeMilliSecond = 700;// 默认700
     // 弹框颜色
     __ROOT__.dialogColorMap = {"DEFAULT":"#000","WARNING":"#f0ad4e","ERR":"#d9534f"};
     // 对外提供颜色枚举
@@ -47,46 +42,82 @@ var MyUtils = function(option){
     __ROOT__.DIALOG_ERR = "ERR"; // 红色,系统级错误
     __ROOT__.dialogFontSize = "14"; // 弹框字体大小
 
-    /**
-     * 页面主题
-     */
-    __ROOT__.PAGE_THEME = true;// true 即为默认 false 则为暗黑模式
+    // 公共key名称枚举
+    __ROOT__.PUBLIC_KEY_ENUM = {};
+    // 用户信息KEY
+    __ROOT__.PUBLIC_KEY_ENUM.LOGIN_USER= "LOGIN_USER";
+    // 主题信息KEY
+    __ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME = "PAGE_THEME";
 
     /**
      * 初始化方法,组价的所有前置控制,可定义在这个方法中
      */
     __ROOT__.init = function () {
-        // 参数接收初始化 初始化公共参数
-        __ROOT__.initPublicParam();
+        // 插入公共js到页面,用户只需要引用myutils.js即可
+        __ROOT__.appendJsToHtml("../util/MyTemplateDefinition.js");
+        // 主题设置
+        __ROOT__.applyPageTheme();
         // dialog弹框所依赖的样式表 初始化
         __ROOT__.insertPageStyleSheet();
         // 页面通用事件处理
-        __ROOT__.pageEventHandel();
+        __ROOT__.pagePublicEvent();
+        // 登录渲染
+        __ROOT__.loginRenderService();
     };
 
     /**
-     * 参数接收初始化 初始化公共参数
+     * 设置页面端缓存
+     * @param key
+     * @param value
+     * @param num 失效时间 单位天  限制为整数
+     * 说明:expire<=0 则认为永久有效
+     * 设计思路:存值时间戳 +  有效时间 = 过期时间戳
+     * 时间戳：是指从格林威治时间1970年01月01日00时00分00秒（UTC/GMT的午夜，即北京时间1970年01月01日08时00分00秒）起至现在的总秒数
+     * 比如设置有效时间为1天 此刻时间戳假设为 A 那么  B = A+(1*一天内的毫秒数) 就是将来过期时刻的 时间戳毫秒数
+     * 那么取值的时候,通过Date.now()获取取值时的时间戳毫秒数> B 就表示过期了,就返回null,并且把对应的数据对象给手动删除掉
      */
-    __ROOT__.initPublicParam = function(){
-        let paramJsonStr = localStorage.getItem(__ROOT__.PUBLIC_PARAM_KEY);
-        // 有值,则初始化
-        if(paramJsonStr){
-            // 1.初始化主题参数
-            let paramJsonObj = JSON.parse(paramJsonStr);
-            __ROOT__.PAGE_THEME = paramJsonObj.PAGE_THEME;
+    __ROOT__.setCache = function(key,value,num){
+        // isNaN是js的内置函数，用于判断一个值是否为NaN（非数值），
+        // 非数值返回true，数值返回false
+        // Number.isInteger 用于整数判断,这里不加,可以设置0.1天有效期 也就是1个小时
+        // 例如设置10秒钟:__ROOT__.setCache("x1",123,1/24/60/60*10)
+        if (isNaN(num)) {
+            throw new Error('有效期天数应为一个整数');
+        };
+        // 86_400_000一天时间的毫秒数，_是数值分隔符 写成86400000也一样
+        let expire = num<=0?0:num * 86_400_000;
+        let obj = {
+            data: value, //存储的数据
+            time: Date.now(), //存值时间戳
+            expire: expire, //num天的累计毫秒值
+        };
+        // 注意，localStorage不能直接存储对象类型，sessionStorage也一样
+        // 需要先用JSON.stringify()将其转换成字符串，取值时再通过JSON.parse()转换回来
+        localStorage.setItem(key,JSON.stringify(obj));
+    };
+
+    /**
+     * 从页面端缓存获取数据 如果没有就返回null
+     * @param key
+     */
+    __ROOT__.getCache = function(key){
+        let val = localStorage.getItem(key);
+        // 如果没有值就直接返回null
+        if (!val)  return null;
+        // 存的时候转换成了字符串，现在转回来
+        val = JSON.parse(val);
+
+        // ==0 则不用判断有效期
+        if(val.expire==0){
+            return val.data;
         }
-    };
-
-    /**
-     * 所有当前对象的公共参数  在这个地方设置,需要调整参数或者设置参数时,调用处直接调用该方法,
-     * 与initPublicParam配合使用,两个地方是对应的,设置了什么就取什么
-     */
-    __ROOT__.autoSetPublicParam = function(){
-        let param = {};
-        // 设置主题参数
-        param.PAGE_THEME = __ROOT__.PAGE_THEME;
-        // 设置其他参数
-        localStorage.setItem(__ROOT__.PUBLIC_PARAM_KEY,JSON.stringify(param));
+        if(Date.now() > val.time + val.expire){
+            // 存值时间戳 +  有效时间 = 过期时间戳
+            // 如果当前时间戳大于过期时间戳说明过期了，删除值并返回提示
+            localStorage.removeItem(key)
+            return null;
+        }
+        return val.data;
     };
 
     /**
@@ -161,7 +192,86 @@ var MyUtils = function(option){
     };
 
     /**
-     * 弹框反馈 请求之后的反馈消息弹框提醒
+     * 成功提示
+     * @param text
+     */
+    __ROOT__.sucessTip = function(text,time){
+        let tipDom = __ROOT__.sucessTipTemplate(text);
+        // 拼接
+        $("body").append(tipDom);
+        // 移除 1秒之后 关闭弹框
+        setTimeout(autoCloseTip,time?time:__ROOT__.closeMilliSecond);
+        function autoCloseTip(){
+            let divTip = $('.ant-message').parent("div");
+            // 加上淡出效果
+            divTip.fadeOut(700,'linear',function(){
+                divTip.remove();
+            });
+        }
+    };
+
+    /**
+     * 警告或者失败提示
+     * @param text
+     * @param time
+     */
+    __ROOT__.waringTip = function (text,time){
+        let tipDom = __ROOT__.waringTipTemplate(text);
+        // 拼接
+        $("body").append(tipDom);
+        // 移除 1秒之后 关闭弹框
+        setTimeout(autoCloseTip,time?time:__ROOT__.closeMilliSecond);
+        function autoCloseTip(){
+            let divTip = $('.ant-message').parent("div");
+            // 加上淡出效果
+            divTip.fadeOut(700,'linear',function(){
+                divTip.remove();
+            });
+        }
+    };
+
+    /**
+     * 获取成功类型弹框模板
+     * @param text
+     */
+    __ROOT__.sucessTipTemplate = function(text){
+        return '<div>\n' +
+            '    <div class="ant-message"><span><div class="ant-message-notice"><div class="ant-message-notice-content"><div\n' +
+            '            class="ant-message-custom-content ant-message-success"><svg xmlns="http://www.w3.org/2000/svg"\n' +
+            '                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"\n' +
+            '                                                                        width="16" height="16" viewBox="0 0 16 16"><defs><path\n' +
+            '            id="success_svg__a"\n' +
+            '            d="M8 0a8 8 0 018 8 8 8 0 01-8 8 8 8 0 01-8-8 8 8 0 018-8zm2.948 5.448L7 9.397 5.552 7.948a.782.782 0 00-1.104 0 .782.782 0 000 1.104l2 2a.782.782 0 001.104 0l4.5-4.5a.782.782 0 000-1.104.782.782 0 00-1.104 0z"></path></defs><g\n' +
+            '            fill="none" fill-rule="evenodd"><mask id="success_svg__b" fill="#fff"><use\n' +
+            '            xlink:href="#success_svg__a"></use></mask><use fill="#D8D8D8" xlink:href="#success_svg__a"></use><g\n' +
+            '            fill="#00AA54" mask="url(#success_svg__b)"><circle cx="60" cy="60" r="60"\n' +
+            '                                                               transform="translate(-52 -52)"></circle></g></g></svg><span>'+text+'</span></div></div></div></span>\n' +
+            '    </div>\n' +
+            '</div>';
+    };
+
+    /**
+     * 获取警告类型弹框模板
+     * @param text
+     */
+    __ROOT__.waringTipTemplate = function(text){
+        return '<div>\n' +
+            '    <div class="ant-message"><span><div class="ant-message-notice"><div class="ant-message-notice-content"><div\n' +
+            '            class="ant-message-custom-content ant-message-error"><svg xmlns="http://www.w3.org/2000/svg"\n' +
+            '                                                                      xmlns:xlink="http://www.w3.org/1999/xlink"\n' +
+            '                                                                      width="16" height="16" viewBox="0 0 16 16"><defs><path\n' +
+            '            id="error_svg__a"\n' +
+            '            d="M8 0a8 8 0 018 8 8 8 0 01-8 8 8 8 0 01-8-8 8 8 0 018-8zM6.411 5.35a.749.749 0 10-1.06 1.061l1.59 1.59-1.59 1.592a.75.75 0 00-.073.977l.072.084a.75.75 0 001.061 0l1.59-1.592 1.592 1.592a.75.75 0 00.977.072l.084-.072a.75.75 0 000-1.061L9.062 8.001l1.592-1.59a.75.75 0 00.072-.977l-.072-.084a.75.75 0 00-1.061 0L8.001 6.941z"></path></defs><g\n' +
+            '            fill="none" fill-rule="evenodd"><mask id="error_svg__b" fill="#fff"><use\n' +
+            '            xlink:href="#error_svg__a"></use></mask><g fill="#F04142" mask="url(#error_svg__b)"><circle cx="60" cy="60"\n' +
+            '                                                                                                        r="60"\n' +
+            '                                                                                                        transform="translate(-52 -52)"></circle></g></g></svg><span>'+text+'</span></div></div></div></span>\n' +
+            '    </div>\n' +
+            '</div>';
+    };
+
+    /**
+     * 弹框反馈 请求之后的反馈消息弹框提醒  这个不推荐使用了 样式太丑
      * @param data
      */
     __ROOT__.feedback = function(data,millisecond,fontSize){
@@ -183,13 +293,14 @@ var MyUtils = function(option){
         $("body").append(subhtml);
         // 对默认的样式进行覆盖,设置颜色和字体大小
         $(".myTip").css("background-color",dialogColor).css("font-size",fontSize);
-        var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
+        //var msgDialogStop = setInterval(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
+        setTimeout(autoCloseAlert,millisecond?millisecond:__ROOT__.closeMilliSecond);
         //关闭弹框
         function autoCloseAlert(){
             // 加上淡出效果
             $('.myTip').fadeOut(700,'linear',function(){
                 $('.myTip').remove();
-                clearInterval(msgDialogStop);
+                //clearInterval(msgDialogStop);
             });
         }
     };
@@ -221,26 +332,47 @@ var MyUtils = function(option){
      * 页面通用事件绑定
      * 1.目前只处理了主题切换
      */
-    __ROOT__.pageEventHandel = function(){
+    __ROOT__.pagePublicEvent = function(){
         /**
          * 1.主题切换事件
          */
         $(".themeChange").unbind("click").bind("click",function(e){
-            // 调用主题切换
-            __ROOT__.PAGE_THEME = !__ROOT__.PAGE_THEME;
-            // 设置公共参数,方便下个tab获取
-            __ROOT__.autoSetPublicParam();
+            // 主题参数toogle
+            __ROOT__.toogleTheme();
             // 应用主题
             __ROOT__.applyPageTheme();
         });
     };
 
     /**
+     * 主题参数toogle 只负责设置主题的boolean值
+     */
+    __ROOT__.toogleTheme = function(){
+        /**
+         * 页面主题 true 即为默认 false 则为暗黑模式
+         */
+        let val = true;
+        let cacheVal = __ROOT__.getCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME);
+        if(cacheVal){
+            val= !cacheVal;
+        }
+        __ROOT__.setCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME,val,-1);
+    };
+
+    /**
      * 传入参数,改变用户主题, 只临时切换,不存在后台数据交互
      * @param val true:则默认为白色   false:则默认为暗黑模式
      */
-     __ROOT__.applyPageTheme = function(){
-        if(__ROOT__.PAGE_THEME){
+    __ROOT__.applyPageTheme = function () {
+        let val = true;
+        let cacheVal = __ROOT__.getCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME);
+        if(cacheVal!=null){
+            val = cacheVal;
+        }else{
+            // 如果没有,则主题初始化设置
+            __ROOT__.setCache(__ROOT__.PUBLIC_KEY_ENUM.PAGE_THEME,val,-1);
+        }
+        if (val) {
             // 浅色外观
             $("html").removeAttr("dark");
             $(".themeChangeText").text('切换深色外观');
@@ -252,9 +384,9 @@ var MyUtils = function(option){
                 '                          d="M10.314 2.546a.75.75 0 0 1 .11.789 7.75 7.75 0 0 0 10.241 10.242.75.75 0 0 1 1.034.867C20.609 18.785 16.681 22 12 22 6.477 22 2 17.523 2 12c0-4.68 3.215-8.608 7.556-9.7a.75.75 0 0 1 .758.246ZM8.529 4.24A8.502 8.502 0 0 0 12 20.5a8.502 8.502 0 0 0 7.761-5.028A9.25 9.25 0 0 1 8.528 4.239Z"\n' +
                 '                          fill="#0C0D0F"></path>\n' +
                 '                </svg>');
-        }else{
+        } else {
             // 深色外观
-            $("html").attr("dark",true);
+            $("html").attr("dark", true);
             $(".themeChangeText").text('切换浅色外观');
             // 图标样式
             $('.themeChange').find('svg').remove();
@@ -271,6 +403,114 @@ var MyUtils = function(option){
         }
     };
 
+    /**
+     * 获取url上的参数
+     */
+    __ROOT__.getUrlParam = function(){
+        var query = location.search.substring(1);
+        var values= query.split("&");
+        let paramMap = {};
+        for(var i = 0; i < values.length; i++) {
+            var pos = values[i].indexOf('=');
+            if (pos == -1) continue;
+            var paramname = values[i].substring(0,pos);
+            var value = values[i].substring(pos+1);
+            paramMap[paramname] = value;
+            //alert(paramname +","+value );
+        }
+        return paramMap;
+    };
+
+    /**
+     * 系统登录模块 通过util工具类调用,util往页面写入对应的js
+     * @param callback
+     */
+    __ROOT__.userLoginService = function(temp,callback){
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
+        let service = new userLoginService(callback,temp);
+        // 启动组件处理
+        service.start();
+    };
+
+    /**
+     * 登录弹框拦截控制中心  把用户未登录时弹框控制写到这里  好多地方都有调用
+     * @param title 弹框标题
+     * @param callback  登录成功之后的回调
+     * @returns {null}  返回的登录信息
+     */
+    __ROOT__.loginInterceptController = function(title,callback){
+        let loginUser = __ROOT__.getCache("LOGIN_USER");
+        if(loginUser==null){
+            let temp = {};
+            temp.title = title;
+            __ROOT__.userLoginService(temp,callback);
+            return null;
+        };
+        // 如果登录了就返回登录信息
+        return loginUser;
+    };
+
+    /**
+     * 焦点位置拼接
+     * @param callback 回调
+     * @param dom 拼接的目标
+     * @param val 要拼接的值
+     */
+    __ROOT__.cursorAppendService = function(callback,dom,val){
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
+        // 初始化
+        let service = new cursorAppendService(callback,dom,val);
+        // 执行拼接
+        service.start();
+    };
+
+    /**
+     * 拼接指定js到当前页面
+     * @param path
+     */
+    __ROOT__.appendJsToHtml =function (path){
+        // 判断是否存在,如果有,则不重复添加
+        if($("script[src='"+path+"']").length == 0){
+            $('body').append('<script src="'+path+'"><\/script>');
+        }
+    };
+
+    /**
+     * 刷新当前页面
+     * @param flag 参数true表示强制刷新并不读取缓存,false更可能是缓存数据
+     */
+    __ROOT__.refreshCurrentPage = function(flag){
+        if(flag){
+            location.reload(true);
+        }else{
+            location.reload(false)
+        }
+    };
+
+    /**
+     * 移除localStorage本地存储
+     * @param key
+     */
+    __ROOT__.localStorageClear = function(key){
+        if(key){
+            localStorage.removeItem(key);
+        }else{
+            localStorage.clear();
+        }
+    }
+
+    /**
+     * 登录渲染服务,处理右上角的登录按钮,两种情况,登录和未登录  调用时机在页面初始化时直接调用
+     */
+    __ROOT__.loginRenderService = function(){
+        __ROOT__.appendJsToHtml("../util/ModuleApi.js");
+        let loginUser = __ROOT__.getCache("LOGIN_USER");
+        let renderRoot = $(".btn-wrap .BU-Component-Header-Avatar .BU-Component-Header-Avatar__container");
+        let service = new loginRenderService(null,renderRoot,loginUser);
+        // 交给组件处理
+        service.start();
+    };
+
 };
 
 // 控制只初始化一次 这里使用var  var全局,let局部
@@ -280,5 +520,6 @@ if(!utils){
     // 执行组价初始化
     utils.init();
 }
+
 
 

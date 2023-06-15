@@ -6,6 +6,7 @@ import com.example.forumdemo.jwt.PassToken;
 import com.example.forumdemo.user.service.UserOpeService;
 import com.example.forumdemo.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,6 +23,21 @@ public class UserOpeController {
     private UserOpeService userOpeService;
 
     /**
+     * 用户登录验证
+     * @param forumUser
+     * @return
+     */
+    @PutMapping("/userLoginNew")
+    public Result<ForumUser> userLoginNew(@RequestBody ForumUser forumUser){
+        ForumUser user = userOpeService.userLogin(forumUser);
+        if(ObjectUtils.isEmpty(user)){
+            return Result.fial();
+        }else{
+            return Result.success(user);
+        }
+    }
+
+    /**
      * 用户注册 跳过验证拦截
      * @return
      */
@@ -35,7 +51,7 @@ public class UserOpeController {
     }
 
     /**
-     * 用户登录  @PassToken跳过验证拦截 登录成功之后,把token写入cookie中
+     * 用户登录  @PassToken跳过验证拦截 登录成功之后,把token写入cookie中  暂时不用
      * @return
      */
     @PutMapping("/userLogin")

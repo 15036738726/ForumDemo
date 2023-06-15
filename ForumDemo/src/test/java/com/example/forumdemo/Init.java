@@ -28,8 +28,43 @@ class Init {
     @Autowired
     private PlayMapper playMapper;
 
+
     /**
-     * 作品表和用户表数据初始化
+     * 初始化4个评论员
+     */
+    @Test
+    void initCommentUser(){
+        List<String> nameList = new ArrayList<>();
+        List<String> addressList = new ArrayList<>();
+        nameList.add("网络喷子");
+        nameList.add("小学生");
+        nameList.add("鲁班七号");
+        nameList.add("酱爆");
+        addressList.add("洛兰");
+        addressList.add("爱尔兰");
+        addressList.add("山东");
+        addressList.add("猪笼寨");
+        for(int i = 0;i<nameList.size();i++){
+            ForumUser userTemp = new ForumUser();
+            // 密码
+            userTemp.setPassword("1");
+            // 姓名
+            userTemp.setUserName(nameList.get(i));
+            // 性别
+            userTemp.setSex(i%2);
+            // 地址
+            userTemp.setAddress(addressList.get(i));
+            // 邮箱
+            userTemp.setEmail("999"+i+".@qq.com");
+            // 用户头像
+            userTemp.setUserHead("img/main_index/user_head/head"+(i+12)+".image");
+            userOpeMapper.insert(userTemp);
+        }
+    }
+
+
+    /**
+     * 作品表和用户表数据初始化,一个用户分配一个作品
      */
     @Test
     void initData(){
@@ -73,7 +108,7 @@ class Init {
         titleList.add("曹操：你吕布什么档次和我一个爱好？");
         titleList.add("开心锤锤：你羡慕别人的时候，说不定别人也在羡慕着你");
         titleList.add("吴用到底是真的智多星还是狗头军师？大哥身后的他有几张面孔？");
-        titleList.add("【吸奇侠】《教父》终局之战，无数经典致敬的血色教堂解析 18");
+        titleList.add("看谁不爽就是怼，记住我叫李宏伟！");
         titleList.add("嘎子卖手机 潘叔把握不住了！");
         titleList.add("我的热爱《水浒传》：被嫌弃的时迁一生，轻功第一为何排名垫底？");
         titleList.add("宋江哥哥收服小弟的超强领导艺术，给钱？诛心？还是断其后路？");
@@ -103,6 +138,8 @@ class Init {
             zuopinTemp.setContentType(17-i);
             // 标题
             zuopinTemp.setTitle(titleList.get(i));
+            // 简介
+            zuopinTemp.setBriefDesp(titleList.get(i));
             // 设置图片路径
             zuopinTemp.setImgPath("img/main_index/vedio_img/main_tupian"+i+".avif");
             // 作品视频链接地址
@@ -130,6 +167,8 @@ class Init {
             zuopinTemp.setDel(1);
             // 点赞数
             zuopinTemp.setZan(getRandomNumberInRange(1,100000));
+            // 收藏数
+            zuopinTemp.setLove(getRandomNumberInRange(1,100000));
 
             userOpeMapper.insert(userTemp);
             // 外键

@@ -15176,14 +15176,12 @@
 <script src="util/MyUtils.js"></script>
 <script type="text/javascript">
     var currentPageObj = function (option){
-        __THIS__ = this;
+        let __THIS__ = this;
 
         /**
          * 页面功能初始化
          */
         __THIS__.init = function () {
-            // 应用页面主题
-            utils.applyPageTheme();
             // 其他初始化数据加载
             __THIS__.otherLoad();
 
