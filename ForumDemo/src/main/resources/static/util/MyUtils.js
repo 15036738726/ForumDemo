@@ -342,6 +342,13 @@ var MyUtils = function(option){
             // 应用主题
             __ROOT__.applyPageTheme();
         });
+
+        /**
+         * 消息事件控制
+         */
+        $(".siteHeader__message").unbind("click").bind("click",function(e){
+            alert("消息弹框");
+        });
     };
 
     /**
