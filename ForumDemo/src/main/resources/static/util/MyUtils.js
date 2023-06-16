@@ -347,7 +347,10 @@ var MyUtils = function(option){
          * 消息事件控制
          */
         $(".siteHeader__message").unbind("click").bind("click",function(e){
-            alert("消息弹框");
+            // 获取消息弹框dom内容
+            let messageDom = templateUtils.getMessageDom(null);
+            // 拼接
+            $("body").append(messageDom);
         });
     };
 

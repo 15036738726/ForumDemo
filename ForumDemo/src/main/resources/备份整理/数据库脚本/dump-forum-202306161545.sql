@@ -49,6 +49,32 @@ INSERT INTO `forum_comment` VALUES (1650040433884909570,1643564378806673409,1647
 UNLOCK TABLES;
 
 --
+-- Table structure for table `forum_instruct_receive`
+--
+
+DROP TABLE IF EXISTS `forum_instruct_receive`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forum_instruct_receive` (
+  `instruct_id` bigint NOT NULL COMMENT '主键id',
+  `instruct_type` int NOT NULL COMMENT '指令类型',
+  `abstract_id` bigint NOT NULL COMMENT '抽象id,可以是对手用户ID,或者评论ID,或者赞ID,或其他业务ID',
+  `work_time` varchar(40) NOT NULL,
+  `status` int NOT NULL DEFAULT '1' COMMENT '状态 0:已处理,1:未处理,指令处理完之后更新为0',
+  PRIMARY KEY (`instruct_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='指令接收表,在指定的动作发生的时候,进行数据记录,目前暂时只处理(评论,点赞,关注)这3种情况的消息处理,将来也许可能会有其他业务也用到,比如延迟注销等业务';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forum_instruct_receive`
+--
+
+LOCK TABLES `forum_instruct_receive` WRITE;
+/*!40000 ALTER TABLE `forum_instruct_receive` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forum_instruct_receive` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `forum_join_knocking`
 --
 
@@ -74,6 +100,39 @@ LOCK TABLES `forum_join_knocking` WRITE;
 /*!40000 ALTER TABLE `forum_join_knocking` DISABLE KEYS */;
 INSERT INTO `forum_join_knocking` VALUES (1654669495999733761,1643564375287652353,1643564383391047682,3,0,'2023-05-06 10:08:44'),(1654669497723592706,1643564375287652353,1643564383391047682,2,0,'2023-05-06 10:08:45'),(1654735443100299266,1643564375287652353,1643564380765413377,4,0,'2023-05-06 14:30:47'),(1654747807245770754,1643564375287652353,1650396329307656193,1,0,'2023-05-06 15:19:55'),(1654747812253769729,1643564375287652353,1650396307044290561,1,0,'2023-05-06 15:19:56'),(1654753145701376002,1643564375287652353,1643564381293895681,4,0,'2023-05-06 15:41:08'),(1655390762604290049,1647766811354968066,1643564380765413377,4,0,'2023-05-08 09:54:48'),(1665970290909097986,1643564375287652353,1643564381092569089,2,0,'2023-06-06 14:34:04'),(1669176005945561089,1647766811354968067,1669175990556659714,1,0,'2023-06-15 10:52:26'),(1669176016120942594,1647766811354968067,1643564375287652353,4,0,'2023-06-15 10:52:28');
 /*!40000 ALTER TABLE `forum_join_knocking` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forum_message`
+--
+
+DROP TABLE IF EXISTS `forum_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forum_message` (
+  `message_id` bigint NOT NULL COMMENT '主键',
+  `message_type` int NOT NULL COMMENT '消息类型 1.评论消息 2.赞消息  3.被关注消息,增加了新的粉丝',
+  `abstract_id` bigint DEFAULT NULL COMMENT '抽象ID,从指令表中获取设置,留个记录可能用不到',
+  `user_id` bigint NOT NULL COMMENT '消息所属用户',
+  `user_name` varchar(40) NOT NULL COMMENT '消息所属用户名称,信息不重要可以冗余,不怕改名',
+  `user_content` varchar(200) NOT NULL COMMENT '你的消息内容',
+  `happen_time` varchar(40) NOT NULL COMMENT '消息(动作)发生时间',
+  `target_user_id` bigint NOT NULL COMMENT '对手方用户ID',
+  `target_user_name` bigint NOT NULL COMMENT '对手方用户姓名',
+  `target_content` varchar(200) NOT NULL COMMENT '对手方用户内容',
+  `read_status` int NOT NULL DEFAULT '1' COMMENT '已读状态  0,已读,1未读',
+  `work_time` varchar(40) NOT NULL COMMENT '数据插入本表时间,当前业务表的时间记录',
+  PRIMARY KEY (`message_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='消息表,评论,点赞,关注这3种情况的消息处理';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forum_message`
+--
+
+LOCK TABLES `forum_message` WRITE;
+/*!40000 ALTER TABLE `forum_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forum_message` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -180,4 +239,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-15 15:08:09
+-- Dump completed on 2023-06-16 15:45:05

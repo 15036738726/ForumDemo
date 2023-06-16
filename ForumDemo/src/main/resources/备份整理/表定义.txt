@@ -1,3 +1,16 @@
+系统表汇总:
+{
+    forum_user:注册表,用户表
+    forum_param:系统参数表
+    forum_zuo_pin:作品表
+    forum_comment:评论表
+    forum_join_knocking:敲击事件数据记录表
+    forum_instruct_receive:指令接收表,在指定的动作发生的时候,进行数据记录
+    forum_message:消息表,评论,点赞,关注这3种情况的消息处理
+
+}
+
+-----------------------------------------------以下是各个表定义脚本--------------------------------------------------
 
 ##注册表FORUM_USER:
 CREATE TABLE `forum_user` (
@@ -91,3 +104,29 @@ CREATE TABLE `forum_join_knocking` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='敲击表,作品点赞,评论点赞和作品收藏,都使用这个表'
 
+#指令接收表,在指定的动作发生的时候,进行数据记录,目前暂时只处理(评论,点赞,关注)这3种情况的消息处理,将来也许可能会有其他业务也用到,比如延迟注销等业务
+CREATE TABLE `forum_instruct_receive` (
+  `instruct_id` bigint NOT NULL COMMENT '主键id',
+  `instruct_type` int NOT NULL COMMENT '指令类型',
+  `abstract_id` bigint NOT NULL COMMENT '抽象id,可以是对手用户ID,或者评论ID,或者赞ID,或其他业务ID',
+  `work_time` varchar(40) NOT NULL,
+  `status` int NOT NULL DEFAULT '1' COMMENT '状态 0:已处理,1:未处理,指令处理完之后更新为0',
+  PRIMARY KEY (`instruct_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='指令接收表,在指定的动作发生的时候,进行数据记录,目前暂时只处理(评论,点赞,关注)这3种情况的消息处理,将来也许可能会有其他业务也用到,比如延迟注销等业务'
+
+#消息表,评论,点赞,关注这3种情况的消息处理
+CREATE TABLE `forum_message` (
+  `message_id` bigint NOT NULL COMMENT '主键',
+  `message_type` int NOT NULL COMMENT '消息类型 1.评论消息 2.赞消息  3.被关注消息,增加了新的粉丝',
+  `abstract_id` bigint DEFAULT NULL COMMENT '抽象ID,从指令表中获取设置,留个记录可能用不到',
+  `user_id` bigint NOT NULL COMMENT '消息所属用户',
+  `user_name` varchar(40) NOT NULL COMMENT '消息所属用户名称,信息不重要可以冗余,不怕改名',
+  `user_content` varchar(200) NOT NULL COMMENT '你的消息内容',
+  `happen_time` varchar(40) NOT NULL COMMENT '消息(动作)发生时间',
+  `target_user_id` bigint NOT NULL COMMENT '对手方用户ID',
+  `target_user_name` bigint NOT NULL COMMENT '对手方用户姓名',
+  `target_content` varchar(200) NOT NULL COMMENT '对手方用户内容',
+  `read_status` int NOT NULL DEFAULT '1' COMMENT '已读状态  0,已读,1未读',
+  `work_time` varchar(40) NOT NULL COMMENT '数据插入本表时间,当前业务表的时间记录',
+  PRIMARY KEY (`message_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='消息表,评论,点赞,关注这3种情况的消息处理'
