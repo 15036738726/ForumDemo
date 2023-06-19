@@ -1,61 +1,61 @@
 package com.example.forumdemo.instruct_receive.strategy;
 
+import cn.hutool.core.map.MapUtil;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumInstructReceive;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.instruct_receive.aop.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.thymeleaf.util.MapUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 所有构建方式定义
+ * 所有构建方式定义 放入到容器中
  */
 @Component
 public class InstructReceiveParamBulidStrategyMap {
     private Map<ReceiveType,InstructReceiveParamBulidStrategy> map = new HashMap<>();
+
     /**
-     * 定义不同的参数初始化策略
+     * 定义不同的参数初始化策略 如果想要在服务器启动的时候就创建,则可以把这个方法名称定义成构造方法
      */
-    public InstructReceiveParamBulidStrategyMap(){
-        InstructReceiveParamBulidStrategy commentTypeStrategy = new InstructReceiveParamBulidStrategy() {
-            @Override
-            public ForumInstructReceive bulid(Object obj) {
-                ForumInstructReceive receive = new ForumInstructReceive();
-                ForumComment comment = (ForumComment) obj;
-                receive.setInstructType(1);
-                receive.setAbstractId(comment.getCommentId());
-                receive.setWorkTime(Utils.getCurrentData());
-                return receive;
-            }
+    public void InstructReceiveParamBulidStrategyMapInit(){
+        // 评论回复对应的指令参数构建
+        InstructReceiveParamBulidStrategy commentTypeStrategy = obj -> {
+            ForumInstructReceive receive = new ForumInstructReceive();
+            ForumComment comment = (ForumComment) obj;
+            receive.setInstructType(ReceiveType.COMMENT_REPLY_TYPE.getReviceTypeCode());
+            receive.setAbstractId(comment.getCommentId());
+            receive.setWorkTime(Utils.getCurrentData());
+            return receive;
         };
         map.put(ReceiveType.COMMENT_REPLY_TYPE,commentTypeStrategy);
 
-        InstructReceiveParamBulidStrategy zanTypeStrategy = new InstructReceiveParamBulidStrategy() {
-            @Override
-            public ForumInstructReceive bulid(Object obj) {
-                ForumInstructReceive receive = new ForumInstructReceive();
-                ForumJoinKnocking zan = (ForumJoinKnocking) obj;
-                receive.setInstructType(2);
-                receive.setAbstractId(zan.getId());
-                receive.setWorkTime(Utils.getCurrentData());
-                return receive;
-            }
+        // 评论点赞对应的指令参数构建
+        InstructReceiveParamBulidStrategy zanTypeStrategy = obj -> {
+            ForumInstructReceive receive = new ForumInstructReceive();
+            ForumJoinKnocking zan = (ForumJoinKnocking) obj;
+            receive.setInstructType(ReceiveType.COMMENT_ZAN_TYPE.getReviceTypeCode());
+            receive.setAbstractId(zan.getId());
+            receive.setWorkTime(Utils.getCurrentData());
+            return receive;
         };
         map.put(ReceiveType.COMMENT_ZAN_TYPE,zanTypeStrategy);
 
-        InstructReceiveParamBulidStrategy loveTypeStrategy = new InstructReceiveParamBulidStrategy() {
-            @Override
-            public ForumInstructReceive bulid(Object obj) {
-                ForumInstructReceive receive = new ForumInstructReceive();
-                ForumJoinKnocking love = (ForumJoinKnocking) obj;
-                receive.setInstructType(3);
-                receive.setAbstractId(love.getId());
-                receive.setWorkTime(Utils.getCurrentData());
-                return receive;
-            }
+        // 关注操作对应的指令参数构建
+        InstructReceiveParamBulidStrategy loveTypeStrategy = obj -> {
+            ForumInstructReceive receive = new ForumInstructReceive();
+            ForumJoinKnocking love = (ForumJoinKnocking) obj;
+            receive.setInstructType(ReceiveType.LOVE_USER_TYPE.getReviceTypeCode());
+            receive.setAbstractId(love.getId());
+            receive.setWorkTime(Utils.getCurrentData());
+            return receive;
         };
         map.put(ReceiveType.LOVE_USER_TYPE,loveTypeStrategy);
     };
@@ -66,9 +66,12 @@ public class InstructReceiveParamBulidStrategyMap {
      * @return
      */
     public InstructReceiveParamBulidStrategy getBulidStrategy(ReceiveType type)throws Exception{
+        if(map.size()==0){
+            InstructReceiveParamBulidStrategyMapInit();
+        }
         InstructReceiveParamBulidStrategy strategy = map.get(type);
         if(strategy==null){
-            throw new Exception("com.example.forumdemo.instruct_receive.strategy.InstructReceiveParamBulidStrategyMap.getBulidStrategy,获取策略异常");
+            throw new Exception("获取策略异常...com.example.forumdemo.instruct_receive.strategy.InstructReceiveParamBulidStrategyMap.getBulidStrategy");
         }
         return strategy;
     }
