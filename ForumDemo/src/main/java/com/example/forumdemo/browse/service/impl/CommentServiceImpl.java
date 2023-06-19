@@ -6,6 +6,8 @@ import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumCommentExt;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.entity.ForumUser;
+import com.example.forumdemo.instruct_receive.anno.InstructReceive;
+import com.example.forumdemo.instruct_receive.aop.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -22,9 +24,10 @@ public class CommentServiceImpl extends MPJBaseServiceImpl<CommentMapper, ForumC
     private CommentMapper commentMapper;
 
     /**
-     * 保存方法,保存评论
+     * 保存方法,保存评论  并通过AOP拦截记录相关数据到指令表(系统消息模块需要用)
      * @param comment
      */
+    @InstructReceive(receiveType = ReceiveType.COMMENT_REPLY_TYPE)
     @Override
     public ForumComment saveComment(ForumComment comment) {
         comment.setWorkTime(Utils.getCurrentData());

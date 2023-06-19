@@ -12,6 +12,8 @@ import com.example.forumdemo.browse.service.KnockingService;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.entity.ForumZuoPin;
+import com.example.forumdemo.instruct_receive.anno.InstructReceive;
+import com.example.forumdemo.instruct_receive.aop.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +63,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
      * @param entity
      * @return 返回真实点赞数
      */
+    @InstructReceive(receiveType = ReceiveType.COMMENT_ZAN_TYPE)
     @Override
     public Map<String,Object> zanComment(ForumJoinKnocking entity) {
         Integer knocking = this.knocking(entity);
@@ -141,6 +144,7 @@ public class KnockingServiceImpl extends ServiceImpl<KnockingMapper, ForumJoinKn
      * @param entity
      * @return
      */
+    @InstructReceive(receiveType = ReceiveType.LOVE_USER_TYPE)
     @Override
     public Map<String, Object> loveUser(ForumJoinKnocking entity) {
         Integer knocking = this.knocking(entity);
