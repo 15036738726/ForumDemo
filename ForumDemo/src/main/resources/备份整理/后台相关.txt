@@ -144,9 +144,14 @@ https://r86oxhhvu2.feishu.cn/docx/doxcnsqHeJ7dbM6hF4LEmU0jaxe
 使用addViewControllers方法实现无业务逻辑跳转
 https://www.5axxw.com/questions/simple/wdmc23
 
+Spring AOP中增强Advice的执行顺序
+https://www.cnblogs.com/longtianbin/archive/2022/11/15/16892993.html
 
+Spring boot开启定时任务的三种方式
+https://blog.csdn.net/qianlixiaomage/article/details/106599951
 
-
+SpringBoot中使用动态定时任务+CRON+多线程（线程池）
+https://blog.csdn.net/shi_nu_bi/article/details/116295461
 
 
 
