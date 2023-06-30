@@ -34,12 +34,12 @@ public class MyTask implements  SchedulingConfigurer   {
     private Map<String, String> CRON = new HashMap<>();
     public MyTask(){
         // 初始化CRON
-        // 评论回复  一分钟跑一次
-        CRON.put("cron_comment_reply_type","* */1 * * * ?");
+        // 评论回复  3分钟跑一次
+        CRON.put("cron_comment_reply_type","0 */3 * * * ?");
         // 评论点赞  5分钟跑一次
-        CRON.put("cron_comment_zan_type","* */5 * * * ?");
+        CRON.put("cron_comment_zan_type","0 */5 * * * ?");
         // 关注 10分钟跑一次
-        CRON.put("cron_love_user_type","* */10 * * * ?");
+        CRON.put("cron_love_user_type","0 */10 * * * ?");
     }
 
     @Override

@@ -19,7 +19,7 @@ public class TaskList {
             e.printStackTrace();
         } finally {
         }
-        System.out.println("xxxxx执行定时任务");
+        System.out.println("xxxxx执行定时任务,评论回复消息处理");
     }
 
 
@@ -29,7 +29,7 @@ public class TaskList {
      */
     @TaskLog(taskName = "评论点赞消息处理")
     public void commentZanMessageTask(){
-
+        System.out.println("xxxxx执行定时任务,评论点赞消息处理");
     }
 
     /**
@@ -37,7 +37,7 @@ public class TaskList {
      */
     @TaskLog(taskName = "关注任务消息处理")
     public void loveUserMessageTask(){
-
+        System.out.println("xxxxx执行定时任务,关注任务消息处理");
     }
 
 }

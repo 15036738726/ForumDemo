@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @MapperScan({"com.example.forumdemo.*.mapper"})
+// 开启对定时任务的支持
 @EnableScheduling
 public class ForumDemoApplication {
 
