@@ -146,14 +146,30 @@ https://www.5axxw.com/questions/simple/wdmc23
 
 Spring AOP中增强Advice的执行顺序
 https://www.cnblogs.com/longtianbin/archive/2022/11/15/16892993.html
+在同一个切面(Apsect)定义中对于同一个Join Point而言，不同类型的Advice执行先后顺序依次是:
+@Around 前置处理
+@Before
+@AfterReturning/@AfterThrowing
+@After
+@Around 后置置处理
 
-Spring boot开启定时任务的三种方式
+
+AOP中After和AfterReturning的区别
+https://blog.csdn.net/Tom098/article/details/105883301
+@After 被代理的方法执行完成之后，要执行的代码。
+@AfterReturning 新生成的代理方法执行完成之后（return 之后），要执行的代码，是放在finally块中的。
+
+
+Spring boot开启定时任务的三种方式/CRON语法结构以及常例
 https://blog.csdn.net/qianlixiaomage/article/details/106599951
+语法格式为："秒域 分域 时域 日域 月域 周域 年域"
 
 SpringBoot中使用动态定时任务+CRON+多线程（线程池）
 https://blog.csdn.net/shi_nu_bi/article/details/116295461
 
-
+需要注意Spring AOP 方法内部调用不生效,这个是一个面试考点, com.example.forumdemo.task.MyTask 这个类在使用LogAop时遇到了这种情况,
+解决办法通过spring注入对象的方式解决即可
+https://dandelioncloud.cn/article/details/1610971380525006849
 
 
 

@@ -1,5 +1,7 @@
 package com.example.forumdemo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -7,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ForumParam {
+    @TableId(type = IdType.INPUT)
     private String forumCfgKey;
     private String forumCfgValue;
 }
