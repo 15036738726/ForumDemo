@@ -17,3 +17,11 @@ mybatis-plus:
       id-type: assign_id #全局设置雪花算法
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#线程池配置
+ExecutorPool:
+  corePoolSize: 5 #核心线程数
+  maxPoolSize: 10 #最大线程数
+  queueCapacity: 20 #等待队列数
+  awaitTerminationSeconds: 60 #销毁前等待时间
+

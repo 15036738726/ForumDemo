@@ -1,7 +1,7 @@
 package com.example.forumdemo.instruct_receive.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.forumdemo.entity.ForumInstructReceive;
+import com.github.yulichang.base.MPJBaseMapper;
 
-public interface InstructReceiveMapper extends BaseMapper<ForumInstructReceive> {
+public interface InstructReceiveMapper extends MPJBaseMapper<ForumInstructReceive> {
 }

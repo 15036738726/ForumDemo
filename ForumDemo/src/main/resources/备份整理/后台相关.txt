@@ -171,13 +171,14 @@ https://blog.csdn.net/shi_nu_bi/article/details/116295461
 解决办法通过spring注入对象的方式解决即可
 https://dandelioncloud.cn/article/details/1610971380525006849
 
-
 springboot 中如何配置线程池
 https://www.yisu.com/zixun/598216.html
 
+JAVA 中 Map 与实体类相互转换的简单方法
+https://www.cnblogs.com/zz150650/p/15841923.html
 
-
-
+https://blog.csdn.net/qq_50652600/article/details/126038809
+mybatis-plus（insertBatchSomeColumn批量添加）
 
 
 

@@ -46,8 +46,9 @@ public class TaskLogAop {
         LocalDateTime start = startTime.get();
         Duration duration = getTaskRunTime(start, end);
         Integer realNum = 0;
-        if(count == null || !(count instanceof Integer)){
-            realNum = 0;
+        // 为空或者返回的不是int值 则不进行转换(默认处理条数0)
+        if(!(count == null || !(count instanceof Integer))){
+            realNum = (Integer) count;
         }
         // 毫秒数duration.toMillis
         log.info("结束:任务名称["+ taskName + ","+methodName +"],时间:"+end.toString()+";线程:" + Thread.currentThread().getName()+";耗时:" + duration.getSeconds()+"秒;共处理记录条数:"+realNum);

@@ -1,17 +1,12 @@
 package com.example.forumdemo.instruct_receive.strategy;
 
-import cn.hutool.core.map.MapUtil;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumInstructReceive;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.instruct_receive.aop.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.thymeleaf.util.MapUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
