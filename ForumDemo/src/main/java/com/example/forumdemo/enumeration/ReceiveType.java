@@ -1,4 +1,4 @@
-package com.example.forumdemo.instruct_receive.aop;
+package com.example.forumdemo.enumeration;
 
 /**
  * 接收类型 用于区分处理方式不同
@@ -11,12 +11,15 @@ public enum ReceiveType {
 
     // 指令类型,查询表时设置instruct_type字段
     private Integer reviceTypeCode;
-    private ReceiveType(Integer code) {
+
+    ReceiveType(Integer code) {
         this.reviceTypeCode = code;
     }
+
     public Integer getReviceTypeCode() {
         return reviceTypeCode;
     }
+
     public void setReviceTypeCode(Integer reviceTypeCode) {
         this.reviceTypeCode = reviceTypeCode;
     }

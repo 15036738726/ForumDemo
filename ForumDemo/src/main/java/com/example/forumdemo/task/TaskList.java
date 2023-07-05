@@ -3,10 +3,8 @@ package com.example.forumdemo.task;
 import com.example.forumdemo.browse.mapper.CommentMapper;
 import com.example.forumdemo.browse.mapper.KnockingMapper;
 import com.example.forumdemo.entity.*;
-import com.example.forumdemo.instruct_receive.aop.ReceiveType;
-import com.example.forumdemo.instruct_receive.mapper.InstructReceiveMapper;
+import com.example.forumdemo.enumeration.ReceiveType;
 import com.example.forumdemo.instruct_receive.service.InstructReceiveService;
-import com.example.forumdemo.message.mapper.MessageMapper;
 import com.example.forumdemo.message.service.MessageService;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -17,8 +15,6 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sun.misc.Signal.handle;
-
 /**
  * 任务列表类,定义处理方法
  */
@@ -26,10 +22,6 @@ import static sun.misc.Signal.handle;
 public class TaskList {
     @Autowired
     private InstructReceiveService instructReceiveService;
-    @Autowired
-    private InstructReceiveMapper instructReceiveMapper;
-    @Autowired
-    private MessageMapper messageMapper;
     @Autowired
     private MessageService messageService;
     @Autowired
@@ -43,7 +35,7 @@ public class TaskList {
     @TaskLog(taskName = "评论回复消息处理")
     public Integer commentReplyMessageTask(){
         /**
-         * #评论表 userId这个评论是属于谁的  reply_user_id 这个评论时回复谁的  parent_comment_id是上级ID,reply_id是根标记,如果是顶级,则根和parent_comment_id都是0,comment是用户回复的内容
+         * #评论表 userId这个评论是属于谁的  reply_user_id 这个评论时回复谁的  parent_comment_id是根标记,reply_id是上级ID,如果是顶级,则根和parent_comment_id都是0,comment是用户回复的内容
          * #最终message表字段处理为:,
          * #userId 是被评论的人,因为消息是发给他的,即评论表中的reply_userId,user_content:是被回复的人的哪条评论内容被回复了,需要查询
          * # target_userId是回复的人的id,即评论表中的USER_ID  target_content:回复的什么内容,即评论表中的comment字段
@@ -59,7 +51,7 @@ public class TaskList {
          * inner join forum_instruct_receive b on a.comment_id  = b.abstract_id
          * inner join forum_user c on a.reply_user_id = c.user_id
          * inner join forum_user d on a.user_id  = d.user_id
-         * left join forum_comment e on a.parent_comment_id  = e.comment_id
+         * left join forum_comment e on a.reply_id  = e.comment_id
          * order by b.instruct_id asc;
          */
         // 参考 官网https://mybatisplusjoin.com/pages/core/qt/zlj.html 自连接
@@ -85,8 +77,8 @@ public class TaskList {
                  * leftJoin的这个表为附表  left join forum_comment e on a.parent_comment_id  = e.comment_id   e表为附表   a表为主表,
                  * 即第一个表中的条件 就是根据parentID看是否能够找到对应在评论表中的上级数据
                  */
-                // left join forum_comment e on a.parent_comment_id  = e.comment_id   e.comment as user_content
-                .leftJoin(ForumComment.class,ForumComment::getCommentId,ForumComment::getParentCommentId,temp -> temp.selectAs(ForumComment::getComment,ForumMessage::getUserContent))
+                // left join forum_comment e on a.reply_id  = e.comment_id   e.comment as user_content
+                .leftJoin(ForumComment.class,ForumComment::getCommentId,ForumComment::getReplyId,temp -> temp.selectAs(ForumComment::getComment,ForumMessage::getUserContent))
                 // a.comment as target_content
                 .selectAs(ForumComment::getComment,ForumMessage::getTargetContent)
                 .orderByAsc(ForumInstructReceive::getInstructId)
@@ -97,10 +89,9 @@ public class TaskList {
         // wrap中的主表泛型已经指定为comment,所以只能用对应的commentMapper去查询 ForumMessage.class是返回的数据泛型
         List<ForumMessage> data = commentMapper.selectJoinList(ForumMessage.class,lambdaWrapper);
         /**
-         * ==>  Preparing: SELECT t1.instruct_id,t1.instruct_type AS messageType,t.comment_id AS abstractId,t2.user_id,t2.user_name,t3.user_id AS targetUserId,t3.user_name AS targetUserName,t4.comment AS userContent,t.comment AS targetContent FROM forum_comment t INNER JOIN forum_instruct_receive t1 ON (t1.abstract_id = t.comment_id) INNER JOIN forum_user t2 ON (t2.user_id = t.reply_user_id) INNER JOIN forum_user t3 ON (t3.user_id = t.user_id) LEFT JOIN forum_comment t4 ON (t4.comment_id = t.parent_comment_id) WHERE (t1.status = ?) ORDER BY t1.instruct_id ASC
+         * ==>  Preparing: SELECT t1.instruct_id,t1.instruct_type AS messageType,t.comment_id AS abstractId,t2.user_id,t2.user_name,t3.user_id AS targetUserId,t3.user_name AS targetUserName,t4.comment AS userContent,t.comment AS targetContent FROM forum_comment t INNER JOIN forum_instruct_receive t1 ON (t1.abstract_id = t.comment_id) INNER JOIN forum_user t2 ON (t2.user_id = t.reply_user_id) INNER JOIN forum_user t3 ON (t3.user_id = t.user_id) LEFT JOIN forum_comment t4 ON (t4.comment_id = t.reply_id) WHERE (t1.status = ?) ORDER BY t1.instruct_id ASC
          * ==> Parameters: 1(String)
          */
-        if(ObjectUtils.isEmpty(data))return 0;
         // 执行消息表插入和指令表更新
         return myHandle(data);
     }
@@ -163,8 +154,6 @@ public class TaskList {
          * ==>  Preparing: SELECT t1.instruct_id,t1.instruct_type AS messageType,t.id AS abstractId,t2.user_id AS targetUserId,t2.user_name AS targetUserName,t.work_time AS happenTime,t4.user_id AS userId,t4.user_name AS userName,t3.comment AS userContent FROM forum_join_knocking t INNER JOIN forum_instruct_receive t1 ON (t1.abstract_id = t.id) INNER JOIN forum_user t2 ON (t2.user_id = t.user_id) INNER JOIN forum_comment t3 ON (t3.comment_id = t.abstract_id) INNER JOIN forum_user t4 ON (t4.user_id = t3.user_id) WHERE (t1.status = ?) ORDER BY t1.instruct_id ASC
          * ==> Parameters: 1(String)
          */
-
-        if(ObjectUtils.isEmpty(data))return 0;
         // 执行消息表插入和指令表更新
         return myHandle(data);
     }
@@ -176,9 +165,40 @@ public class TaskList {
      */
     @TaskLog(taskName = "关注任务消息处理")
     public Integer loveUserMessageTask(){
-        //List<ForumInstructReceive> data = instructReceiveService.getInstructDataByType(3);
-        System.out.println("xxxxx执行定时任务,关注任务消息处理");
-        return 5;
+        /**
+         * #敲击表(关注类型 type=4的) 指令表
+         * #user_id为a的用户关注了abstart_Id为b的用户,即需要给用户b进行消息提醒,target为用户a 两个content都为空
+         * select b.instruct_id ,b.instruct_type as message_type,
+         * a.id as abstract_id,
+         * c.user_id,c.user_name,
+         * a.work_time as happenTime,
+         * d.user_id as target_user_id,d.user_name as target_user_name
+         * from forum_join_knocking a
+         * inner join forum_instruct_receive b on b.abstract_id  = a.id
+         * inner join forum_user c on c.user_id = a.abstract_id
+         * inner join forum_user d on d.user_id  = a.user_id
+         * where b.status = 1 and b.instruct_type = 3
+         * order by b.instruct_id asc;
+         */
+        MPJLambdaWrapper<ForumJoinKnocking> wrapper = new MPJLambdaWrapper<>();
+        wrapper.select(ForumInstructReceive::getInstructId)
+                .selectAs(ForumInstructReceive::getInstructType,ForumMessage::getMessageType)
+                .selectAs(ForumJoinKnocking::getId,ForumMessage::getAbstractId)
+                .innerJoin(ForumInstructReceive.class,ForumInstructReceive::getAbstractId,ForumJoinKnocking::getId)
+                .innerJoin(ForumUser.class,ForumUser::getUserId,ForumJoinKnocking::getAbstractId,temp->temp.select(ForumUser::getUserId).select(ForumUser::getUserName))
+                .selectAs(ForumJoinKnocking::getWorkTime,ForumMessage::getHappenTime)
+                .innerJoin(ForumUser.class,ForumUser::getUserId,ForumJoinKnocking::getUserId,temp->temp.selectAs(ForumUser::getUserId,ForumMessage::getTargetUserId).selectAs(ForumUser::getUserName,ForumMessage::getTargetUserName))
+                .orderByAsc(ForumInstructReceive::getInstructId)
+                // 找未处理的数据
+                .eq(ForumInstructReceive::getStatus,"1")
+                .eq(ForumInstructReceive::getInstructType, ReceiveType.LOVE_USER_TYPE.getReviceTypeCode());
+        List<ForumMessage> data = knockingMapper.selectJoinList(ForumMessage.class, wrapper);
+        /**
+         * ==>  Preparing: SELECT t1.instruct_id,t1.instruct_type AS messageType,t.id AS abstractId,t2.user_id,t2.user_name,t.work_time AS happenTime,t3.user_id AS targetUserId,t3.user_name AS targetUserName FROM forum_join_knocking t INNER JOIN forum_instruct_receive t1 ON (t1.abstract_id = t.id) INNER JOIN forum_user t2 ON (t2.user_id = t.abstract_id) INNER JOIN forum_user t3 ON (t3.user_id = t.user_id) WHERE (t1.status = ? AND t1.instruct_type = ?) ORDER BY t1.instruct_id ASC
+         * ==> Parameters: 1(String), 3(Integer)
+         */
+        // 执行消息表插入和指令表更新
+        return myHandle(data);
     }
 
     /**
@@ -187,6 +207,7 @@ public class TaskList {
      * @return
      */
     private Integer myHandle(List<ForumMessage> data) {
+        if(ObjectUtils.isEmpty(data))return 0;
         // 指定ID集合,用于插入消息表之后,把处理的数据的更新状态字段置为已处理
         List<ForumInstructReceive> instructReceiveList = new ArrayList<>();
         for(ForumMessage temp : data){
@@ -203,6 +224,14 @@ public class TaskList {
         messageService.saveBatch(data);
         return data.size();
     }
+
+    /**
+     * #说明一下 指令表中statue=1的数据无法处理的情况,这个只有评论点赞type=2和用户关注type=3会发生这种情况,因为评论不可以被删除所以"逃过一劫",而这两种情况的数据都是存在敲击表中的,这个表是不做逻辑删除的,是物理删除
+     * #首先这个情况是正常的,当用户张三给李四发起一个评论点赞,那么在敲击表中是存在一条点赞记录的,并且指令接收表也同步记录了一条数据 statue=1,
+     * #在定时任务执行之前,如果张三取消给李四的点赞,那么敲击表的数据是会被删除掉的,所以在定时任务跑的时候,因为关联不到敲击表的数据,就导致这个指令数据一直清理不掉,同时也无法给李四发送消息提醒,这个也正好解决了点赞,又取消的情况
+     * #如果有强迫症的话,也是可以解决的,就是在取消点赞或者取消关注的地方,删除数据之前,根据待删除数据的id,同步删除指令表中对应的abstract_id字段,不过不删也不影响业务
+     * #如果处理了上边说的情况,那么指令表和消息表中的数据条数应该是完全一致的
+     */
 
     /**
      * 这个版本没有把上级回复的评论找出来

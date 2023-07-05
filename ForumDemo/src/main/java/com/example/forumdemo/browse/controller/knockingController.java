@@ -2,6 +2,7 @@ package com.example.forumdemo.browse.controller;
 
 import com.example.forumdemo.browse.service.KnockingService;
 import com.example.forumdemo.entity.ForumJoinKnocking;
+import com.example.forumdemo.enumeration.KnockingType;
 import com.example.forumdemo.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +25,7 @@ public class knockingController {
      */
     @PutMapping("/zanComment")
     public Result<Map<String,Object>> zanComment(@RequestBody ForumJoinKnocking entity){
+        entity.setAbstractType(KnockingType.COMMENT_ZAN_TYPE.getCode());
         Map<String,Object> knocking = knockingService.zanComment(entity);
         return Result.success(knocking);
     }
@@ -35,6 +37,7 @@ public class knockingController {
      */
     @PutMapping("/zanZuopin")
     public Result<Map<String,Object>> zanZuopin(@RequestBody ForumJoinKnocking entity){
+        entity.setAbstractType(KnockingType.ZUOPIN_ZAN_TYPE.getCode());
         Map<String,Object> knocking = knockingService.zanZuopin(entity);
         return Result.success(knocking);
     }
@@ -46,6 +49,7 @@ public class knockingController {
      */
     @PutMapping("/loveZuopin")
     public Result<Map<String,Object>> loveZuopin(@RequestBody ForumJoinKnocking entity){
+        entity.setAbstractType(KnockingType.ZUOPIN_COLLECT_TYPE.getCode());
         Map<String,Object> knocking = knockingService.loveZuopin(entity);
         return Result.success(knocking);
     }
@@ -57,6 +61,7 @@ public class knockingController {
      */
     @PutMapping("/loveUser")
     public Result<Map<String,Object>> loveUser(@RequestBody ForumJoinKnocking entity){
+        entity.setAbstractType(KnockingType.USER_COLLECT_TYPE.getCode());
         Map<String,Object> knocking = knockingService.loveUser(entity);
         return Result.success(knocking);
     }

@@ -13,7 +13,7 @@ import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.entity.ForumZuoPin;
 import com.example.forumdemo.instruct_receive.anno.InstructReceive;
-import com.example.forumdemo.instruct_receive.aop.ReceiveType;
+import com.example.forumdemo.enumeration.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

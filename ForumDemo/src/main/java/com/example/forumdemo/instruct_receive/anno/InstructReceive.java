@@ -1,6 +1,6 @@
 package com.example.forumdemo.instruct_receive.anno;
 
-import com.example.forumdemo.instruct_receive.aop.ReceiveType;
+import com.example.forumdemo.enumeration.ReceiveType;
 
 import java.lang.annotation.*;
 

@@ -7,7 +7,7 @@ import com.example.forumdemo.entity.ForumCommentExt;
 import com.example.forumdemo.entity.ForumJoinKnocking;
 import com.example.forumdemo.entity.ForumUser;
 import com.example.forumdemo.instruct_receive.anno.InstructReceive;
-import com.example.forumdemo.instruct_receive.aop.ReceiveType;
+import com.example.forumdemo.enumeration.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;

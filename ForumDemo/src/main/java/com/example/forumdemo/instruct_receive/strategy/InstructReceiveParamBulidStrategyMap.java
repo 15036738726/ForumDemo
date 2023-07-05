@@ -3,7 +3,7 @@ package com.example.forumdemo.instruct_receive.strategy;
 import com.example.forumdemo.entity.ForumComment;
 import com.example.forumdemo.entity.ForumInstructReceive;
 import com.example.forumdemo.entity.ForumJoinKnocking;
-import com.example.forumdemo.instruct_receive.aop.ReceiveType;
+import com.example.forumdemo.enumeration.ReceiveType;
 import com.example.forumdemo.util.Utils;
 import org.springframework.stereotype.Component;
 

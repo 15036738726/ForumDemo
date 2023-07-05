@@ -1,6 +1,7 @@
 package com.example.forumdemo.instruct_receive.aop;
 
 import com.example.forumdemo.entity.ForumInstructReceive;
+import com.example.forumdemo.enumeration.ReceiveType;
 import com.example.forumdemo.instruct_receive.anno.InstructReceive;
 import com.example.forumdemo.instruct_receive.service.InstructReceiveService;
 import com.example.forumdemo.instruct_receive.strategy.InstructReceiveParamBulidStrategy;
@@ -46,7 +47,7 @@ public class InstructReceiveAop {
         // 获取指定的参数构建策略
         InstructReceiveParamBulidStrategy strategy = strategyMap.getBulidStrategy(receiveType);
         ForumInstructReceive model = strategy.bulid(arg);
-        // 执行保存 如果为空,则跳过处理(说明是取消点赞 或者取消收藏的情况,后续看要不要删除接收表的数据)
+        // 执行保存 如果为空,则跳过处理(说明是取消点赞 或者取消关注的情况,后续看要不要删除接收表的数据)
         if(model.getAbstractId()!=null)
         instructReceiveService.save(model);
     }

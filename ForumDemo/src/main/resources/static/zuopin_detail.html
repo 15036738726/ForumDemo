@@ -5388,7 +5388,8 @@
                 let sendData = {};
                 sendData.abstractId = commentId;
                 sendData.userId = userId;
-                sendData.abstractType = 1;
+                // 类型由后端控制层设置枚举值,不通过前端传入
+                // sendData.abstractType = 1;
                 let callback = function(temp){
                     // 点赞数更新
                     // 获取模板
@@ -5436,7 +5437,7 @@
                         console.log("单机");
                         // 组织参数发起单机请求
                         let param = {};
-                        param.abstractType = 2;
+                        // param.abstractType = 2;
                         // 单机行为0 长按就是1
                         param.actionType = 0;
                         param.title = "登录后可点赞";
@@ -5466,7 +5467,7 @@
                             clearInterval(time);
                             // 组织参数发起长按请求
                             let param = {};
-                            param.abstractType = 2;
+                            // param.abstractType = 2;
                             // 单机行为0 长按就是1
                             param.actionType = 1;
                             param.title = "登录后可推荐视频";
@@ -5500,7 +5501,7 @@
                 // alert("收藏")
                 // 组织参数发起长按请求
                 let param = {};
-                param.abstractType = 3;
+                // param.abstractType = 3;
                 // action_type默认是0 可不用传
                 param.title = "登录后可收藏视频";
                 param.url = "/knockingController/loveZuopin";
@@ -5525,7 +5526,7 @@
                 let sendData = {};
                 sendData.userId = loginUser.userId;
                 sendData.abstractId = __THIS__.userInfo.userId;
-                sendData.abstractType = 4;
+                // sendData.abstractType = 4;
                 let callback = function(result){
                     // 设置关注情况
                     __THIS__.setPageUserLoveInfo(result.data);
