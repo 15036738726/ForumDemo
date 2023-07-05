@@ -5,5 +5,4 @@ import com.github.yulichang.base.MPJBaseMapper;
 
 public interface MessageMapper extends MPJBaseMapper<ForumMessage> {
 
-
 }

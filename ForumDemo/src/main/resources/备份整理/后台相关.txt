@@ -41,6 +41,8 @@ https://gitee.com/best_handsome/mybatis-plus-join/wikis/MyLambdaWrapper/selectAs
 解决查询评论关联同一个表两次问题 Mybatis Plus Join
 https://ylctmh.com/pages/core/qt/many.html
 
+总网址
+https://mybatisplusjoin.com/
 
 MPJ坐标:
 <dependency>
