@@ -179,8 +179,14 @@ https://www.yisu.com/zixun/598216.html
 JAVA 中 Map 与实体类相互转换的简单方法
 https://www.cnblogs.com/zz150650/p/15841923.html
 
-https://blog.csdn.net/qq_50652600/article/details/126038809
 mybatis-plus（insertBatchSomeColumn批量添加）
+https://blog.csdn.net/qq_50652600/article/details/126038809
 
 
+spring boot 集成 websocket  实现消息推送
+https://blog.csdn.net/A____t/article/details/127695152
+Spring Boot集成WebSocket实现消息推送
+https://blog.csdn.net/m0_73330311/article/details/126474113
+SpringBoot2.0集成WebSocket，实现后台向前端推送信息
+https://cloud.tencent.com/developer/article/2076306?areaSource=102001.13&traceId=cAR9DAbzvoCWuGYsrv-ou
 

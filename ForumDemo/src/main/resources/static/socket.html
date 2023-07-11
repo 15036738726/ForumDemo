@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Java 后端 WebSocket 的 Tomcat 实现</title>
+</head>
+
+<body>
+<div>
+    WebSocket 测试！<br/>
+</div>
+<input id="text" type="text" />
+<button onclick="send()">发送消息</button>
+<hr/>
+<button onclick="closeWebSocket()">关闭 WebSocket 连接</button>
+<hr/>
+<div id="message"></div>
+</body>
+
+<script type="text/javascript">
+
+    /* 判断当前浏览器是否支持WebSocket*/
+    let websocket = null;
+    if('WebSocket' in window) {
+        // 改成你的地址
+        websocket = new WebSocket("ws://localhost:9090/api/websocket/100");
+    } else {
+        alert('当前浏览器不支持 websocket！')
+    }
+    // 连接发生错误的回调方法
+    websocket.onerror = function() {
+        setMessageInnerHTML(" WebSocket 连接失败！");
+    };
+    // 连接成功的回调方法
+    websocket.onopen = function() {
+        debugger;
+        setMessageInnerHTML(" WebSocket 连接成功！");
+    }
+    // 接收到消息的回调方法
+    websocket.onmessage = function(event) {
+        console.log(event);
+        setMessageInnerHTML("接收后端data：" + event.data);
+    }
+    // 连接关闭的回调方法
+    websocket.onclose = function() {
+        setMessageInnerHTML(" WebSocket 连接关闭!");
+    }
+    // 监听窗口关闭事件，当窗口关闭时，主动去关闭 WebSocket 连接，防止连接还没断开就关闭窗口，Server 端会抛异常。
+    window.onbeforeunload = function() {
+        closeWebSocket();
+    }
+    // 将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+    // 关闭 WebSocket 连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+    // 发送消息
+    function send() {
+        let message = document.getElementById('text').value;
+        websocket.send('{"msg":"' + message + '"}');
+        setMessageInnerHTML(message + "&#13;");
+    }
+</script>
+<style>
+
+</style>
+</html>

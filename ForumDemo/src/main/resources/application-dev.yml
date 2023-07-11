@@ -8,7 +8,8 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     #driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/forum?characterEncoding=utf8&serverTimezone=UTC
-
+#  mvc:
+#    static-path-pattern: /static/**
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
@@ -24,4 +25,3 @@ ExecutorPool:
   maxPoolSize: 10 #最大线程数
   queueCapacity: 20 #等待队列数
   awaitTerminationSeconds: 60 #销毁前等待时间
-
