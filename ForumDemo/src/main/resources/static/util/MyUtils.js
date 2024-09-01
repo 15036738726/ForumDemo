@@ -63,6 +63,8 @@ var MyUtils = function(option){
         __ROOT__.pagePublicEvent();
         // 登录渲染
         __ROOT__.loginRenderService();
+        // 消息渲染
+        __ROOT__.messageRenderService();
     };
 
     /**
@@ -519,6 +521,16 @@ var MyUtils = function(option){
         let service = new loginRenderService(null,renderRoot,loginUser);
         // 交给组件处理
         service.start();
+    };
+
+    /**
+     * 消息渲染方法,页面初始化调用,同登录渲染调用时机一样(刷新当前页面或者页面打开时调用)
+     * 另外两个调用时机分别是,用户登录,后台通过websocket组件主动推送
+     */
+    __ROOT__.messageRenderService = function(){
+        // 暂定 未登录时,不主动请求数据,登录发请求,主动推送时获取全部数据
+
+
     };
 
 };

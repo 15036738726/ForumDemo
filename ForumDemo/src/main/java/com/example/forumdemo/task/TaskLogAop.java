@@ -2,6 +2,7 @@ package com.example.forumdemo.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,6 @@ import java.time.LocalDateTime;
 @Aspect
 @Component
 public class TaskLogAop {
-    //统计请求的处理时间
-    ThreadLocal<LocalDateTime> startTime = new ThreadLocal<>();
 
     /**
      * 拦截所有被该注解所标记的方法
@@ -20,15 +19,37 @@ public class TaskLogAop {
     @Pointcut("@annotation(com.example.forumdemo.task.TaskLog)")
     public void myCut(){};
 
-    @Before("myCut()&&@annotation(anno)")
-    public void before(JoinPoint joinPoint,TaskLog anno){
+    /**
+     * 环绕增强
+     * @param joinPoint
+     * @param anno
+     */
+    @Around("myCut()&&@annotation(anno)")
+    public void run(ProceedingJoinPoint joinPoint, TaskLog anno){
         String methodName = joinPoint.getSignature().getName();
         String taskName = anno.taskName();
         LocalDateTime start = LocalDateTime.now();
-        // 设置时间
-        startTime.set(start);
-        // start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         log.info("开始:任务名称["+ taskName + ","+methodName +"],时间:" + start.toString() + ";线程:" + Thread.currentThread().getName());
+        Integer realNum = 0;
+        try {
+            // 执行目标方法
+            Object proceed = joinPoint.proceed();
+            // 为空或者返回的不是int值 则不进行转换(默认处理条数0)
+            if(!(proceed == null || !(proceed instanceof Integer))){
+                realNum = (Integer) proceed;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        LocalDateTime end = LocalDateTime.now();
+        Duration duration = getTaskRunTime(start, end);
+        // 毫秒数duration.toMillis
+        log.info("结束:任务名称["+ taskName + ","+methodName +"],时间:"+end.toString()+";线程:" + Thread.currentThread().getName()+";耗时:" + duration.getSeconds()+"秒;共处理记录条数:"+realNum);
+    }
+
+
+    @Before("myCut()&&@annotation(anno)")
+    public void before(JoinPoint joinPoint,TaskLog anno){
     }
 
     /**
@@ -40,18 +61,7 @@ public class TaskLogAop {
      */
     @AfterReturning(value = "myCut()&&@annotation(anno)",returning = "count")
     public void afterReturning(JoinPoint joinPoint,TaskLog anno,Object count)throws Exception{
-        String methodName = joinPoint.getSignature().getName();
-        String taskName = anno.taskName();
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = startTime.get();
-        Duration duration = getTaskRunTime(start, end);
-        Integer realNum = 0;
-        // 为空或者返回的不是int值 则不进行转换(默认处理条数0)
-        if(!(count == null || !(count instanceof Integer))){
-            realNum = (Integer) count;
-        }
-        // 毫秒数duration.toMillis
-        log.info("结束:任务名称["+ taskName + ","+methodName +"],时间:"+end.toString()+";线程:" + Thread.currentThread().getName()+";耗时:" + duration.getSeconds()+"秒;共处理记录条数:"+realNum);
+
     }
 
     /**
